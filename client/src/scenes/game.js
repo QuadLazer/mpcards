@@ -12,10 +12,10 @@ export default class Game extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('cyanCardFront', 'assets/CyanCardFront.png');
-        this.load.image('cyanCardBack', 'assets/CyanCardBack.png');
-        this.load.image('magentaCardFront', 'assets/MagentaCardFront.png');
-        this.load.image('magentaCardBack', 'assets/MagentaCardBack.png');
+        this.load.image('p1CardFront', 'assets/p1CardFront.png');
+        this.load.image('p1CardBack', 'assets/p1CardBack.png');
+        this.load.image('p2CardFront', 'assets/p2CardFront.png');
+        this.load.image('p2CardBack', 'assets/p2CardBack.png');
     }
 
     create() {

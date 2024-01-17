@@ -6,11 +6,11 @@ export default class Dealer {
             let playerSprite;
             let opponentSprite;
             if (scene.isPlayerA) {
-                playerSprite = 'cyanCardFront';
-                opponentSprite = 'magentaCardBack';
+                playerSprite = 'p1CardFront';
+                opponentSprite = 'p2CardBack';
             } else {
-                playerSprite = 'magentaCardFront';
-                opponentSprite = 'cyanCardBack';
+                playerSprite = 'p2CardFront';
+                opponentSprite = 'p1CardBack';
             };
             for (let i = 0; i < 5; i++) {
                 let playerCard = new Card(scene);
