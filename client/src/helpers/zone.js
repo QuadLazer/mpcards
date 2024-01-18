@@ -7,8 +7,10 @@ export default class Zone {
         };
         this.renderOutline = (dropZone) => {
             let dropZoneOutline = scene.add.graphics();
-            dropZoneOutline.lineStyle(4, 0xff69b4);
+            dropZoneOutline.lineStyle(4, 0xffffff);
             dropZoneOutline.strokeRect(dropZone.x - dropZone.input.hitArea.width / 2, dropZone.y - dropZone.input.hitArea.height / 2, dropZone.input.hitArea.width, dropZone.input.hitArea.height)
+            console.log((dropZone.x - dropZone.input.hitArea.width / 2) + " " + (dropZone.y - dropZone.input.hitArea.height / 2));
+            console.log(dropZone.input.hitArea.width + " " + dropZone.input.hitArea.height);
         }
     }
 }

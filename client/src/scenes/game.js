@@ -25,6 +25,9 @@ export default class Game extends Phaser.Scene {
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
         this.outline = this.zone.renderOutline(this.dropZone);
+        // Debugging pixel coords
+        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+        this.pointer = this.input.activePointer;
 
         this.dealer = new Dealer(this);
 
@@ -84,6 +87,7 @@ export default class Game extends Phaser.Scene {
     }
     
     update() {
-    
+        // Debugging pixel coords
+        this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
     }
 }
