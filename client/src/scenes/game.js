@@ -24,6 +24,7 @@ export default class Game extends Phaser.Scene {
 
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
+        //this.handZone = this.zone.renderHandZone();
         this.outline = this.zone.renderOutline(this.dropZone);
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
@@ -49,13 +50,24 @@ export default class Game extends Phaser.Scene {
             self.dealer.dealCards();
         })
 
-        this.socket.on('cardPlayed', function (gameObject, isPlayerA) {
+        this.socket.on('cardDropped', function (gameObject, isPlayerA) {
             if (isPlayerA !== self.isPlayerA) {
                 let sprite = gameObject.textureKey;
+                console.log(sprite);
                 self.opponentCards.shift().destroy();
                 self.dropZone.data.values.cards++;
                 let card = new Card(self);
-                card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cards * 50)), (self.dropZone.y), sprite).disableInteractive();
+                card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cards * 200)), (self.dropZone.y - 200), sprite).disableInteractive();
+            }
+        })
+
+        this.socket.on('cardReturned', function (gameObject, isPlayerA) {
+            if (isPlayerA !== self.isPlayerA) {
+                let sprite = gameObject.textureKey;
+                console.log(sprite);
+                //self.handZone.data.values.cards++;
+                let card = new Card(self);
+                card.render(((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
             }
         })
 
@@ -78,12 +90,23 @@ export default class Game extends Phaser.Scene {
         })
 
         this.input.on('drop', function (pointer, gameObject, dropZone) {
-            dropZone.data.values.cards++;
-            gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 50);
-            gameObject.y = dropZone.y;
-            gameObject.disableInteractive();
-            self.socket.emit('cardPlayed', gameObject, self.isPlayerA);
+            if (!gameObject.inDropZone) {
+                gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 250);
+                gameObject.inDropZone = true;
+                dropZone.data.values.cards++;
+                //handZone.data.values.cards--;
+                gameObject.y = dropZone.y;
+                //gameObject.disableInteractive();
+                self.socket.emit('cardDropped', gameObject, self.isPlayerA);
+            }
         })
+
+        this.input.on('dragleave', function (pointer, gameObject, dropZone) {
+            dropZone.setAlpha(0.5);
+            gameObject.x = gameObject.input.dragStartX;
+            gameObject.y = gameObject.input.dragStartY;
+        })
+
     }
     
     update() {
