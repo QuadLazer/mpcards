@@ -21,7 +21,7 @@ export default class Login extends Phaser.Scene
 
         const text = this.add.text(10, 10, 'Please login to play', { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
 
-        const element = this.add.dom(600, 800).createFromCache('nameform');
+        const element = this.add.dom(650, 400).createFromCache('nameform');
 
         element.setPerspective(800);
 
@@ -43,21 +43,10 @@ export default class Login extends Phaser.Scene
                     //  Turn off the click events
                     this.removeListener('click');
 
-                    //  Tween the login form out
-                    this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 3000, ease: 'Power3' });
-
-                    this.scene.tweens.add({
-                        targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 3000, ease: 'Power3',
-                        onComplete: function ()
-                        {
-                            element.setVisible(false);
-                        }
-                    });
-
                     //  Populate the text with whatever they typed in as the username!
                     text.setText(`Welcome ${inputUsername.value}`);
 
-                    this.scene.start('Game');
+                    this.scene.scene.start('Game');
                 }
                 else
                 {
@@ -66,13 +55,6 @@ export default class Login extends Phaser.Scene
                 }
             }
 
-        });
-
-        this.tweens.add({
-            targets: element,
-            y: 300,
-            duration: 3000,
-            ease: 'Power3'
         });
     }
 
