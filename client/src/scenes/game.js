@@ -20,6 +20,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('re1', 'assets/resourceCardFront1.png');
         this.load.image('re2', 'assets/resourceCardFront2.png');
         this.load.image('re3', 'assets/resourceCardFront3.png');
+        this.load.image('quit', 'assets/quit.png');
     }
 
     create() {
@@ -33,6 +34,13 @@ export default class Game extends Phaser.Scene {
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
+
+        var btnQuit = this.add.text(100,100, 'QUIT', { fill: '#CCAAFF'});
+        btnQuit.setInteractive();
+        btnQuit.on('pointerdown', () => {
+            this.socket.disconnect();
+            this.scene.start('Load');
+        });
 
         this.dealer = new Dealer(this);
 
