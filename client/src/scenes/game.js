@@ -2,7 +2,7 @@ import Zone from '../helpers/zone';
 import Card from '../helpers/card';
 import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
-
+import Controller from '../helpers/controller';
 
 export default class Game extends Phaser.Scene {
     constructor() {
@@ -22,13 +22,15 @@ export default class Game extends Phaser.Scene {
     create() {
         this.isPlayerA = false;
         this.opponentCards = [];
-
+        
+        this.controller = new Controller(this);
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
         //this.handZone = this.zone.renderHandZone();
         this.outline = this.zone.renderOutline(this.dropZone);
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+        this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
 
         this.dealer = new Dealer(this);
@@ -44,6 +46,7 @@ export default class Game extends Phaser.Scene {
         });
 
         this.socket.on('isPlayerA', function () {
+            console.log("I've set someone to true!");
             self.isPlayerA = true;
         })
 
@@ -113,5 +116,18 @@ export default class Game extends Phaser.Scene {
     update() {
         // Debugging pixel coords
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+        if (this.controller.turnCheck() && this.isPlayerA) {
+            //console.log("Cond 1!");
+            this.turnIndicator.setText('Your turn!');
+        } else if (this.controller.turnCheck() && !this.isPlayerA) {
+            //console.log("Cond 2!");
+            this.turnIndicator.setText('Opponent\'s turn!');
+        } else if (!this.controller.turnCheck() && !this.isPlayerA) {
+            //console.log("Cond 3!");
+            this.turnIndicator.setText('Your turn!');
+        } else if (!this.controller.turnCheck() && this.isPlayerA) {
+            //console.log("Cond 4!");
+            this.turnIndicator.setText('Opponent\'s turn!');
+        } 
     }
 }
