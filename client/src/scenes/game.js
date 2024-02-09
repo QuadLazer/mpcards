@@ -2,6 +2,7 @@ import Zone from '../helpers/zone';
 import Card from '../helpers/card';
 import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
+import Mascot from '../helpers/mascot';
 
 
 export default class Game extends Phaser.Scene {
@@ -16,11 +17,13 @@ export default class Game extends Phaser.Scene {
         this.load.image('p1CardBack', 'assets/p1CardBack.png');
         this.load.image('p2CardFront', 'assets/p2CardFront.png');
         this.load.image('p2CardBack', 'assets/p2CardBack.png');
+        this.load.image('mascotCardFront', 'assets/gator_logo.png');
     }
 
     create() {
         this.isPlayerA = false;
         this.opponentCards = [];
+        this.mascotCardPlace = false;
 
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
@@ -29,6 +32,19 @@ export default class Game extends Phaser.Scene {
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
+
+        //hover mascot variables
+        //this.objectWithToolTip = this.add.rectangle( 100, 100, 100, 100, 0xffffff).setInteractive();
+        this.cardPopUp =  this.add.rectangle( 0, 0, 250, 50, 0xff0000).setOrigin(0);
+        this.cardPopUpText = this.add.text( 0, 0, 'This is a pop up', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+        this.cardPopUp.alpha = 0;
+
+        //attack button 
+        let clickCount = 0;
+        this.clickCountText = this.add.text(44, 440, '');
+        this.attackButton = this.add.text(100, 395, 'Attack', {fill:'#ff5733'}).setInteractive();
+        this.attackButton.on('pointerdown', () => this.updateClickCountText(++clickCount));
+        this.updateClickCountText(clickCount);
 
         this.dealer = new Dealer(this);
 
@@ -50,14 +66,60 @@ export default class Game extends Phaser.Scene {
             self.dealer.dealCards();
         })
 
+        //setPollOnMove - means that the interaction won't happen unless the user moves the mouse pointer themselves
+        this.input.setPollOnMove();
+        //this animates the pop up
+        this.input.on('gameobjectover', function (pointer, Mascot) {
+            this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+            this.tweens.add({
+            targets: [this.cardPopUp, this.cardPopUpText],
+            alpha: {from:0, to:1},
+            repeat: 0,
+            duration: 500
+         });
+        }, this);
+
+        //when taking the mouse off the game object, the pop up will disappear
+        this.input.on('gameobjectout', function (pointer, Mascot) {
+            self.cardPopUp.alpha = 0;
+            self.cardPopUpText.alpha = 0;
+            self.cardPopUpText.destroy();
+        });
+
+        //this moves the pop up while over an object
+        this.input.on('pointermove', function (pointer, Mascot) {
+            self.cardPopUp.x = pointer.x;
+            self.cardPopUp.y = pointer.y;
+            self.cardPopUpText.x = pointer.x + 5;
+            self.cardPopUpText.y = pointer.y + 5;
+        });
+    
+
         this.socket.on('cardDropped', function (gameObject, isPlayerA) {
+            let mascotDropped = Boolean(false);
             if (isPlayerA !== self.isPlayerA) {
                 let sprite = gameObject.textureKey;
                 console.log(sprite);
                 self.opponentCards.shift().destroy();
                 self.dropZone.data.values.cards++;
+
                 let card = new Card(self);
+                //if card is a mascot 
+                if(gameObject instanceof Mascot){
+                    //TODO: need to access mascot attributes from class object
+                    let card = new Mascot('gator', 4000, 'S',self);
+                    mascotDropped = Boolean(true);
+                    self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), card.getHealthPoints(), {fill:'#ff5733'});
+                }
+                
+                //let card = new Card(self);
                 card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cards * 200)), (self.dropZone.y - 200), sprite).disableInteractive();
+            }
+
+            //showing hp for P1 mascot
+            if(mascotDropped){
+                //TODO: Fix this to display health when mascot card is placed into drop zone
+                self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), 'card.getHealthPoints()', {fill:'#ff5733'});
             }
         })
 
@@ -113,4 +175,8 @@ export default class Game extends Phaser.Scene {
         // Debugging pixel coords
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
     }
+
+    updateClickCountText(clickCount) {
+        this.clickCountText.setText(`Attacked ${clickCount} times.`);
+      }
 }
