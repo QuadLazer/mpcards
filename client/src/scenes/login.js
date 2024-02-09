@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import FirebasePlugin from '../plugins/FirebasePlugin';
 
 export default class Login extends Phaser.Scene
 {
@@ -11,10 +12,24 @@ export default class Login extends Phaser.Scene
     preload ()
     {
         this.load.html('nameform', 'assets/html/loginform.html');
+        this.load.plugin('FirebasePlugin', FirebasePlugin, true);
     }
 
     create ()
     {
+        var firebaseApp = this.plugins.get('FirebasePlugin');
+        console.log(firebaseApp);
+
+        let scene = this.scene;
+
+        // check if user already logged in
+        firebaseApp.auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log('Logged in as: ' + user.email);
+                this.scene.start('Game');
+            }
+        });
+
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
@@ -40,13 +55,29 @@ export default class Login extends Phaser.Scene
                 //  Have they entered anything?
                 if (inputUsername.value !== '' && inputPassword.value !== '')
                 {
-                    //  Turn off the click events
-                    this.removeListener('click');
+                    // Sign in
+                    firebaseApp.signInWithEmailAndPassword(inputUsername.value, inputPassword.value)
+                    .then(cred => {
+                        console.log(cred);
+                        this.scene.scene.start('Game');
+                    })
+                    .catch(function(error) {
+                        // Handle Errors here
+                        console.log(scene);
+                        text.setText(`Error: Invalid username/password`);
+                        console.log(error);
+                    });
 
-                    //  Populate the text with whatever they typed in as the username!
-                    text.setText(`Welcome ${inputUsername.value}`);
-
-                    this.scene.scene.start('Game');
+                    /*firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
+                    .then(cred => {
+                        console.log(cred);
+                    })
+                    .catch(function(error) {
+                        // Handle Errors here.
+                        console.log(error);
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                    });*/
                 }
                 else
                 {
