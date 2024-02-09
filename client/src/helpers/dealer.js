@@ -1,10 +1,11 @@
 import Card from './card';
-
+import Controller from './controller';
 export default class Dealer {
     constructor(scene) {
         this.dealCards = () => {
             let playerSprite;
             let opponentSprite;
+            let endTurnSprite = 'testEndButton';
             if (scene.isPlayerA) {
                 playerSprite = 'p1CardFront';
                 opponentSprite = 'p2CardBack';
@@ -19,6 +20,8 @@ export default class Dealer {
                 let opponentCard = new Card(scene);
                 scene.opponentCards.push(opponentCard.render(475 + (i * 100), 50, opponentSprite).disableInteractive());
             }
+            let gameController = new Controller(scene);
+            gameController.render(endTurnSprite);
         }
     }
 }
