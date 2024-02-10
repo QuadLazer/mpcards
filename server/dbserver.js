@@ -13,7 +13,7 @@ app.use(cors()); //avoid cross origin access errors
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use("/old", userRouter);
-app.use("/users", router);
+app.use("", router);
 
 app.use(errorHandler);
 

@@ -8,15 +8,23 @@ const eraseUser = controllers.eraseUser;
 const modifyUser = controllers.modifyUser;
 const otherFunction = controllers.otherFunction;
 const register = controllers.register;
+const fetchAllAchievements = controllers.fetchAllAchievements;
+const findAchievement = controllers.findAchievement;
+const findUserAchieved = controllers.findUserAchieved;
 
 //const router = express.Router();
 
-router.get("/fetchUsers", fetchAllUsers);
-router.get("/findUser", findUser);
-router.get("/sameFetch", otherFunction);
-router.post("/register", register);
-router.delete("/delete", eraseUser);
-router.put("/updateAccount", modifyUser);
+router.get("/users/fetchUsers", fetchAllUsers);
+router.get("/users/findUser", findUser);
+router.get("/users/sameFetch", otherFunction);
+router.post("/users/register", register);
+router.delete("/users/delete", eraseUser);
+router.put("/users/updateAccount", modifyUser);
+
+router.get("/ach/fetchAchievements", fetchAllAchievements);
+router.get("/ach/findAchievement", findAchievement);
+
+router.get("/uha/fetchUserAch", findUserAchieved);
 
 module.exports = router;
 

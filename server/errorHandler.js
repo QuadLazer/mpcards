@@ -8,8 +8,10 @@ const errorHandler = (error,req,res,next) => {
         return res.status(500).send({ message: error.message || internal });
     } else if (error.name === "DatabaseQueryError") {
         return res.status(500).send({ message: error.message || internal });
-    }else if(error.name === "DuplicateKeyError"){
-        return res.status(409).send({message: error.message || internal2})
+    } else if (error.name === "QueryError") {
+        return res.status(500).send({message: error.message || internal});
+    } else if(error.name === "DuplicateKeyError"){
+        return res.status(409).send({message: error.message || internal2});
     } else {
         return res.status(500).send({ message: error.message || internal });
     }

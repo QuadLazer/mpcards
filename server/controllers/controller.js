@@ -1,10 +1,16 @@
 const argon2 = require('argon2');
 const userModel = require("../models/users.js");
+const achievementsModel = require("../models/achievements.js");
+const userAchieveModel = require("../models/userHasAchievements.js");
 const getUsers = userModel.getUsers;
 const getUser = userModel.getUser;
 const addUser = userModel.addUser;
 const deleteUser = userModel.deleteUser;
 const updateUser = userModel.updateUser;
+const getAchievements = achievementsModel.getAchievements;
+const getAchByName = achievementsModel.getAchievementByName;
+const getUserAchieved = userAchieveModel.getUserAchievements;
+const addAchievement = userAchieveModel.addUserAchievement;
 //import {getUsers} from "../models/users.js";
 
 
@@ -74,7 +80,39 @@ const register = async (req, res, next) => {
     }
 }
 
-module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, otherFunction, register}
+const fetchAllAchievements = async (req, res, next) => {
+    try {
+        const achievementList = await getAchievements();
+        return res.status(200).send(achievementList)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const findAchievement = async (req, res, next) => {
+    try {
+        let {achievementName} = req.body
+        const achievement = await getAchByName(achievementName);
+        return res.status(200).send(achievement)
+    } catch (error) {
+        next(error)
+    }
+
+}
+//The variable name here has to match what is passed in as json
+const findUserAchieved = async (req, res, next) => {
+    try {
+        let {email} = req.body
+        const achievement = await getUserAchieved(email);
+        return res.status(200).send(achievement)
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, otherFunction, register,
+fetchAllAchievements, findAchievement, findUserAchieved}
 //exports.fetchAllUsers = fetchAllUsers;
 //exports.otherFunction = otherFunction;
 //module.exports = fetchAllUsers;
