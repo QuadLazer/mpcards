@@ -1,17 +1,17 @@
 import io from 'socket.io-client';
 import FirebasePlugin from '../plugins/FirebasePlugin';
 
-export default class Login extends Phaser.Scene
+export default class Signup extends Phaser.Scene
 {
     constructor() {
         super({
-            key: 'Login'
+            key: 'Signup'
         });
     }
 
     preload ()
     {
-        this.load.html('nameform', 'assets/html/loginform.html');
+        this.load.html('signupform', 'assets/html/signupform.html');
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
     }
 
@@ -23,12 +23,12 @@ export default class Login extends Phaser.Scene
         let scene = this.scene;
 
         // check if user already logged in
-        firebaseApp.auth.onAuthStateChanged(user => {
+        /*firebaseApp.auth.onAuthStateChanged(user => {
             if (user) {
                 console.log('Logged in as: ' + user.email);
                 this.scene.start('Game');
             }
-        });
+        });*/
 
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
@@ -36,7 +36,7 @@ export default class Login extends Phaser.Scene
 
         const text = this.add.text(10, 10, 'Please login to play', { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
 
-        const element = this.add.dom(650, 400).createFromCache('nameform');
+        const element = this.add.dom(650, 400).createFromCache('signupform');
 
         element.setPerspective(800);
 
@@ -47,7 +47,7 @@ export default class Login extends Phaser.Scene
         element.on('click', function (event)
         {
 
-            if (event.target.name === 'loginButton')
+            if (event.target.name === 'signupButton')
             {
                 const inputUsername = this.getChildByName('username');
                 const inputPassword = this.getChildByName('password');
@@ -55,29 +55,18 @@ export default class Login extends Phaser.Scene
                 //  Have they entered anything?
                 if (inputUsername.value !== '' && inputPassword.value !== '')
                 {
-                    // Sign in
-                    firebaseApp.signInWithEmailAndPassword(inputUsername.value, inputPassword.value)
+                    // Create new user account
+                    firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
                     .then(cred => {
                         console.log(cred);
-                        this.scene.scene.start('Game');
-                    })
-                    .catch(function(error) {
-                        // Handle Errors here
-                        console.log(scene);
-                        text.setText(`Error: Invalid username/password`);
-                        console.log(error);
-                    });
-
-                    /*firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
-                    .then(cred => {
-                        console.log(cred);
+                        scene.stop('Signup');
                     })
                     .catch(function(error) {
                         // Handle Errors here.
                         console.log(error);
                         var errorCode = error.code;
                         var errorMessage = error.message;
-                    });*/
+                    });
                 }
                 else
                 {
@@ -85,21 +74,20 @@ export default class Login extends Phaser.Scene
                     this.scene.tweens.add({ targets: text, alpha: 0.1, duration: 200, ease: 'Power3', yoyo: true });
                 }
             }
-
         });
 
-        this.signupButton = this.add.text(740, 220, 'Sign up', { color: 'white', fontFamily: 'Arial', fontSize: '16px '});
-        this.signupButton.setInteractive();
-        this.signupButton.on('pointerover', () => {
-            this.signupButton.setColor('yellow');
-        });
-        this.signupButton.on('pointerout', () => {
-            this.signupButton.setColor('white');
-        });
-        this.signupButton.on('pointerdown', () => {
-            element.setVisible(false);
-            scene.start('Signup');
-        });
+        this.loginButton = this.add.text(740, 220, 'Log in', { color: 'white', fontFamily: 'Arial', fontSize: '16px '});
+            this.loginButton.setInteractive();
+            this.loginButton.on('pointerover', () => {
+                this.loginButton.setColor('yellow');
+            });
+            this.loginButton.on('pointerout', () => {
+                this.loginButton.setColor('white');
+            });
+            this.loginButton.on('pointerdown', () => {
+                element.setVisible(false);
+                scene.start('Login');
+            });
     }
 
     update ()
