@@ -2,25 +2,29 @@ const db = require('../db/index.js');
 
 const getUserAchievements = async (email) => {
     try {
-        //const checkEmail = await db.any("Select * from g_user");
-        const checkEmail = await db.any(`SELECT id FROM g_user WHERE email = $1`,[email])
-        const userID = checkEmail[0].id;
+        const checkEmail = await db.oneOrNone(`SELECT id FROM g_user WHERE email = $1`,[email])
+        if(!checkEmail) throw {name: "NotValidUser", message: "Not a valid account!", status: false }
+        const userID = checkEmail.id;
 
         const getAchList = await db.any(`SELECT * FROM user_has_achieved  WHERE user_id = $1`, [userID]);
+        //if(getAchList.length === 0) return { message: "User has no achievements", status: true }
         return getAchList 
     } catch (error) {
-        throw {
-            name: "DatabaseQueryError",
-            message: "Error fetching user",
-            cause: error
+        if (error.name === "NotValidUser"){
+            console.log("No user found with that email address")
+            throw error
+        }else{
+            throw {
+                name: "DatabaseQueryError",
+                message: "Error fetching user",
+                cause: error
+            }
         }
     }
 }
 
 const addUserAchievement = async(email,achievementName) => { 
     try { 
-        //.log(email);
-        //console.log(achievementName);
         const checkEmail = await db.oneOrNone(`SELECT id FROM g_user WHERE email = $1`,[email])
         if (!checkEmail) throw {name: "NotValidUser", message: "Not a valid account!", status: false }
         const userID = checkEmail.id;
@@ -38,12 +42,12 @@ const addUserAchievement = async(email,achievementName) => {
         return { message: "Achievement added to user", status: true, user: userID, achievement: achievementName }
     } catch (error) {
         if (error.name === "NotValidUser"){
-            console.log("duplicate key error")
+            console.log("No user found with that email address")
             throw error
         }else{
             throw {
                 name: "DatabaseQueryError",
-                message: "Error creating user",
+                message: "Error adding achievement",
                 cause: error
             }
         }

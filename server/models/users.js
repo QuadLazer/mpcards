@@ -9,26 +9,29 @@ const getUsers = async () => {
         throw { 
             name: "getUsersError",
             message: "Error fetching users",
-            cause: error
+            cause: err
         }
-        //next(err)
     }
 }
 
 const getUser = async (identifier) => {
     try {
-        const getUser = await db.one(`SELECT * FROM g_user WHERE email = $1 OR uname = $1`, [identifier]);
-        //if(!getUser)
-        return getUser //throw {name: "Database", message: "User not found", status: false }
+        const getUser = await db.oneOrNone(`SELECT * FROM g_user WHERE email = $1 OR uname = $1`, [identifier]);
+        if(!getUser)  throw {name: "NotValidUser", message: "Not a valid account!", status: false }
+        return getUser 
     } catch (error) {
-        throw {
-            name: "DatabaseQueryError",
-            message: "Error fetching user",
-            cause: error
+        if (error.name === "NotValidUser"){
+            console.log("No user found with that email address")
+            throw error
+        }else{
+            throw {
+                name: "DatabaseQueryError",
+                message: "Error fetching user",
+                cause: error
+            }
         }
     }
 }
-
 const addUser = async(username, email, password) => { 
     try { //id, uname, password, email
 

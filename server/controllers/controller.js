@@ -11,7 +11,7 @@ const getAchievements = achievementsModel.getAchievements;
 const getAchByName = achievementsModel.getAchievementByName;
 const getUserAchieved = userAchieveModel.getUserAchievements;
 const addAchievement = userAchieveModel.addUserAchievement;
-//import {getUsers} from "../models/users.js";
+
 
 
 
