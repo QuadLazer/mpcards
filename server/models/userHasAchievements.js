@@ -17,20 +17,27 @@ const getUserAchievements = async (email) => {
     }
 }
 
-const addUserAchievement = async(email) => { 
+const addUserAchievement = async(email,achievementName) => { 
     try { 
-
-        const checkEmail = await db.one(`SELECT id FROM g_user WHERE email = $1`,[email])
-        if (!checkEmail) throw {name: "DuplicateKeyError", message: "Not a valid account!", status: false }
-        
-        // const addUser = await db.any(`
-        // INSERT INTO g_user(uname, password, email)
-        // VALUES($1, $2, $3)
-        // `,[username,password, email])
-        // console.log("I inserted")
-        //     return { message: "User created successfully", status: true, user: addUser }
+        //.log(email);
+        //console.log(achievementName);
+        const checkEmail = await db.oneOrNone(`SELECT id FROM g_user WHERE email = $1`,[email])
+        if (!checkEmail) throw {name: "NotValidUser", message: "Not a valid account!", status: false }
+        const userID = checkEmail.id;
+        const d = new Date();
+        const date_with_time = +d.getFullYear()+"-"
+                        +("0" + (d.getMonth()+1)).slice(-2)+"-"
+                        +("0" + d.getDate()).slice(-2)+" "
+                        +("0" + d.getHours()).slice(-2)+":"
+                        +("0" + d.getMinutes()).slice(-2)+":"
+                        +("0" + d.getSeconds()).slice(-2);
+        console.log(date_with_time);
+        const addedAchievement = await db.any(`
+        INSERT INTO user_has_achieved(user_id, aid, a_date)
+        VALUES($1, $2, $3)`,[userID, achievementName, date_with_time])
+        return { message: "Achievement added to user", status: true, user: userID, achievement: achievementName }
     } catch (error) {
-        if (error.name === "DuplicateKeyError"){
+        if (error.name === "NotValidUser"){
             console.log("duplicate key error")
             throw error
         }else{

@@ -111,8 +111,18 @@ const findUserAchieved = async (req, res, next) => {
 
 }
 
+const addAchievementToUser = async (req, res, next) => {
+    try {
+        let {email,achievementName} = req.body
+        const addedToUser = await addAchievement(email,achievementName);
+        return res.status(200).send(addedToUser)
+    } catch (error) {
+        next(error)
+    }
+}
+
 module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, otherFunction, register,
-fetchAllAchievements, findAchievement, findUserAchieved}
+fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser}
 //exports.fetchAllUsers = fetchAllUsers;
 //exports.otherFunction = otherFunction;
 //module.exports = fetchAllUsers;

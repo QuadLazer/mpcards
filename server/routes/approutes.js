@@ -11,6 +11,7 @@ const register = controllers.register;
 const fetchAllAchievements = controllers.fetchAllAchievements;
 const findAchievement = controllers.findAchievement;
 const findUserAchieved = controllers.findUserAchieved;
+const addAchievementToUser = controllers.addAchievementToUser;
 
 //const router = express.Router();
 
@@ -25,6 +26,7 @@ router.get("/ach/fetchAchievements", fetchAllAchievements);
 router.get("/ach/findAchievement", findAchievement);
 
 router.get("/uha/fetchUserAch", findUserAchieved);
+router.get("/uha/addUserAch", addAchievementToUser);
 
 module.exports = router;
 
