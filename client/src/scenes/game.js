@@ -109,6 +109,7 @@ export default class Game extends Phaser.Scene {
                     //TODO: need to access mascot attributes from class object
                     let card = new Mascot('gator', 4000, 'S',self);
                     mascotDropped = Boolean(true);
+                    self.dropZone.data.values.mascots++;
                     self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), card.getHealthPoints(), {fill:'#ff5733'});
                 }
                 
@@ -151,11 +152,17 @@ export default class Game extends Phaser.Scene {
             }
         })
 
-        this.input.on('drop', function (pointer, gameObject, dropZone) {
-            if (!gameObject.inDropZone) {
+        this.input.on('drop', function (pointer, gameObject, dropZone, Mascot) {
+            //TODO: mascot limit implemented, may need modification to include resource card limit(s) later
+            if (!gameObject.inDropZone && dropZone.data.values.mascots == 0) {
                 gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 250);
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
+                dropZone.data.values.mascots++;
+
+                //print out how many mascots there are in drop zone (for debug purposes)
+                console.log('Mascots In Zone:' + dropZone.data.values.mascots);
+
                 //handZone.data.values.cards--;
                 gameObject.y = dropZone.y;
                 //gameObject.disableInteractive();
