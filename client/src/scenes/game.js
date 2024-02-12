@@ -46,6 +46,11 @@ export default class Game extends Phaser.Scene {
         this.attackButton.on('pointerdown', () => this.updateClickCountText(++clickCount));
         this.updateClickCountText(clickCount);
 
+        //mascot display 
+        let mascotHealth = 0;
+        this.mascotHealthText = this.add.text(619, 350, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
+        //this.updateMascotHealthText(mascotHealth);
+
         this.dealer = new Dealer(this);
 
         let self = this;
@@ -69,14 +74,17 @@ export default class Game extends Phaser.Scene {
         //setPollOnMove - means that the interaction won't happen unless the user moves the mouse pointer themselves
         this.input.setPollOnMove();
         //this animates the pop up
-        this.input.on('gameobjectover', function (pointer, Mascot) {
-            this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-            this.tweens.add({
-            targets: [this.cardPopUp, this.cardPopUpText],
-            alpha: {from:0, to:1},
-            repeat: 0,
-            duration: 500
-         });
+        this.input.on('gameobjectover', function (pointer, gameObject) {
+            
+                this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+                this.tweens.add({
+                targets: [this.cardPopUp, this.cardPopUpText],
+                alpha: {from:0, to:1},
+                repeat: 0,
+                duration: 500
+            });
+            
+            
         }, this);
 
         //when taking the mouse off the game object, the pop up will disappear
@@ -87,11 +95,11 @@ export default class Game extends Phaser.Scene {
         });
 
         //this moves the pop up while over an object
-        this.input.on('pointermove', function (pointer, Mascot) {
+        this.input.on('pointermove', function (pointer, gameObject) {
             self.cardPopUp.x = pointer.x;
             self.cardPopUp.y = pointer.y;
             self.cardPopUpText.x = pointer.x + 5;
-            self.cardPopUpText.y = pointer.y + 5;
+            self.cardPopUpText.y = pointer.y + 5;  
         });
     
 
@@ -152,7 +160,7 @@ export default class Game extends Phaser.Scene {
             }
         })
 
-        this.input.on('drop', function (pointer, gameObject, dropZone, Mascot) {
+        this.input.on('drop', function (pointer, gameObject, dropZone) {
             //TODO: mascot limit implemented, may need modification to include resource card limit(s) later
             if (!gameObject.inDropZone && dropZone.data.values.mascots == 0) {
                 gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 250);
@@ -163,9 +171,15 @@ export default class Game extends Phaser.Scene {
                 //print out how many mascots there are in drop zone (for debug purposes)
                 console.log('Mascots In Zone:' + dropZone.data.values.mascots);
 
+                //TODO: edit this line to fit any mascot health class variable
+                self.mascotHealth += 4000;
+                console.log(self.mascotHealth);
+                //console.log('Mascot HEALTH' + Mascot.getHealthPoints());
+
                 //handZone.data.values.cards--;
                 gameObject.y = dropZone.y;
                 //gameObject.disableInteractive();
+                self.updateMascotHealthText(self.mascotHealth);
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
             }
         })
@@ -185,5 +199,9 @@ export default class Game extends Phaser.Scene {
 
     updateClickCountText(clickCount) {
         this.clickCountText.setText(`Attacked ${clickCount} times.`);
-      }
+    }
+
+    updateMascotHealthText(mascotHealth) {
+        this.mascotHealthText.setText(`Mascot Health: ${mascotHealth}`);
+    }
 }
