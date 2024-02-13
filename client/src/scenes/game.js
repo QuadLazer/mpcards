@@ -3,6 +3,7 @@ import Card from '../helpers/card';
 import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
 import Mascot from '../helpers/mascot';
+import { GameObjects } from 'phaser';
 
 
 export default class Game extends Phaser.Scene {
@@ -73,9 +74,11 @@ export default class Game extends Phaser.Scene {
 
         //setPollOnMove - means that the interaction won't happen unless the user moves the mouse pointer themselves
         this.input.setPollOnMove();
+
         //this animates the pop up
         this.input.on('gameobjectover', function (pointer, gameObject) {
-            
+            //TODO: this triggers on any Sprite object, might need modifying in future to work for different card types?
+            if(gameObject instanceof GameObjects.Sprite && self.isPlayerA == true){
                 this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                 this.tweens.add({
                 targets: [this.cardPopUp, this.cardPopUpText],
@@ -83,12 +86,12 @@ export default class Game extends Phaser.Scene {
                 repeat: 0,
                 duration: 500
             });
-            
-            
+            }
+                
         }, this);
 
         //when taking the mouse off the game object, the pop up will disappear
-        this.input.on('gameobjectout', function (pointer, Mascot) {
+        this.input.on('gameobjectout', function (pointer, gameObject) {
             self.cardPopUp.alpha = 0;
             self.cardPopUpText.alpha = 0;
             self.cardPopUpText.destroy();
