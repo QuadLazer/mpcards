@@ -2,9 +2,13 @@ import Zone from '../helpers/zone';
 import Card from '../helpers/card';
 import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
+
+import FirebasePlugin from '../plugins/FirebasePlugin';
+
 import Controller from '../helpers/controller';
 import Mascot from '../helpers/mascot';
 import { GameObjects } from 'phaser';
+
 
 
 export default class Game extends Phaser.Scene {
@@ -19,15 +23,21 @@ export default class Game extends Phaser.Scene {
         this.load.image('p1CardBack', 'assets/p1CardBack.png');
         this.load.image('p2CardFront', 'assets/p2CardFront.png');
         this.load.image('p2CardBack', 'assets/p2CardBack.png');
+
+        this.load.plugin('FirebasePlugin', FirebasePlugin, true);
+
         this.load.image('testEndButton', 'assets/TestEnd.png');
         this.load.image('mascotCardFront', 'assets/gator_logo.png');
+
     }
 
     create() {
+        var firebaseApp = this.plugins.get('FirebasePlugin');
         this.isPlayerA = false;
         this.opponentCards = [];
         this.controller = new Controller(this);
         this.mascotCardPlace = false;
+
 
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
@@ -198,6 +208,16 @@ export default class Game extends Phaser.Scene {
             gameObject.y = gameObject.input.dragStartY;
         })
 
+        this.logoutButton = this.add.text(1134, 0, 'Logout', { fontFamily: '"Monospace"'});
+        this.logoutButton.setInteractive();
+        this.logoutButton.on('pointerdown', function () {
+            firebaseApp.auth.signOut().then(() => {
+                console.log('Signed out');
+                self.scene.start('Login');
+            }).catch((error) => {
+                console.log(error);
+            });
+        });
     }
     
     update() {
