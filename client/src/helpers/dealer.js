@@ -1,6 +1,6 @@
 import Card from './card';
+import Controller from './controller';
 import Mascot from './mascot'
-
 export default class Dealer {
     gatorAttributes = ['gator', 4000, 'S'];
     //mascostList = ['gator', ];
@@ -8,7 +8,9 @@ export default class Dealer {
         this.dealCards = () => {
             let playerSprite;
             let opponentSprite;
+            let endTurnSprite = 'testEndButton';
             let mascotSprite;
+
 
             if (scene.isPlayerA) {
                 playerSprite = 'p1CardFront';
@@ -34,6 +36,8 @@ export default class Dealer {
                 let opponentMascot = new Mascot(this.gatorAttributes.at(0), this.gatorAttributes.at(1), this.gatorAttributes.at(2), scene);
                 scene.opponentCards.push(opponentMascot.render(775 + (i * 100), 50, opponentSprite).disableInteractive());
             }
+            let gameController = new Controller(scene);
+            gameController.render(endTurnSprite);
         }
     }
 }

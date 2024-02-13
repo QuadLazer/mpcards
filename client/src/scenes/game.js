@@ -2,6 +2,7 @@ import Zone from '../helpers/zone';
 import Card from '../helpers/card';
 import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
+import Controller from '../helpers/controller';
 import Mascot from '../helpers/mascot';
 import { GameObjects } from 'phaser';
 
@@ -18,12 +19,14 @@ export default class Game extends Phaser.Scene {
         this.load.image('p1CardBack', 'assets/p1CardBack.png');
         this.load.image('p2CardFront', 'assets/p2CardFront.png');
         this.load.image('p2CardBack', 'assets/p2CardBack.png');
+        this.load.image('testEndButton', 'assets/TestEnd.png');
         this.load.image('mascotCardFront', 'assets/gator_logo.png');
     }
 
     create() {
         this.isPlayerA = false;
         this.opponentCards = [];
+        this.controller = new Controller(this);
         this.mascotCardPlace = false;
 
         this.zone = new Zone(this);
@@ -32,6 +35,7 @@ export default class Game extends Phaser.Scene {
         this.outline = this.zone.renderOutline(this.dropZone);
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+        this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
 
         //hover mascot variables
@@ -65,6 +69,7 @@ export default class Game extends Phaser.Scene {
         });
 
         this.socket.on('isPlayerA', function () {
+            console.log("I've set someone to true!");
             self.isPlayerA = true;
         })
 
@@ -198,6 +203,19 @@ export default class Game extends Phaser.Scene {
     update() {
         // Debugging pixel coords
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+        if (this.controller.turnCheck() && this.isPlayerA) {
+            //console.log("Cond 1!");
+            this.turnIndicator.setText('Your turn!');
+        } else if (this.controller.turnCheck() && !this.isPlayerA) {
+            //console.log("Cond 2!");
+            this.turnIndicator.setText('Opponent\'s turn!');
+        } else if (!this.controller.turnCheck() && !this.isPlayerA) {
+            //console.log("Cond 3!");
+            this.turnIndicator.setText('Your turn!');
+        } else if (!this.controller.turnCheck() && this.isPlayerA) {
+            //console.log("Cond 4!");
+            this.turnIndicator.setText('Opponent\'s turn!');
+        } 
     }
 
     updateClickCountText(clickCount) {
