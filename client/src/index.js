@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Game from "./scenes/game";
+import Load from "./scenes/load";
 import Login from "./scenes/login";
 import Signup from "./scenes/signup";
 import FirebasePlugin from "./plugins/FirebasePlugin";
@@ -14,6 +15,7 @@ const config = {
     },
     scene: [
         Login,
+        Load,
         Game,
         Signup
     ],

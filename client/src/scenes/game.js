@@ -23,6 +23,11 @@ export default class Game extends Phaser.Scene {
         this.load.image('p1CardBack', 'assets/p1CardBack.png');
         this.load.image('p2CardFront', 'assets/p2CardFront.png');
         this.load.image('p2CardBack', 'assets/p2CardBack.png');
+        this.load.image('resourceCardFront', 'assets/resourceCardFront.png');
+        this.load.image('re1', 'assets/resourceCardFront1.png');
+        this.load.image('re2', 'assets/resourceCardFront2.png');
+        this.load.image('re3', 'assets/resourceCardFront3.png');
+        this.load.image('quit', 'assets/quit.png');
 
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
 
@@ -48,6 +53,13 @@ export default class Game extends Phaser.Scene {
         this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
 
+        let btnQuit = this.add.text(100,200, 'QUIT', { fill: '#CCAAFF'});
+        btnQuit.setInteractive();
+        btnQuit.on('pointerdown', () => {
+            this.socket.disconnect();
+            this.scene.start('Load');
+        });
+      
         //hover mascot variables
         //this.objectWithToolTip = this.add.rectangle( 100, 100, 100, 100, 0xffffff).setInteractive();
         this.cardPopUp =  this.add.rectangle( 0, 0, 250, 50, 0xff0000).setOrigin(0);
