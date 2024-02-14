@@ -35,7 +35,7 @@ export default class Game extends Phaser.Scene {
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
 
-        var btnQuit = this.add.text(100,100, 'QUIT', { fill: '#CCAAFF'});
+        let btnQuit = this.add.text(100,200, 'QUIT', { fill: '#CCAAFF'});
         btnQuit.setInteractive();
         btnQuit.on('pointerdown', () => {
             this.socket.disconnect();
