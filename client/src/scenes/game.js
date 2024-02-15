@@ -2,6 +2,7 @@ import Zone from '../helpers/zone';
 import Card from '../helpers/card';
 import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
+import Resource from '../helpers/resource';
 
 import FirebasePlugin from '../plugins/FirebasePlugin';
 
@@ -48,6 +49,9 @@ export default class Game extends Phaser.Scene {
         this.dropZone = this.zone.renderZone();
         //this.handZone = this.zone.renderHandZone();
         this.outline = this.zone.renderOutline(this.dropZone);
+
+        this.resDropZone = this.zone.renderResourceZone();
+        this.resOutline = this.zone.renderResOutline(this.resDropZone);
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: '"Monospace"'});
@@ -68,14 +72,14 @@ export default class Game extends Phaser.Scene {
 
         //attack button 
         let clickCount = 0;
-        this.clickCountText = this.add.text(44, 440, '');
-        this.attackButton = this.add.text(100, 395, 'Attack', {fill:'#ff5733'}).setInteractive();
+        this.clickCountText = this.add.text(44, 650, '');
+        this.attackButton = this.add.text(100, 600, 'Attack', {fill:'#ff5733'}).setInteractive();
         this.attackButton.on('pointerdown', () => this.updateClickCountText(++clickCount));
         this.updateClickCountText(clickCount);
 
         //mascot display 
         let mascotHealth = 0;
-        this.mascotHealthText = this.add.text(619, 350, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
+        this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
         //this.updateMascotHealthText(mascotHealth);
 
         this.dealer = new Dealer(this);
@@ -152,13 +156,36 @@ export default class Game extends Phaser.Scene {
                 }
                 
                 //let card = new Card(self);
-                card.render(((self.dropZone.x - 350) + (self.dropZone.data.values.cards * 200)), (self.dropZone.y - 200), sprite).disableInteractive();
+                //card.render(((self.dropZone.x- 350) + (self.dropZone.data.values.cards * 200)), (self.dropZone.y - 200), sprite).disableInteractive();
+                card.render((self.dropZone.x), (self.dropZone.y -210), sprite).disableInteractive();
             }
 
             //showing hp for P1 mascot
             if(mascotDropped){
                 //TODO: Fix this to display health when mascot card is placed into drop zone
                 self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), 'card.getHealthPoints()', {fill:'#ff5733'});
+            }
+        })
+
+        this.socket.on('resDropped', function (gameObject, isPlayerA) {
+            if (isPlayerA !== self.isPlayerA) {
+                let sprite = gameObject.textureKey;
+                console.log(sprite);
+                self.opponentCards.shift().destroy();
+                self.resDropZone.data.values.resources++;
+                console.log(self.resDropZone.getData('resources'));
+                //card.render((self.dropZone.x), (self.dropZone.y -100), sprite).disableInteractive();
+            }
+
+        })
+
+        this.input.on('drop', function (pointer, gameObject, resDropZone) {
+            if (!gameObject.inDropZone) {
+                gameObject.x = (resDropZone.x);
+
+                console.log(gameObject);
+                resDropZone.data.values.resources++;
+                console.log('Resources In Zone:' + resDropZone.data.values.resources);
             }
         })
 
@@ -193,13 +220,14 @@ export default class Game extends Phaser.Scene {
         this.input.on('drop', function (pointer, gameObject, dropZone) {
             //TODO: mascot limit implemented, may need modification to include resource card limit(s) later
             if (!gameObject.inDropZone && dropZone.data.values.mascots == 0) {
-                gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 250);
+                gameObject.x = (dropZone.x);
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
                 dropZone.data.values.mascots++;
 
                 //print out how many mascots there are in drop zone (for debug purposes)
                 console.log('Mascots In Zone:' + dropZone.data.values.mascots);
+                
 
                 //TODO: edit this line to fit any mascot health class variable
                 self.mascotHealth += 4000;

@@ -2,7 +2,7 @@ export default class Controller {
     userTurn = true;
     constructor(scene) {
         this.render = (sprite) => {
-            let button = scene.add.image(70, 220, sprite).setScale(0.75, 0.75).setInteractive();
+            let button = scene.add.image(1170, 100, sprite).setScale(0.75, 0.75).setInteractive();
             return button;
         }
 

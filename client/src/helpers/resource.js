@@ -5,4 +5,7 @@ export default class Resource extends Card {
          super(scene);
     }
 
+        
+
+
 }
