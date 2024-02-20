@@ -145,7 +145,7 @@ export default class Game extends Phaser.Scene {
                 self.opponentCards.shift().destroy();
                 self.dropZone.data.values.cards++;
 
-                let card = new Card(self);
+                //let card = new Card(self);
                 //if card is a mascot 
                 if(gameObject instanceof Mascot){
                     //TODO: need to access mascot attributes from class object
@@ -157,7 +157,8 @@ export default class Game extends Phaser.Scene {
                 
                 //let card = new Card(self);
                 //card.render(((self.dropZone.x- 350) + (self.dropZone.data.values.cards * 200)), (self.dropZone.y - 200), sprite).disableInteractive();
-                card.render((self.dropZone.x), (self.dropZone.y -210), sprite).disableInteractive();
+                //card.render((self.dropZone.x), (self.dropZone.y -210), sprite).disableInteractive();
+                let card = new Card(self, (self.dropZone.x), (self.dropZone.y -210), sprite).disableInteractive();
             }
 
             //showing hp for P1 mascot
@@ -183,7 +184,16 @@ export default class Game extends Phaser.Scene {
             if (!gameObject.inDropZone) {
                 gameObject.x = (resDropZone.x);
 
+                console.log('Game Obj Vars:')
                 console.log(gameObject);
+                if(gameObject instanceof Resource){
+                    console.log('Game object is being recognized as a Resource object')
+                    console.log('Resource Card Value Dropped: ' + gameObject.getResVal());
+                }
+                else{
+                    console.log('Game object is not being recognized as a Resource object')
+                }
+                
                 resDropZone.data.values.resources++;
                 console.log('Resources In Zone:' + resDropZone.data.values.resources);
             }
@@ -194,8 +204,9 @@ export default class Game extends Phaser.Scene {
                 let sprite = gameObject.textureKey;
                 console.log(sprite);
                 //self.handZone.data.values.cards++;
-                let card = new Card(self);
-                card.render(((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
+                let card = new Card(self,((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
+                //card.render(((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
+
             }
         })
 

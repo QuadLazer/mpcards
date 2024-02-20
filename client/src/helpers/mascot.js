@@ -4,6 +4,7 @@ import Card from './card';
 //1. Will have a variable for their region attribute (NE, S, MW, W)
 //2. Each player gets 4 mascot cards 
 
+//TODO: will need to modify this class more to match changes made to Card and Resource
 export default class Mascot extends Card {
     //class variables
     inDropZone = false;
@@ -13,7 +14,7 @@ export default class Mascot extends Card {
 
     //class methods
     constructor(name, healthPoints, region, scene){
-        super();
+        super(scene);
 
         this.name = name;
         this.healthPoints = healthPoints;
