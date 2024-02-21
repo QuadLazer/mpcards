@@ -74,7 +74,7 @@ export default class Game extends Phaser.Scene {
                 card.render(((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
             }
         })
-
+        
         this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
             gameObject.x = dragX;
             gameObject.y = dragY;
@@ -109,6 +109,10 @@ export default class Game extends Phaser.Scene {
             dropZone.setAlpha(0.5);
             gameObject.x = gameObject.input.dragStartX;
             gameObject.y = gameObject.input.dragStartY;
+        })
+
+        this.input.on('gameobjectdown', function (pointer, gameObject) {
+            console.log(gameObject);
         })
 
     }
