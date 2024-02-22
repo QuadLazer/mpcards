@@ -26,7 +26,6 @@ export default class Game extends Phaser.Scene {
     create() {
         this.isPlayerA = false;
         this.opponentCards = [];
-        this.controller = new Controller(this);
         this.mascotCardPlace = false;
 
         this.zone = new Zone(this);
@@ -57,6 +56,8 @@ export default class Game extends Phaser.Scene {
         //this.updateMascotHealthText(mascotHealth);
 
         this.dealer = new Dealer(this);
+        this.controller = new Controller(this);
+        this.controlButton = this.controller.render();
 
         let self = this;
 
@@ -201,6 +202,11 @@ export default class Game extends Phaser.Scene {
         this.input.on('gameobjectdown', function (pointer, gameObject) {
             console.log(gameObject);
         })
+
+        this.controlButton.on('pointerup', function (pointer) {
+            console.log("I was clicked!");
+            this.scene.start('Profile');
+        }, this)
 
     }
     

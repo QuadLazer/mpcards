@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import Game from "./scenes/game";
+import Profile from "./scenes/profile";
 
 const config = {
     type: Phaser.AUTO,
@@ -7,7 +8,8 @@ const config = {
     width: 1280,
     height: 780,
     scene: [
-        Game
+        Game,
+        Profile
     ]
 };
 
