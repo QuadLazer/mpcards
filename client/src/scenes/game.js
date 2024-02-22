@@ -189,15 +189,20 @@ export default class Game extends Phaser.Scene {
                 if(gameObject instanceof Resource){
                     console.log('Game object is being recognized as a Resource object')
                     console.log('Resource Card Value Dropped: ' + gameObject.getResVal());
+                    resDropZone.data.values.pointSum += gameObject.getResVal();
                 }
                 else{
                     console.log('Game object is not being recognized as a Resource object')
                 }
                 
                 resDropZone.data.values.resources++;
+                
                 console.log('Resources In Zone:' + resDropZone.data.values.resources);
+                console.log('Resource total value:' + resDropZone.data.values.pointSum);
+                console.log(resDropZone);
             }
         })
+
 
         this.socket.on('cardReturned', function (gameObject, isPlayerA) {
             if (isPlayerA !== self.isPlayerA) {
@@ -241,14 +246,14 @@ export default class Game extends Phaser.Scene {
                 
 
                 //TODO: edit this line to fit any mascot health class variable
-                self.mascotHealth += 4000;
-                console.log(self.mascotHealth);
+                //self.mascotHealth += 4000;
+                console.log(gameObject.getHealthPoints());
                 //console.log('Mascot HEALTH' + Mascot.getHealthPoints());
 
                 //handZone.data.values.cards--;
                 gameObject.y = dropZone.y;
                 //gameObject.disableInteractive();
-                self.updateMascotHealthText(self.mascotHealth);
+                self.updateMascotHealthText(gameObject.getHealthPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
             }
         })
