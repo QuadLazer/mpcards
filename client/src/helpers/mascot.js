@@ -11,14 +11,11 @@ export default class Mascot extends Card {
     //healthPoints;
     //region;
 
-
     //class methods
      constructor(scene, x, y, textureKey) {
         //this super() constructor is for the Sprite class
         super(scene, x, y, textureKey);
         //this.scene = scene;
-
-        
 
         this.setScale(0.25, 0.25);
         this.setInteractive();
@@ -30,8 +27,6 @@ export default class Mascot extends Card {
 
         scene.add.existing(this);
         let inDropZone = false;
-
-        
 
         this.getHealthPoints = () => {
             return this.healthPoints;
@@ -47,6 +42,9 @@ export default class Mascot extends Card {
     
         this.decreaseHP = (amount) =>{
             this.healthPoints = this.healthPoints - amount;
+            if(this.healthPoints < 0){
+                this.healthPoints = 0;
+            }
         }
     
         this.increaseHP = (amount) => {
@@ -55,8 +53,4 @@ export default class Mascot extends Card {
     
 
     }
-
-
-
- 
 }

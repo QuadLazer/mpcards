@@ -65,9 +65,8 @@ export default class Game extends Phaser.Scene {
         });
       
         //hover mascot variables
-        //this.objectWithToolTip = this.add.rectangle( 100, 100, 100, 100, 0xffffff).setInteractive();
-        this.cardPopUp =  this.add.rectangle( 0, 0, 250, 50, 0xff0000).setOrigin(0);
-        this.cardPopUpText = this.add.text( 0, 0, 'This is a pop up', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+        this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0).setDepth(100);
+        this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0).setDepth(100);
         this.cardPopUp.alpha = 0;
 
         //attack button 
@@ -80,7 +79,6 @@ export default class Game extends Phaser.Scene {
         //mascot display 
         let mascotHealth = 0;
         this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
-        //this.updateMascotHealthText(mascotHealth);
 
         this.dealer = new Dealer(this);
 
@@ -110,13 +108,43 @@ export default class Game extends Phaser.Scene {
         this.input.on('gameobjectover', function (pointer, gameObject) {
             //TODO: this triggers on any Sprite object, might need modifying in future to work for different card types?
             if(gameObject instanceof GameObjects.Sprite && self.isPlayerA == true){
-                this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-                this.tweens.add({
-                targets: [this.cardPopUp, this.cardPopUpText],
-                alpha: {from:0, to:1},
-                repeat: 0,
-                duration: 500
-            });
+                if(gameObject instanceof Mascot){
+                    //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+                    this.cardPopUpText.setText('HP: ' + gameObject.getHealthPoints());
+                    this.tweens.add({
+                        targets: [this.cardPopUp, this.cardPopUpText],
+                        alpha: {from:0, to:1},
+                        repeat: 0,
+                        duration: 500
+                    }); 
+                }
+                else if(gameObject instanceof Resource){
+                    //this.cardPopUpText = this.add.text( 0, 0, 'Value: ' + gameObject.getResVal(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+                    this.cardPopUpText.setText('Value: ' + gameObject.getResVal());
+                    this.tweens.add({
+                        targets: [this.cardPopUp, this.cardPopUpText],
+                        alpha: {from:0, to:1},
+                        repeat: 0,
+                        duration: 500
+                    }); 
+                }
+                else if(gameObject instanceof Card){
+                    //this.cardPopUpText = this.add.text( 0, 0, 'This is a card.', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+                    this.cardPopUpText.setText('this is a card');
+                    this.tweens.add({
+                        targets: [this.cardPopUp, this.cardPopUpText],
+                        alpha: {from:0, to:1},
+                        repeat: 0,
+                        duration: 500
+                    }); 
+                }
+            //     this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
+            //     this.tweens.add({
+            //     targets: [this.cardPopUp, this.cardPopUpText],
+            //     alpha: {from:0, to:1},
+            //     repeat: 0,
+            //     duration: 500
+            // });
             }
                 
         }, this);
@@ -125,11 +153,15 @@ export default class Game extends Phaser.Scene {
         this.input.on('gameobjectout', function (pointer, gameObject) {
             self.cardPopUp.alpha = 0;
             self.cardPopUpText.alpha = 0;
-            self.cardPopUpText.destroy();
+            //self.cardPopUpText.destroy();
         });
 
         //this moves the pop up while over an object
         this.input.on('pointermove', function (pointer, gameObject) {
+            // if(gameObject instanceof Card && self.isPlayerA == true){
+            //     self.cardPopUp.depth = 100;
+            //     self.cardPopUpText.depth = 100;
+            // }
             self.cardPopUp.x = pointer.x;
             self.cardPopUp.y = pointer.y;
             self.cardPopUpText.x = pointer.x + 5;
@@ -161,11 +193,11 @@ export default class Game extends Phaser.Scene {
                 let card = new Card(self, (self.dropZone.x), (self.dropZone.y -210), sprite).disableInteractive();
             }
 
-            //showing hp for P1 mascot
-            if(mascotDropped){
-                //TODO: Fix this to display health when mascot card is placed into drop zone
-                self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), 'card.getHealthPoints()', {fill:'#ff5733'});
-            }
+            // //showing hp for P1 mascot
+            // if(mascotDropped){
+            //     //TODO: Fix this to display health when mascot card is placed into drop zone
+            //     self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), 'card.getHealthPoints()', {fill:'#ff5733'});
+            // }
         })
 
         this.socket.on('resDropped', function (gameObject, isPlayerA) {
@@ -300,5 +332,17 @@ export default class Game extends Phaser.Scene {
 
     updateMascotHealthText(mascotHealth) {
         this.mascotHealthText.setText(`Mascot Health: ${mascotHealth}`);
+    }
+
+    updateCardPopUpText(gameObject) {
+        //different text for each type of card
+        if(gameObject instanceof Card){
+            //mascot card
+            if(gameObject instanceof Mascot){
+                this.cardPopUpText.setText('gameObject.getHealthPoints()');
+            }
+
+            //TODO: resource card
+        }
     }
 }
