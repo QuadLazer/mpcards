@@ -4,6 +4,7 @@ import Load from "./scenes/load";
 import Login from "./scenes/login";
 import Signup from "./scenes/signup";
 import FirebasePlugin from "./plugins/FirebasePlugin";
+import Profile from "./scenes/profile";
 
 const config = {
     type: Phaser.AUTO,
@@ -17,6 +18,7 @@ const config = {
         Login,
         Load,
         Game,
+        Profile,
         Signup
     ],
     plugins: {

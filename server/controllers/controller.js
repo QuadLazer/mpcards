@@ -27,7 +27,8 @@ const fetchAllUsers = async (req, res, next) => {
 
 const findUser = async (req, res, next) => {
     try {
-        let {identifier} = req.body
+        let identifier = req.params['userEmail']
+        console.log(identifier);
         const user = await getUser(identifier);
         return res.status(200).send(user)
     } catch (error) {

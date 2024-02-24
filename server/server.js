@@ -28,6 +28,11 @@ io.on('connection', function (socket) {
         io.emit('cardDropped', gameObject, isPlayerA);
     });
 
+    //not sure if this is needed?
+    socket.on('resDropped', function(gameObject, isPlayerA) {
+        io.emit('resDropped', gameObject, isPlayerA);
+    });
+
     socket.on('disconnect', function () {
         console.log('A user disconnected: ' + socket.id);
         players = players.filter(player => player !== socket.id);
