@@ -50,6 +50,7 @@ export default class Game extends Phaser.Scene {
         this.outline = this.zone.renderOutline(this.dropZone);
 
         this.resDropZone = this.zone.renderResourceZone();
+        console.log(this.resDropZone);
         this.resOutline = this.zone.renderResOutline(this.resDropZone);
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
@@ -218,7 +219,8 @@ export default class Game extends Phaser.Scene {
         })
 
         this.input.on('drop', function (pointer, gameObject, resDropZone) {
-            if (!gameObject.inDropZone) {
+
+            if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource ) {
                 gameObject.x = (resDropZone.x);
 
                 console.log('Game Obj Vars:')
@@ -238,8 +240,11 @@ export default class Game extends Phaser.Scene {
                 console.log('Resources In Zone:' + resDropZone.data.values.resources);
                 console.log('Resource total value:' + resDropZone.data.values.pointSum);
                 console.log(resDropZone);
+            } else {
+                gameObject.x = gameObject.input.dragStartX;
+                gameObject.y = gameObject.input.dragStartY;
             }
-        })
+        } )
 
 
         this.socket.on('cardReturned', function (gameObject, isPlayerA) {
@@ -273,7 +278,7 @@ export default class Game extends Phaser.Scene {
 
         this.input.on('drop', function (pointer, gameObject, dropZone) {
             //TODO: mascot limit implemented, may need modification to include resource card limit(s) later
-            if (!gameObject.inDropZone && dropZone.data.values.mascots == 0) {
+            if (!gameObject.inDropZone && dropZone.data.values.mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
                 gameObject.x = (dropZone.x);
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
@@ -294,7 +299,8 @@ export default class Game extends Phaser.Scene {
                 self.updateMascotHealthText(gameObject.getHealthPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
             }
-        })
+        
+    })
 
         this.input.on('dragleave', function (pointer, gameObject, dropZone) {
             dropZone.setAlpha(0.5);

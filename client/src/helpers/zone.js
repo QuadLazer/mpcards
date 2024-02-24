@@ -3,6 +3,7 @@ export default class Zone {
         this.renderZone = () => {
             let dropZone = scene.add.zone(674, 470, 150, 200).setRectangleDropZone(150, 200);
             dropZone.setData({ cards: 0, mascots: 0});
+            dropZone.name = 'mascotArea'
             return dropZone;
         };
         this.renderOutline = (dropZone) => {
@@ -23,6 +24,7 @@ export default class Zone {
             let resDropZone = scene.add.zone(200, 470, 300, 200).setRectangleDropZone(300,200)
             scene.add.zone()
             resDropZone.setData({ resources: 0, pointSum: 0});
+            resDropZone.name = 'resourceArea'
             return resDropZone;
         }
 
