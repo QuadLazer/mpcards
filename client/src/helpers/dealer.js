@@ -9,7 +9,6 @@ export default class Dealer {
         this.dealCards = () => {
             let playerSprite;
             let opponentSprite;
-            let endTurnSprite = 'testEndButton';
             let mascotSprite;
 
             if (scene.isPlayerA) {
@@ -53,8 +52,6 @@ export default class Dealer {
                 let opponentResource = new Card(scene, 875 + (i * 100), 50, opponentSprite);
                 scene.opponentCards.push((opponentResource).disableInteractive());
             }
-            let gameController = new Controller(scene);
-            gameController.render(endTurnSprite);
         }
     }
 }

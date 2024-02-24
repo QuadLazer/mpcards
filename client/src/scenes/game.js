@@ -41,7 +41,6 @@ export default class Game extends Phaser.Scene {
         var firebaseApp = this.plugins.get('FirebasePlugin');
         this.isPlayerA = false;
         this.opponentCards = [];
-        this.controller = new Controller(this);
         this.mascotCardPlace = false;
 
 
@@ -85,6 +84,8 @@ export default class Game extends Phaser.Scene {
         this.resourceTotalText = this.add.text(50, 350, 'Resource pool: ' + resourceTotal, {color: '#ffaa' });
 
         this.dealer = new Dealer(this);
+        this.controller = new Controller(this);
+        this.controlButton = this.controller.render();
 
         let self = this;
 
@@ -251,7 +252,7 @@ export default class Game extends Phaser.Scene {
 
             }
         })
-
+        
         this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
             gameObject.x = dragX;
             gameObject.y = dragY;
@@ -311,6 +312,15 @@ export default class Game extends Phaser.Scene {
                 console.log(error);
             });
         });
+        this.input.on('gameobjectdown', function (pointer, gameObject) {
+            console.log(gameObject);
+        })
+
+        this.controlButton.on('pointerup', function (pointer) {
+            console.log("I was clicked!");
+            this.scene.start('Profile');
+        }, this)
+
     }
     
     update() {
