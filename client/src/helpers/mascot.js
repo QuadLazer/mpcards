@@ -22,7 +22,7 @@ export default class Mascot extends Card {
         scene.input.setDraggable(this);
 
         this.name = "Test";
-        this.healthPoints = 15;
+        this.healthPoints = Math.floor(Math.random()*15)+1;
         this.region = "S";
 
         scene.add.existing(this);

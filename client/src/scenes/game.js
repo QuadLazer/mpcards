@@ -113,7 +113,8 @@ export default class Game extends Phaser.Scene {
         //this animates the pop up
         this.input.on('gameobjectover', function (pointer, gameObject) {
             //TODO: this triggers on any Sprite object, might need modifying in future to work for different card types?
-            if(gameObject instanceof GameObjects.Sprite && self.isPlayerA == true){
+            //if(gameObject instanceof GameObjects.Sprite && self.isPlayerA == true){
+            if(gameObject instanceof GameObjects.Sprite){
                 if(gameObject instanceof Mascot){
                     //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                     this.cardPopUpText.setText('HP: ' + gameObject.getHealthPoints());
@@ -121,7 +122,7 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 500
+                        duration: 50
                     }); 
                 }
                 else if(gameObject instanceof Resource){
@@ -131,7 +132,7 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 500
+                        duration: 50
                     }); 
                 }
                 else if(gameObject instanceof Card){
@@ -141,24 +142,19 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 500
+                        duration: 50
                     }); 
                 }
-            //     this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-            //     this.tweens.add({
-            //     targets: [this.cardPopUp, this.cardPopUpText],
-            //     alpha: {from:0, to:1},
-            //     repeat: 0,
-            //     duration: 500
-            // });
             }
                 
         }, this);
 
         //when taking the mouse off the game object, the pop up will disappear
         this.input.on('gameobjectout', function (pointer, gameObject) {
+            if(gameObject instanceof GameObjects.Sprite) {
             self.cardPopUp.alpha = 0;
             self.cardPopUpText.alpha = 0;
+            }
             //self.cardPopUpText.destroy();
         });
 
@@ -171,7 +167,8 @@ export default class Game extends Phaser.Scene {
             self.cardPopUp.x = pointer.x;
             self.cardPopUp.y = pointer.y;
             self.cardPopUpText.x = pointer.x + 5;
-            self.cardPopUpText.y = pointer.y + 5;  
+            self.cardPopUpText.y = pointer.y + 5;
+            self.cardPopUp.setDepth(1); 
         });
     
 
