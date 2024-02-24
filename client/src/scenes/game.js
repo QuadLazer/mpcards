@@ -222,6 +222,7 @@ export default class Game extends Phaser.Scene {
 
             if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource ) {
                 gameObject.x = (resDropZone.x);
+                gameObject.insResDropZone = true;
 
                 console.log('Game Obj Vars:')
                 console.log(gameObject);
