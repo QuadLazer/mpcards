@@ -14,7 +14,7 @@ const findUserAchieved = controllers.findUserAchieved;
 const addAchievementToUser = controllers.addAchievementToUser;
 
 router.get("/users/fetchUsers", fetchAllUsers);
-router.get("/users/findUser", findUser);
+router.get("/users/findUser/:userEmail", findUser);
 router.get("/users/sameFetch", otherFunction);
 router.post("/users/register", register);
 router.delete("/users/delete", eraseUser);

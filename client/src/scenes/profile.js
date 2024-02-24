@@ -1,3 +1,5 @@
+import FirebasePlugin from '../plugins/FirebasePlugin.js'
+
 export default class Game extends Phaser.Scene {
     constructor() {
         super({
@@ -29,6 +31,24 @@ export default class Game extends Phaser.Scene {
             console.log("I was clicked!");
             this.scene.start('Game');
         }, this)
+
+        var firebaseApp = this.plugins.get('FirebasePlugin');
+        console.log(firebaseApp.getUser())
+        const userEmail = firebaseApp.getUser().email;
+
+        const request = ( url, param, method = 'GET' ) => {
+
+            url +=  ( param).toString();        
+            return fetch( url ).then( response => response.json() );
+        };
+        const get = ( url, param ) => request( url, param, 'GET' );
+
+        get('http://localhost:3001/users/findUser/', userEmail)
+        .then(response => {
+            console.log(response);
+        })
+        
+
     }
     
     update() {
