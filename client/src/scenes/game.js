@@ -121,7 +121,7 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 50
+                        duration: 5
                     }); 
                 }
                 else if(gameObject instanceof Resource){
@@ -131,7 +131,7 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 50
+                        duration: 5
                     }); 
                 }
                 else if(gameObject instanceof Card){
@@ -141,7 +141,7 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 50
+                        duration: 5
                     }); 
                 }
             }
