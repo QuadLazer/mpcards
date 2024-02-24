@@ -113,7 +113,6 @@ export default class Game extends Phaser.Scene {
         //this animates the pop up
         this.input.on('gameobjectover', function (pointer, gameObject) {
             //TODO: this triggers on any Sprite object, might need modifying in future to work for different card types?
-            //if(gameObject instanceof GameObjects.Sprite && self.isPlayerA == true){
             if(gameObject instanceof GameObjects.Sprite){
                 if(gameObject instanceof Mascot){
                     //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
@@ -160,10 +159,6 @@ export default class Game extends Phaser.Scene {
 
         //this moves the pop up while over an object
         this.input.on('pointermove', function (pointer, gameObject) {
-            // if(gameObject instanceof Card && self.isPlayerA == true){
-            //     self.cardPopUp.depth = 100;
-            //     self.cardPopUpText.depth = 100;
-            // }
             self.cardPopUp.x = pointer.x;
             self.cardPopUp.y = pointer.y;
             self.cardPopUpText.x = pointer.x + 5;
@@ -217,7 +212,8 @@ export default class Game extends Phaser.Scene {
 
         this.input.on('drop', function (pointer, gameObject, resDropZone) {
 
-            if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource ) {
+            if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource
+                && gameObject.insResDropZone != true ) {
                 gameObject.x = (resDropZone.x);
                 gameObject.insResDropZone = true;
 
