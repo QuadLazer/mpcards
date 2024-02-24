@@ -46,7 +46,7 @@ export default class Dealer {
                 let opponentCard = new Card(scene, 475 + (i * 100), 50, opponentSprite);
                 scene.opponentCards.push((opponentCard).disableInteractive());
 
-                let opponentMascot = new Mascot(scene,675 + (i * 100), 670, mascotSprite);
+                let opponentMascot = new Mascot(scene,675 + (i * 100), 50, opponentSprite);
                 scene.opponentCards.push(opponentMascot.disableInteractive());
 
                 let opponentResource = new Card(scene, 875 + (i * 100), 50, opponentSprite);
