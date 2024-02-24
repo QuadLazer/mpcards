@@ -50,6 +50,7 @@ export default class Game extends Phaser.Scene {
         this.outline = this.zone.renderOutline(this.dropZone);
 
         this.resDropZone = this.zone.renderResourceZone();
+        console.log(this.resDropZone);
         this.resOutline = this.zone.renderResOutline(this.resDropZone);
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
@@ -112,7 +113,7 @@ export default class Game extends Phaser.Scene {
         //this animates the pop up
         this.input.on('gameobjectover', function (pointer, gameObject) {
             //TODO: this triggers on any Sprite object, might need modifying in future to work for different card types?
-            if(gameObject instanceof GameObjects.Sprite && self.isPlayerA == true){
+            if(gameObject instanceof GameObjects.Sprite){
                 if(gameObject instanceof Mascot){
                     //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                     this.cardPopUpText.setText('HP: ' + gameObject.getHealthPoints());
@@ -120,7 +121,7 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 500
+                        duration: 5
                     }); 
                 }
                 else if(gameObject instanceof Resource){
@@ -130,7 +131,7 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 500
+                        duration: 5
                     }); 
                 }
                 else if(gameObject instanceof Card){
@@ -140,37 +141,29 @@ export default class Game extends Phaser.Scene {
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
                         repeat: 0,
-                        duration: 500
+                        duration: 5
                     }); 
                 }
-            //     this.cardPopUpText = this.add.text( 0, 0, 'working', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-            //     this.tweens.add({
-            //     targets: [this.cardPopUp, this.cardPopUpText],
-            //     alpha: {from:0, to:1},
-            //     repeat: 0,
-            //     duration: 500
-            // });
             }
                 
         }, this);
 
         //when taking the mouse off the game object, the pop up will disappear
         this.input.on('gameobjectout', function (pointer, gameObject) {
+            if(gameObject instanceof GameObjects.Sprite) {
             self.cardPopUp.alpha = 0;
             self.cardPopUpText.alpha = 0;
+            }
             //self.cardPopUpText.destroy();
         });
 
         //this moves the pop up while over an object
         this.input.on('pointermove', function (pointer, gameObject) {
-            // if(gameObject instanceof Card && self.isPlayerA == true){
-            //     self.cardPopUp.depth = 100;
-            //     self.cardPopUpText.depth = 100;
-            // }
             self.cardPopUp.x = pointer.x;
             self.cardPopUp.y = pointer.y;
             self.cardPopUpText.x = pointer.x + 5;
-            self.cardPopUpText.y = pointer.y + 5;  
+            self.cardPopUpText.y = pointer.y + 5;
+            self.cardPopUp.setDepth(1); 
         });
     
 
@@ -218,8 +211,11 @@ export default class Game extends Phaser.Scene {
         })
 
         this.input.on('drop', function (pointer, gameObject, resDropZone) {
-            if (!gameObject.inDropZone) {
+
+            if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource
+                && gameObject.insResDropZone != true ) {
                 gameObject.x = (resDropZone.x);
+                gameObject.insResDropZone = true;
 
                 console.log('Game Obj Vars:')
                 console.log(gameObject);
@@ -238,8 +234,11 @@ export default class Game extends Phaser.Scene {
                 console.log('Resources In Zone:' + resDropZone.data.values.resources);
                 console.log('Resource total value:' + resDropZone.data.values.pointSum);
                 console.log(resDropZone);
+            } else {
+                gameObject.x = gameObject.input.dragStartX;
+                gameObject.y = gameObject.input.dragStartY;
             }
-        })
+        } )
 
 
         this.socket.on('cardReturned', function (gameObject, isPlayerA) {
@@ -273,7 +272,7 @@ export default class Game extends Phaser.Scene {
 
         this.input.on('drop', function (pointer, gameObject, dropZone) {
             //TODO: mascot limit implemented, may need modification to include resource card limit(s) later
-            if (!gameObject.inDropZone && dropZone.data.values.mascots == 0) {
+            if (!gameObject.inDropZone && dropZone.data.values.mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
                 gameObject.x = (dropZone.x);
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
@@ -294,7 +293,8 @@ export default class Game extends Phaser.Scene {
                 self.updateMascotHealthText(gameObject.getHealthPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
             }
-        })
+        
+    })
 
         this.input.on('dragleave', function (pointer, gameObject, dropZone) {
             dropZone.setAlpha(0.5);
