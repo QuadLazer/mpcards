@@ -80,6 +80,10 @@ export default class Game extends Phaser.Scene {
         let mascotHealth = 0;
         this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
 
+        //
+        let resourceTotal = 0;
+        this.resourceTotalText = this.add.text(50, 350, 'Resource pool: ' + resourceTotal, {color: '#ffaa' });
+
         this.dealer = new Dealer(this);
 
         let self = this;
@@ -222,6 +226,7 @@ export default class Game extends Phaser.Scene {
                     console.log('Game object is being recognized as a Resource object')
                     console.log('Resource Card Value Dropped: ' + gameObject.getResVal());
                     resDropZone.data.values.pointSum += gameObject.getResVal();
+                    self.updateResourceTotalText(resDropZone.data.values.pointSum);
                 }
                 else{
                     console.log('Game object is not being recognized as a Resource object')
@@ -332,6 +337,10 @@ export default class Game extends Phaser.Scene {
 
     updateMascotHealthText(mascotHealth) {
         this.mascotHealthText.setText(`Mascot Health: ${mascotHealth}`);
+    }
+
+    updateResourceTotalText(resourceTotal) {
+        this.resourceTotalText.setText(`Resource pool: ${resourceTotal}`);
     }
 
     updateCardPopUpText(gameObject) {
