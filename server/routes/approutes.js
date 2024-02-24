@@ -21,9 +21,9 @@ router.delete("/users/delete", eraseUser);
 router.put("/users/updateAccount", modifyUser);
 
 router.get("/ach/fetchAchievements", fetchAllAchievements);
-router.get("/ach/findAchievement", findAchievement);
+router.get("/ach/findAchievement/:achName", findAchievement);
 
-router.get("/uha/fetchUserAch", findUserAchieved);
+router.get("/uha/fetchUserAch/:email", findUserAchieved);
 router.get("/uha/addUserAch", addAchievementToUser);
 
 module.exports = router;

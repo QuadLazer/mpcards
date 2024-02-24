@@ -28,7 +28,6 @@ const fetchAllUsers = async (req, res, next) => {
 const findUser = async (req, res, next) => {
     try {
         let identifier = req.params['userEmail']
-        console.log(identifier);
         const user = await getUser(identifier);
         return res.status(200).send(user)
     } catch (error) {
@@ -92,7 +91,7 @@ const fetchAllAchievements = async (req, res, next) => {
 
 const findAchievement = async (req, res, next) => {
     try {
-        let {achievementName} = req.body
+        let achievementName = req.params['achName'];
         const achievement = await getAchByName(achievementName);
         return res.status(200).send(achievement)
     } catch (error) {
@@ -103,7 +102,7 @@ const findAchievement = async (req, res, next) => {
 //The variable name here has to match what is passed in as json
 const findUserAchieved = async (req, res, next) => {
     try {
-        let {email} = req.body
+        let email = req.params['email'];
         const achievement = await getUserAchieved(email);
         return res.status(200).send(achievement)
     } catch (error) {
