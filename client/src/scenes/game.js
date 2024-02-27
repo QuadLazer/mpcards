@@ -43,7 +43,7 @@ export default class Game extends Phaser.Scene {
         this.opponentCards = [];
         this.mascotCardPlace = false;
 
-
+        //zone variables
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
         //this.handZone = this.zone.renderHandZone();
@@ -52,11 +52,13 @@ export default class Game extends Phaser.Scene {
         this.resDropZone = this.zone.renderResourceZone();
         console.log(this.resDropZone);
         this.resOutline = this.zone.renderResOutline(this.resDropZone);
+
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
 
+        //button variables
         let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF'});
         btnQuit.setInteractive();
         btnQuit.on('pointerdown', () => {
@@ -69,18 +71,18 @@ export default class Game extends Phaser.Scene {
         this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0).setDepth(100);
         this.cardPopUp.alpha = 0;
 
-        //attack button 
+        //attack button
         let clickCount = 0;
         this.clickCountText = this.add.text(44, 650, '');
         this.attackButton = this.add.text(100, 600, 'Attack', {fill:'#ff5733'}).setInteractive();
-        this.attackButton.on('pointerdown', () => this.updateClickCountText(++clickCount));
         this.updateClickCountText(clickCount);
 
         //mascot display 
         let mascotHealth = 0;
         this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
+        let enemyMascot;
 
-        //
+        //resource variables
         let resourceTotal = 0;
         this.resourceTotalText = this.add.text(50, 350, 'Resource pool: ' + resourceTotal, {color: '#ffaa' });
 
@@ -112,7 +114,6 @@ export default class Game extends Phaser.Scene {
 
         //this animates the pop up
         this.input.on('gameobjectover', function (pointer, gameObject) {
-            //TODO: this triggers on any Sprite object, might need modifying in future to work for different card types?
             if(gameObject instanceof GameObjects.Sprite){
                 if(gameObject instanceof Mascot){
                     //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
@@ -151,8 +152,8 @@ export default class Game extends Phaser.Scene {
         //when taking the mouse off the game object, the pop up will disappear
         this.input.on('gameobjectout', function (pointer, gameObject) {
             if(gameObject instanceof GameObjects.Sprite) {
-            self.cardPopUp.alpha = 0;
-            self.cardPopUpText.alpha = 0;
+                self.cardPopUp.alpha = 0;
+                self.cardPopUpText.alpha = 0;
             }
             //self.cardPopUpText.destroy();
         });
@@ -169,33 +170,34 @@ export default class Game extends Phaser.Scene {
 
         this.socket.on('cardDropped', function (gameObject, isPlayerA) {
             let mascotDropped = Boolean(false);
+
+            //for player B
             if (isPlayerA !== self.isPlayerA) {
+                this.enemyMascot = gameObject;
+                console.log("Opponent mascot variables:");
+                console.log(enemyMascot);
                 let sprite = gameObject.textureKey;
                 console.log(sprite);
                 self.opponentCards.shift().destroy();
                 self.dropZone.data.values.cards++;
+                self.dropZone.data.values.playerB_mascots++;
+                console.log("Player A mascots: " + self.dropZone.data.values.playerA_mascots);
+                console.log("Player A mascots: " + self.dropZone.data.values.playerA_mascots);
+                console.log("Opponent Mascot Dropped.");
+                console.log("Mascots now in zone: " + (self.dropZone.data.values.playerA_mascots + self.dropZone.data.values.playerB_mascots));
 
-                //let card = new Card(self);
                 //if card is a mascot 
                 if(gameObject instanceof Mascot){
                     //TODO: need to access mascot attributes from class object
                     let card = new Mascot('gator', 4000, 'S',self);
                     mascotDropped = Boolean(true);
-                    self.dropZone.data.values.mascots++;
+                    self.dropZone.data.values.playerB_mascots++;
+                    console.log("Opponent Mascot Dropped.")
                     self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), card.getHealthPoints(), {fill:'#ff5733'});
                 }
                 
-                //let card = new Card(self);
-                //card.render(((self.dropZone.x- 350) + (self.dropZone.data.values.cards * 200)), (self.dropZone.y - 200), sprite).disableInteractive();
-                //card.render((self.dropZone.x), (self.dropZone.y -210), sprite).disableInteractive();
-                let card = new Card(self, (self.dropZone.x), (self.dropZone.y -210), sprite).disableInteractive();
+                let card = new Card(self, (self.dropZone.x), (self.dropZone.y - 210), sprite).disableInteractive();
             }
-
-            // //showing hp for P1 mascot
-            // if(mascotDropped){
-            //     //TODO: Fix this to display health when mascot card is placed into drop zone
-            //     self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), 'card.getHealthPoints()', {fill:'#ff5733'});
-            // }
         })
 
         this.socket.on('resDropped', function (gameObject, isPlayerA) {
@@ -210,8 +212,8 @@ export default class Game extends Phaser.Scene {
 
         })
 
+        //for resource drop zone
         this.input.on('drop', function (pointer, gameObject, resDropZone) {
-
             if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource
                 && gameObject.insResDropZone != true ) {
                 gameObject.x = (resDropZone.x);
@@ -248,7 +250,6 @@ export default class Game extends Phaser.Scene {
                 //self.handZone.data.values.cards++;
                 let card = new Card(self,((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
                 //card.render(((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
-
             }
         })
         
@@ -270,22 +271,21 @@ export default class Game extends Phaser.Scene {
             }
         })
 
+        //for mascots
         this.input.on('drop', function (pointer, gameObject, dropZone) {
             //TODO: mascot limit implemented, may need modification to include resource card limit(s) later
-            if (!gameObject.inDropZone && dropZone.data.values.mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
+            if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
                 gameObject.x = (dropZone.x);
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
-                dropZone.data.values.mascots++;
+                dropZone.data.values.playerA_mascots++;
+                console.log("Player A mascots: " + self.dropZone.data.values.playerA_mascots);
+                console.log("Player B mascots: " + self.dropZone.data.values.playerB_mascots);
 
                 //print out how many mascots there are in drop zone (for debug purposes)
-                console.log('Mascots In Zone:' + dropZone.data.values.mascots);
-                
-
-                //TODO: edit this line to fit any mascot health class variable
-                //self.mascotHealth += 4000;
-                console.log(gameObject.getHealthPoints());
-                //console.log('Mascot HEALTH' + Mascot.getHealthPoints());
+                console.log("Player A Mascot Dropped");
+                console.log('Mascots In Zone:' + (dropZone.data.values.playerA_mascots + dropZone.data.values.playerB_mascots));
+                console.log("Mascot Health: " + gameObject.getHealthPoints());
 
                 //handZone.data.values.cards--;
                 gameObject.y = dropZone.y;
@@ -294,13 +294,21 @@ export default class Game extends Phaser.Scene {
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
             }
         
-    })
+        })
 
         this.input.on('dragleave', function (pointer, gameObject, dropZone) {
             dropZone.setAlpha(0.5);
             gameObject.x = gameObject.input.dragStartX;
             gameObject.y = gameObject.input.dragStartY;
         })
+
+        this.socket.on('mascotAttacked', function (gameObject, isPlayerA) {
+            //this is emitted to all clients (player A and B), so this function goes thru both
+            console.log("Mascot Attacked!!!!");
+
+
+        })
+            
 
         this.logoutButton = this.add.text(1134, 0, 'Logout', { fontFamily: '"Monospace"'});
         this.logoutButton.setInteractive();
@@ -320,6 +328,11 @@ export default class Game extends Phaser.Scene {
             console.log("I was clicked!");
             this.scene.start('Profile');
         }, this)
+
+        this.attackButton.on('pointerdown', (isPlayerA, gameObject) => { 
+            this.updateClickCountText(++clickCount);
+            self.socket.emit('mascotAttacked', gameObject, self.isPlayerA);
+        });
 
     }
     
@@ -362,6 +375,12 @@ export default class Game extends Phaser.Scene {
             }
 
             //TODO: resource card
+        }
+    }
+
+    updateMascotHealth(mascotA_Health, mascotB_Health){
+        if(mascotA_Health > mascotB_Health){
+            //something
         }
     }
 }
