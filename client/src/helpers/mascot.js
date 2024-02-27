@@ -4,51 +4,53 @@ import Card from './card';
 //1. Will have a variable for their region attribute (NE, S, MW, W)
 //2. Each player gets 4 mascot cards 
 
+//TODO: will need to modify this class more to match changes made to Card and Resource
 export default class Mascot extends Card {
     //class variables
-    inDropZone = false;
-    name;
-    healthPoints;
-    region;
+    //name;
+    //healthPoints;
+    //region;
 
     //class methods
-    constructor(name, healthPoints, region, scene){
-        super();
+     constructor(scene, x, y, textureKey) {
+        //this super() constructor is for the Sprite class
+        super(scene, x, y, textureKey);
+        //this.scene = scene;
 
-        this.name = name;
-        this.healthPoints = healthPoints;
-        this.region = region;
+        this.setScale(0.25, 0.25);
+        this.setInteractive();
+        scene.input.setDraggable(this);
 
-        this.render = (x, y, sprite) => {
-            let card = scene.add.sprite(x, y, sprite).setScale(0.25, 0.25).setInteractive();
-            scene.input.setDraggable(card);
-            return card;
-        }
+        this.name = "Test";
+        this.healthPoints = Math.floor(Math.random()*15)+1;
+        this.region = "S";
+
+        scene.add.existing(this);
+        let inDropZone = false;
 
         this.getHealthPoints = () => {
             return this.healthPoints;
         }
+
+        this.getRegion = ()=> {
+            return this.region;
+        }
+    
+        this.getName  = () => {
+            return this.name;
+        }
+    
+        this.decreaseHP = (amount) =>{
+            this.healthPoints = this.healthPoints - amount;
+            if(this.healthPoints < 0){
+                this.healthPoints = 0;
+            }
+        }
+    
+        this.increaseHP = (amount) => {
+            this.healthPoints = this.healthPoints + amount;
+        }
     
 
-    }
-
-
-
-    //Get and Set Methods
-    
-    getRegion(){
-        return this.region;
-    }
-
-    getName(){
-        return this.name;
-    }
-
-    decreaseHP(amount){
-        this.healthPoints = this.healthPoints - amount;
-    }
-
-    increaseHP(amount){
-        this.healthPoints = this.healthPoints + amount;
     }
 }
