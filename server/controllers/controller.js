@@ -1,4 +1,5 @@
 const argon2 = require('argon2');
+const validator = require('email-validator');
 const userModel = require("../models/users.js");
 const achievementsModel = require("../models/achievements.js");
 const userAchieveModel = require("../models/userHasAchievements.js");
@@ -69,6 +70,9 @@ const otherFunction = async (req, res, next) => {
 const register = async (req, res, next) => {
     try {
         let { email, password } = req.body
+        if (!validator.validate(email) || password.length < 6) {
+            return res.status(400);
+        }
         const hash = await argon2.hash(password)
         console.log(email);
         let username = email;
