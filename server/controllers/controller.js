@@ -8,7 +8,7 @@ const addUser = userModel.addUser;
 const deleteUser = userModel.deleteUser;
 const updateUser = userModel.updateUser;
 const getAchievements = achievementsModel.getAchievements;
-const getAchByName = achievementsModel.getAchievementByName;
+const getAchById = achievementsModel.getAchievementById;
 const getUserAchieved = userAchieveModel.getUserAchievements;
 const addAchievement = userAchieveModel.addUserAchievement;
 
@@ -68,12 +68,11 @@ const otherFunction = async (req, res, next) => {
 
 const register = async (req, res, next) => {
     try {
-        let { username, email, password } = req.body
-        //password = await argon2.hash(password)
-        console.log(username);
+        let { email, password } = req.body
+        const hash = await argon2.hash(password)
         console.log(email);
-        console.log(password);
-        const user = await addUser(username, email, password)
+        let username = email;
+        const user = await addUser(username, email, hash)
         return res.status(201).send(user)
     } catch (error) {
         next(error)
@@ -91,8 +90,8 @@ const fetchAllAchievements = async (req, res, next) => {
 
 const findAchievement = async (req, res, next) => {
     try {
-        let achievementName = req.params['achName'];
-        const achievement = await getAchByName(achievementName);
+        let achievementId = req.params['achId'];
+        const achievement = await getAchById(achievementId);
         return res.status(200).send(achievement)
     } catch (error) {
         next(error)

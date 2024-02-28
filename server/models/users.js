@@ -2,7 +2,7 @@ const db = require('../db/index.js');
 
 const getUsers = async () => {
     try {
-        const users = await db.any("SELECT * FROM g_user");
+        const users = await db.any("SELECT uname, email, win_count FROM g_user");
         console.log(users);
         return users
     } catch (err) {
@@ -16,7 +16,7 @@ const getUsers = async () => {
 
 const getUser = async (identifier) => {
     try {
-        const getUser = await db.oneOrNone(`SELECT * FROM g_user WHERE email = $1 OR uname = $1`, [identifier]);
+        const getUser = await db.oneOrNone(`SELECT uname, email, win_count FROM g_user WHERE email = $1 OR uname = $1`, [identifier]);
         if(!getUser)  throw {name: "NotValidUser", message: "Not a valid account!", status: false }
         return getUser 
     } catch (error) {
