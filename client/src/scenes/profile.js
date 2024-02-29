@@ -24,6 +24,9 @@ export default class Game extends Phaser.Scene {
         this.usernameHeader = this.add.image(1020, 100, 'username').setScale(0.75, 0.75);
         this.emailHeader = this.add.image(1020, 300, 'email').setScale(0.75, 0.75);
         this.winCountHeader = this.add.image(1020, 500, 'winCount').setScale(0.75, 0.75);
+        this.userName = this.add.text(1080, 150, 'Loading...', {align: 'right'});
+        this.userEmail = this.add.text(1080, 350, 'Loading...', {align: 'right'});
+        this.userWinCount = this.add.text(1220, 550, 'Loading...', {align: 'right'});
 
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
@@ -32,9 +35,13 @@ export default class Game extends Phaser.Scene {
             this.scene.start('Game');
         }, this)
 
-        var firebaseApp = this.plugins.get('FirebasePlugin');
+        let firebaseApp = this.plugins.get('FirebasePlugin');
         console.log(firebaseApp.getUser())
         const userEmail = firebaseApp.getUser().email;
+
+        this.uname = '';
+        this.email = '';
+        this.winCount = 0;
 
         const request = ( url, param, method = 'GET' ) => {
 
@@ -46,12 +53,23 @@ export default class Game extends Phaser.Scene {
         get('http://localhost:3001/users/findUser/', userEmail)
         .then(response => {
             console.log(response);
+            this.uname = response.uname;
+            this.email = response.email;
+            this.winCount = response.win_count;
+            console.log(this.uname, this.email, this.winCount);
         })
         
-
     }
     
     update() {
-        
+        if (this.uname == '' || this.email == '') {
+            this.userName.setText('Loading...');
+            this.userEmail.setText('Loading...');
+            this.userWinCount.setText('Loading...');
+        } else {
+            this.userName.setText(this.uname);
+            this.userEmail.setText(this.email);
+            this.userWinCount.setText(this.winCount);
+        }
     }
 }
