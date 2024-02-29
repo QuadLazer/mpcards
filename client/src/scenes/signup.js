@@ -55,6 +55,30 @@ export default class Signup extends Phaser.Scene
                 //  Have they entered anything?
                 if (inputUsername.value !== '' && inputPassword.value !== '')
                 {
+                    const userData = JSON.stringify({
+                        email: inputUsername.value,
+                        password: inputPassword.value
+                    });
+
+
+
+
+                    const options = {
+                        method: 'POST',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userData,
+                    }
+
+                    fetch("http://localhost:3001/users/register",options).then(response =>{
+                        console.log(JSON.stringify(response));
+                    })
+
+                    // response.then(data => {
+                    // console.log(JSON.stringify(data));
+                    // });
                     // Create new user account
                     firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
                     .then(cred => {

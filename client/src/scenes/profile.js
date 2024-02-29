@@ -37,6 +37,7 @@ export default class Game extends Phaser.Scene {
         this.userWinCount.setStroke('#000000', 6);
         this.userWinCount.setShadow(4, 4, '#000000', 0);
 
+        this.achievements = [];
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
         this.exit.on('pointerup', function (pointer) {
@@ -66,6 +67,15 @@ export default class Game extends Phaser.Scene {
             this.email = response.email;
             this.winCount = response.win_count;
         })
+
+        const achieve = get('http://localhost:3001/uha/fetchUserAch/',userEmail)
+        .then(response => {
+            console.log(response)
+            this.achievements.push(response.map(item => item.aid));
+
+        });
+
+        console.log(this.achievements);
         
     }
     

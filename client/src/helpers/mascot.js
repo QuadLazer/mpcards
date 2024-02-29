@@ -28,6 +28,7 @@ export default class Mascot extends Card {
         scene.add.existing(this);
         let inDropZone = false;
 
+        //get methods
         this.getHealthPoints = () => {
             return this.healthPoints;
         }
@@ -40,6 +41,7 @@ export default class Mascot extends Card {
             return this.name;
         }
     
+        //set methods
         this.decreaseHP = (amount) =>{
             this.healthPoints = this.healthPoints - amount;
             if(this.healthPoints < 0){
