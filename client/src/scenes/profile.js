@@ -15,6 +15,10 @@ export default class Game extends Phaser.Scene {
         this.load.image('email', 'assets/profile_assets/emailHeader.png');
         this.load.image('winCount', 'assets/profile_assets/winCountHeader.png');
         this.load.image('exit', 'assets/exitArrow.png');
+        this.load.image('sampleAch1', 'assets/achievements_assets/sampleAch1.png');
+        this.load.image('sampleAch2', 'assets/achievements_assets/sampleAch2.png');
+        this.load.image('sampleAch3', 'assets/achievements_assets/sampleAch3.png');
+        this.load.image('lockedAch', 'assets/achievements_assets/lockedAchIcon.png');
     }
 
     create() {
@@ -36,6 +40,12 @@ export default class Game extends Phaser.Scene {
         {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
         this.userWinCount.setStroke('#000000', 6);
         this.userWinCount.setShadow(4, 4, '#000000', 0);
+
+        // Will eventually clean up with a nice loop, but this works for now.
+        this.achDisplay = []
+        this.achDisplay.push(this.add.sprite(1200, 710, 'lockedAch').setScale(0.75, 0.75));
+        this.achDisplay.push(this.add.sprite(1060, 710, 'lockedAch').setScale(0.75, 0.75));
+        this.achDisplay.push(this.add.sprite(920, 710, 'lockedAch').setScale(0.75, 0.75));
 
         this.achievements = [];
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
@@ -71,12 +81,8 @@ export default class Game extends Phaser.Scene {
         const achieve = get('http://localhost:3001/uha/fetchUserAch/',userEmail)
         .then(response => {
             console.log(response)
-            this.achievements.push(response.map(item => item.aid));
-
+            this.achievements = response.map(item => item.aid);
         });
-
-        console.log(this.achievements);
-        
     }
     
     update() {
@@ -88,6 +94,12 @@ export default class Game extends Phaser.Scene {
             this.userName.setText(this.uname);
             this.userEmail.setText(this.email);
             this.userWinCount.setText(this.winCount);
+        }
+
+        for (let i = 0; i < this.achievements.length; i++) {
+            let texture = 'sampleAch' + this.achievements[i];
+            //console.log(texture);
+            this.achDisplay[i].setTexture(texture);
         }
     }
 }
