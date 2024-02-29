@@ -24,7 +24,7 @@ export default class Dealer {
                 //render player cards
                 let playerCard = new Card(scene, 475 + (i * 100), 670, playerSprite);
 
-                let playerMascot = new Mascot(scene,675 + (i * 100), 670, mascotSprite )
+                let playerMascot = new Mascot(scene,675 + (i * 100), 670, mascotSprite);
 
                 //let playerMascot = new Mascot(this.gatorAttributes.at(0), this.gatorAttributes.at(1), this.gatorAttributes.at(2), scene);
                 //playerMascot.render(675 + (i * 100), 670, mascotSprite);

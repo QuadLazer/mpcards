@@ -1,4 +1,5 @@
 const argon2 = require('argon2');
+const validator = require('email-validator');
 const userModel = require("../models/users.js");
 const achievementsModel = require("../models/achievements.js");
 const userAchieveModel = require("../models/userHasAchievements.js");
@@ -8,7 +9,7 @@ const addUser = userModel.addUser;
 const deleteUser = userModel.deleteUser;
 const updateUser = userModel.updateUser;
 const getAchievements = achievementsModel.getAchievements;
-const getAchByName = achievementsModel.getAchievementByName;
+const getAchById = achievementsModel.getAchievementById;
 const getUserAchieved = userAchieveModel.getUserAchievements;
 const addAchievement = userAchieveModel.addUserAchievement;
 
@@ -28,7 +29,6 @@ const fetchAllUsers = async (req, res, next) => {
 const findUser = async (req, res, next) => {
     try {
         let identifier = req.params['userEmail']
-        console.log(identifier);
         const user = await getUser(identifier);
         return res.status(200).send(user)
     } catch (error) {
@@ -69,12 +69,14 @@ const otherFunction = async (req, res, next) => {
 
 const register = async (req, res, next) => {
     try {
-        let { username, email, password } = req.body
-        //password = await argon2.hash(password)
-        console.log(username);
+        let { email, password } = req.body
+        if (!validator.validate(email) || password.length < 6) {
+            return res.status(400);
+        }
+        const hash = await argon2.hash(password)
         console.log(email);
-        console.log(password);
-        const user = await addUser(username, email, password)
+        let username = email;
+        const user = await addUser(username, email, hash)
         return res.status(201).send(user)
     } catch (error) {
         next(error)
@@ -92,8 +94,8 @@ const fetchAllAchievements = async (req, res, next) => {
 
 const findAchievement = async (req, res, next) => {
     try {
-        let {achievementName} = req.body
-        const achievement = await getAchByName(achievementName);
+        let achievementId = req.params['achId'];
+        const achievement = await getAchById(achievementId);
         return res.status(200).send(achievement)
     } catch (error) {
         next(error)
@@ -103,7 +105,7 @@ const findAchievement = async (req, res, next) => {
 //The variable name here has to match what is passed in as json
 const findUserAchieved = async (req, res, next) => {
     try {
-        let {email} = req.body
+        let email = req.params['email'];
         const achievement = await getUserAchieved(email);
         return res.status(200).send(achievement)
     } catch (error) {
