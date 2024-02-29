@@ -28,9 +28,22 @@ io.on('connection', function (socket) {
         io.emit('cardDropped', gameObject, isPlayerA);
     });
 
-    //not sure if this is needed?
+    //needed if you want Player B to see resource cards of player A
     socket.on('resDropped', function(gameObject, isPlayerA) {
         io.emit('resDropped', gameObject, isPlayerA);
+    });
+
+    //the event that should trigger when mascot attacks another
+    socket.on('mascotAttacked', function(gameObject, isPlayerA){
+        io.emit('mascotAttacked', gameObject, isPlayerA);
+    });
+
+    socket.on('mascotDropped', function(hp, isPlayerA){
+        io.emit('mascotDropped', hp);
+    });
+
+    socket.on('mascotDestroyed', function(isPlayerA){
+        io.emit('mascotDestroyed', isPlayerA);
     });
 
     socket.on('disconnect', function () {
