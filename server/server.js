@@ -42,6 +42,10 @@ io.on('connection', function (socket) {
         io.emit('mascotDropped', hp);
     });
 
+    socket.on('mascotDestroyed', function(isPlayerA){
+        io.emit('mascotDestroyed', isPlayerA);
+    });
+
     socket.on('disconnect', function () {
         console.log('A user disconnected: ' + socket.id);
         players = players.filter(player => player !== socket.id);

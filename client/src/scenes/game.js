@@ -82,6 +82,7 @@ export default class Game extends Phaser.Scene {
         this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
         let enemyMascot;
         let yourMascot;
+        let droppedCard;
 
         //resource variables
         let resourceTotal = 0;
@@ -213,7 +214,7 @@ export default class Game extends Phaser.Scene {
                     self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), card.getHealthPoints(), {fill:'#ff5733'});
                 }
                 
-                let card = new Card(self, (self.dropZone.x), (self.dropZone.y - 210), sprite).disableInteractive();
+                self.droppedCard = new Card(self, (self.dropZone.x), (self.dropZone.y - 210), sprite).disableInteractive();
             }
         })
 
@@ -330,6 +331,15 @@ export default class Game extends Phaser.Scene {
             gameObject.y = gameObject.input.dragStartY;
         })
 
+        this.socket.on('mascotDestroyed', function(isPlayerA){
+            if(isPlayerA !== self.isPlayerA){
+                console.log("Your Mascot will be destroyed.");
+                self.dropZone.data.cards--;
+                self.dropZone.data.playerA_mascots--;
+                self.droppedCard.destroy();
+            }
+        })
+
         this.socket.on('mascotAttacked', function (gameObject, isPlayerA) {
             //this is emitted to all clients (player A and B), so this function goes thru both
             console.log("Mascot Attacked!!!!");
@@ -338,19 +348,23 @@ export default class Game extends Phaser.Scene {
                 if(self.enemyMascot > self.yourMascot){
                     console.log("You Lose this battle. Your Mascot dies.");
                     win = true;
+                    
                 }
                 else{
                     console.log("You Win this battle. Your Mascot lives.");
+                    self.socket.emit('mascotDestroyed', self.isPlayerA);
                 }
             }
             else{
-                if(win){
+                if(self.enemyMascot > self.yourMascot){
                     console.log("You Win this battle. Your Mascot lives.");
+                    self.socket.emit('mascotDestroyed', self.isPlayerA);
                 }
                 else{
                     console.log("You Lose this battle. Your Mascot dies.");
                 }
             }
+            win = false;
         })
             
 
