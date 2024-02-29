@@ -24,9 +24,18 @@ export default class Game extends Phaser.Scene {
         this.usernameHeader = this.add.image(1020, 100, 'username').setScale(0.75, 0.75);
         this.emailHeader = this.add.image(1020, 300, 'email').setScale(0.75, 0.75);
         this.winCountHeader = this.add.image(1020, 500, 'winCount').setScale(0.75, 0.75);
-        this.userName = this.add.text(1080, 150, 'Loading...', {align: 'right'});
-        this.userEmail = this.add.text(1080, 350, 'Loading...', {align: 'right'});
-        this.userWinCount = this.add.text(1210, 550, 'Loading...', {align: 'right'});
+        this.userName = this.add.text(1230, 150, 'Loading...', 
+        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
+        this.userName.setStroke('#000000', 6);
+        this.userName.setShadow(4, 4, '#000000', 0);
+        this.userEmail = this.add.text(1230, 350, 'Loading...', 
+        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
+        this.userEmail.setStroke('#000000', 6);
+        this.userEmail.setShadow(4, 4, '#000000', 0);
+        this.userWinCount = this.add.text(1230, 550, 'Loading...', 
+        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
+        this.userWinCount.setStroke('#000000', 6);
+        this.userWinCount.setShadow(4, 4, '#000000', 0);
 
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
