@@ -65,7 +65,6 @@ export default class Game extends Phaser.Scene {
             this.uname = response.uname;
             this.email = response.email;
             this.winCount = response.win_count;
-            console.log(this.uname, this.email, this.winCount);
         })
         
     }
