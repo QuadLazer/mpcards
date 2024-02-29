@@ -25,6 +25,7 @@ export default class Game extends Phaser.Scene {
         this.emailHeader = this.add.image(1020, 300, 'email').setScale(0.75, 0.75);
         this.winCountHeader = this.add.image(1020, 500, 'winCount').setScale(0.75, 0.75);
 
+        this.achievements = [];
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
         this.exit.on('pointerup', function (pointer) {
@@ -47,6 +48,15 @@ export default class Game extends Phaser.Scene {
         .then(response => {
             console.log(response);
         })
+
+        const achieve = get('http://localhost:3001/uha/fetchUserAch/',userEmail)
+        .then(response => {
+            console.log(response)
+            this.achievements.push(response.map(item => item.aid));
+
+        });
+
+        console.log(this.achievements);
         
 
     }
