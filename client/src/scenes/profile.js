@@ -26,7 +26,7 @@ export default class Game extends Phaser.Scene {
         this.winCountHeader = this.add.image(1020, 500, 'winCount').setScale(0.75, 0.75);
         this.userName = this.add.text(1080, 150, 'Loading...', {align: 'right'});
         this.userEmail = this.add.text(1080, 350, 'Loading...', {align: 'right'});
-        this.userWinCount = this.add.text(1220, 550, 'Loading...', {align: 'right'});
+        this.userWinCount = this.add.text(1210, 550, 'Loading...', {align: 'right'});
 
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
