@@ -121,45 +121,36 @@ export default class Game extends Phaser.Scene {
                 if(gameObject instanceof Mascot){
                     //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                     this.cardPopUpText.setText('HP: ' + gameObject.getHealthPoints());
-                    this.tweens.add({
-                        targets: [this.cardPopUp, this.cardPopUpText],
-                        alpha: {from:0, to:1},
-                        repeat: 0,
-                        duration: 5
-                    }); 
                 }
                 else if(gameObject instanceof Resource){
                     //this.cardPopUpText = this.add.text( 0, 0, 'Value: ' + gameObject.getResVal(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                     this.cardPopUpText.setText('Value: ' + gameObject.getResVal());
-                    this.tweens.add({
-                        targets: [this.cardPopUp, this.cardPopUpText],
-                        alpha: {from:0, to:1},
-                        repeat: 0,
-                        duration: 5
-                    }); 
                 }
                 else if (gameObject instanceof Effect) {
                     if (gameObject.type == 'Buff') {
-                        this.cardPopUpText.setText('This is a buff type card');
+                        let hpText = 'Health + ' + gameObject.getHealthVal() + '\n';
+                        let hitText = 'Hit + ' + gameObject.getHitVal();
+                        let display = 'This is a buff type card\n';
+                        if (gameObject.getHealthVal() == 0) {
+                            display = display + hitText;
+                        }
+                        else {
+                            display = display + hpText;
+                        }
+                        this.cardPopUpText.setText(display);
                     }
-                    
-                    this.tweens.add({
-                        targets: [this.cardPopUp, this.cardPopUpText],
-                        alpha: {from:0, to:1},
-                        repeat: 0,
-                        duration: 5
-                    }); 
+
                 }
                 else if(gameObject instanceof Card){
                     //this.cardPopUpText = this.add.text( 0, 0, 'This is a card.', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                     this.cardPopUpText.setText('this is a card');
-                    this.tweens.add({
-                        targets: [this.cardPopUp, this.cardPopUpText],
-                        alpha: {from:0, to:1},
-                        repeat: 0,
-                        duration: 5
-                    }); 
                 }
+                this.tweens.add({
+                    targets: [this.cardPopUp, this.cardPopUpText],
+                    alpha: {from:0, to:1},
+                    repeat: 0,
+                    duration: 5
+                }); 
             }
                 
         }, this);

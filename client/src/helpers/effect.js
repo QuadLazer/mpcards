@@ -23,6 +23,14 @@ export default class Effect extends Card {
             else {
                 this.healthUp = Math.floor(Math.random()*5) + 1;
             }
+
+            this.getHitVal = () => {
+                return this.hitUp;
+            }
+
+            this.getHealthVal = () => {
+                return this.healthUp;
+            }
         }
 
 
