@@ -3,6 +3,7 @@ import Card from '../helpers/card';
 import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
 import Resource from '../helpers/resource';
+import Effect from '../helpers/effect';
 
 import FirebasePlugin from '../plugins/FirebasePlugin';
 
@@ -130,6 +131,18 @@ export default class Game extends Phaser.Scene {
                 else if(gameObject instanceof Resource){
                     //this.cardPopUpText = this.add.text( 0, 0, 'Value: ' + gameObject.getResVal(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                     this.cardPopUpText.setText('Value: ' + gameObject.getResVal());
+                    this.tweens.add({
+                        targets: [this.cardPopUp, this.cardPopUpText],
+                        alpha: {from:0, to:1},
+                        repeat: 0,
+                        duration: 5
+                    }); 
+                }
+                else if (gameObject instanceof Effect) {
+                    if (gameObject.type == 'Buff') {
+                        this.cardPopUpText.setText('This is a buff type card');
+                    }
+                    
                     this.tweens.add({
                         targets: [this.cardPopUp, this.cardPopUpText],
                         alpha: {from:0, to:1},
