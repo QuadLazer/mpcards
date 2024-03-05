@@ -43,6 +43,7 @@ export default class Game extends Phaser.Scene {
         this.isPlayerA = false;
         this.opponentCards = [];
         this.mascotCardPlace = false;
+        
 
         //zone variables
         this.zone = new Zone(this);
@@ -58,6 +59,7 @@ export default class Game extends Phaser.Scene {
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
+
 
         //button variables
         let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF'});
@@ -84,6 +86,7 @@ export default class Game extends Phaser.Scene {
         let enemyMascot;
         let yourMascot;
         let droppedCard;
+        let yourDroppedCard;
 
         //resource variables
         let resourceTotal = 0;
@@ -296,7 +299,9 @@ export default class Game extends Phaser.Scene {
         //for mascot drop zone
         this.input.on('drop', function (pointer, gameObject, dropZone) {
             if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
+                yourDroppedCard = gameObject;
                 gameObject.x = (dropZone.x);
+                console.log(gameObject);
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
                 dropZone.data.values.playerA_mascots++;
@@ -384,7 +389,29 @@ export default class Game extends Phaser.Scene {
         });
         this.input.on('gameobjectdown', function (pointer, gameObject) {
             console.log(gameObject);
-        })
+        });
+
+        let lastTime = 0;
+        this.input.on('gameobjectdown', (pointer,gameObject)=>{
+            let clickDelay = this.time.now - lastTime;
+            lastTime = this.time.now;
+            //double-click event
+            if(clickDelay < 350) {
+                if (gameObject instanceof Effect) {
+                    console.log("Effects lie here");
+                    if (gameObject.type == 'Buff' && this.dropZone.data.values.playerA_mascots > 0) {
+                        console.log(yourDroppedCard);
+                        console.log(this.dropZone.data.values.playerA_mascots)
+                        console.log(gameObject.getHitVal(), gameObject.getHealthVal());
+                        yourDroppedCard.increaseHP(gameObject.getHealthVal());
+                        this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
+                        //Need code here to apply card effect to token 
+                        gameObject.destroy();
+                        
+                    }
+                }
+            }
+        });
 
         this.controlButton.on('pointerup', function (pointer) {
             console.log("I was clicked!");
@@ -395,6 +422,7 @@ export default class Game extends Phaser.Scene {
             this.updateClickCountText(++clickCount);
             self.socket.emit('mascotAttacked', gameObject, self.isPlayerA);
         });
+
 
     }
     
@@ -415,6 +443,7 @@ export default class Game extends Phaser.Scene {
             this.turnIndicator.setText('Opponent\'s turn!');
         } 
     }
+
 
     updateClickCountText(clickCount) {
         this.clickCountText.setText(`Attacked ${clickCount} times.`);
@@ -441,6 +470,7 @@ export default class Game extends Phaser.Scene {
     }
 
     updateMascotHealth(mascotA_Health, mascotB_Health){
+
         if(mascotA_Health > mascotB_Health){
             //something
         }
