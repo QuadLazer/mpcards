@@ -42,6 +42,18 @@ export default class Mascot extends Card {
         }
     
         //set methods
+        this.setName = (name) => {
+            this.name = name;
+        }
+        
+        this.setRegion = (region) => {
+            this.region = region;
+        }
+
+        this.setHP = (HP) => {
+            this.healthPoints = HP;
+        }
+
         this.decreaseHP = (amount) =>{
             this.healthPoints = this.healthPoints - amount;
             if(this.healthPoints < 0){
