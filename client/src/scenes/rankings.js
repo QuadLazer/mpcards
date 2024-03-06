@@ -144,9 +144,11 @@ var CreateContent = function (linesCount) {
 
 var createPanel = function (scene) {
     console.log(scene);
-    var text = scene.add.text(0, 0, 'gothic').setText(CreateContent(30));
+    var entries = scene.add.sprite(250, 100, 'entryBg').setScale(0.75, 0.75);
+    var text = scene.add.text(0, 0, 'test', { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
+    var cont = scene.add.container(0, 0, [entries, text]);
     var container = scene.add.container()
-        .add(text)
+        .add(cont)
         .setSize(200, text.height);
 
     return container;
