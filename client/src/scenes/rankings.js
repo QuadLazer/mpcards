@@ -34,6 +34,46 @@ export default class Rankings extends Phaser.Scene {
         this.userWinCount.setStroke('#000000', 6);
         this.userWinCount.setShadow(4, 4, '#000000', 0);
 
+        // Debugging pixel coords
+        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+        this.pointer = this.input.activePointer;
+
+        //Scroll panel
+        var scrollablePanel = this.rexUI.add.scrollablePanel({
+            x: 1000, y: 400,
+            width: 500,
+            height: 500,
+
+            scrollMode: 'y',
+
+            background: this.rexUI.add.roundRectangle({
+                radius: 10
+            }),
+
+            panel: {
+                child: createPanel(this),
+
+                mask: { padding: 1, },
+            },
+
+            slider: {
+                track: this.add.sprite(0, 0, 'scrollBar1').setOrigin(0),
+                thumb: this.add.sprite(0, 0, 'scrollBar2').setOrigin(0.5, 0),
+            },
+          
+            mouseWheelScroller: {
+                focus: false,
+                speed: 0.1
+            },
+          
+            header: this.add.sprite(),
+
+            footer: this.add.sprite(),
+
+            space: { left: 20, right: 20, top: 20, bottom: 20, panel: 3, header: 5, footer: 5 }
+        })
+            .layout()
+
         this.achievements = [];
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
@@ -88,5 +128,26 @@ export default class Rankings extends Phaser.Scene {
             //console.log(texture);
             this.achDisplay[i].setTexture(texture);
         }
+
+        // Debugging pixel coords
+        this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
     }
+}
+
+var CreateContent = function (linesCount) {
+    var numbers = [];
+    for (var i = 0; i < linesCount; i++) {
+        numbers.push(i.toString());
+    }
+    return numbers.join('\n');
+}
+
+var createPanel = function (scene) {
+    console.log(scene);
+    var text = scene.add.text(0, 0, 'gothic').setText(CreateContent(30));
+    var container = scene.add.container()
+        .add(text)
+        .setSize(200, text.height);
+
+    return container;
 }
