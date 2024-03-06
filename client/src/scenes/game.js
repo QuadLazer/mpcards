@@ -192,9 +192,9 @@ export default class Game extends Phaser.Scene {
 
             //for player B
             if (isPlayerA !== self.isPlayerA) {
-                this.enemyMascot = gameObject;
+                //this.enemyMascot = gameObject;
                 console.log("Opponent mascot variables:");
-                console.log(enemyMascot);
+                //console.log(enemyMascot);
                 let sprite = gameObject.textureKey;
                 console.log(sprite);
                 self.opponentCards.shift().destroy();
@@ -218,10 +218,10 @@ export default class Game extends Phaser.Scene {
                 //this is Player B rendering the Mascot Card that Player A dropped
                 self.droppedCard = new Mascot(self, (self.dropZone.x), (self.dropZone.y - 210), sprite).disableInteractive();
                 console.log("dropped Card -------");
-                console.log(droppedCard);
+                console.log(self.droppedCard);
             }
             //yourDroppedCard = gameObject;
-            console.log(yourDroppedCard);
+            //console.log(yourDroppedCard);
         })
 
         this.socket.on('resDropped', function (gameObject, isPlayerA) {
@@ -298,7 +298,7 @@ export default class Game extends Phaser.Scene {
         //for mascot drop zone
         this.input.on('drop', function (pointer, gameObject, dropZone) {
             if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
-                yourDroppedCard = gameObject;
+                
                 gameObject.x = (dropZone.x);
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
@@ -311,6 +311,7 @@ export default class Game extends Phaser.Scene {
                 console.log('Mascots In Zone:' + (dropZone.data.values.playerA_mascots + dropZone.data.values.playerB_mascots));
                 console.log("Player A Mascot Health: " + gameObject.getHealthPoints());
                 yourMascot = gameObject.getHealthPoints();
+                
 
                 //handZone.data.values.cards--;
                 gameObject.y = dropZone.y;
@@ -318,6 +319,10 @@ export default class Game extends Phaser.Scene {
                 self.updateMascotHealthText(gameObject.getHealthPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
                 self.socket.emit('mascotDropped', gameObject.getHealthPoints(), self.isPlayerA);
+
+                yourDroppedCard = gameObject;
+                console.log("your dropped card");
+                console.log(yourDroppedCard);
             }
         
         })
@@ -340,47 +345,42 @@ export default class Game extends Phaser.Scene {
 
         this.socket.on('mascotDestroyed', function(isPlayerA){
             if(isPlayerA !== self.isPlayerA){
-                console.log("Your Mascot will be destroyed.");
-                self.dropZone.data.cards--;
-                self.dropZone.data.playerA_mascots--;
-                self.droppedCard.destroy();
+                console.log("You lost this battle. Your Mascot will be destroyed.");
+                self.dropZone.data.values.cards--;
+                self.dropZone.data.values.playerA_mascots = 0;
+                yourDroppedCard.destroy();
+                yourMascot = 0;
+                self.updateMascotHealthText(0);
             }
             else{
-                self.dropZone.data.playerB_mascots--;
+                self.droppedCard.destroy();
+                self.dropZone.data.values.playerB_mascots--;
                 self.enemyMascot = 0;
+            
             }
+                
         })
 
         this.socket.on('mascotAttacked', function (gameObject, isPlayerA) {
             //this is emitted to all clients (player A and B), so this function goes thru both
             console.log("Mascot Attacked!!!!");
             console.log(yourDroppedCard);
-            yourDroppedCard.increaseHP(5);
             console.log("Dropped Card HP: " + yourDroppedCard.getHealthPoints());
-            self.updateMascotHealthText(yourDroppedCard.getHealthPoints());
-            
-            let win = false;
-            if(self.dropZone.data.playerA_mascots == 1 && self.dropZone.data.playerB_mascots == 1){
-                if(isPlayerA !== self.isPlayerA){
-                    if(self.enemyMascot > self.yourMascot){
-                        console.log("You Lose this battle. Your Mascot dies.");
-                        win = true;
-                    }
-                    else{
-                        console.log("You Win this battle. Your Mascot lives.");
-                        self.socket.emit('mascotDestroyed', self.isPlayerA);
-                    }
+
+            if(isPlayerA !== self.isPlayerA){
+                console.log("Enemy Mascot HP: " + self.enemyMascot);
+                console.log("Your Mascot HP: " + yourMascot);
+                if(self.enemyMascot > yourMascot){
+                    console.log("You Lose this battle. Your Mascot dies.");
+                    self.socket.emit('mascotDestroyed', isPlayerA);
+                }
+                else if(self.enemyMascot == yourMascot){
+                    console.log("This battle ends in a tie.");
                 }
                 else{
-                    if(self.enemyMascot > self.yourMascot){
-                        console.log("You Win this battle. Your Mascot lives.");
-                        self.socket.emit('mascotDestroyed', self.isPlayerA);
-                    }
-                    else{
-                        console.log("You Lose this battle. Your Mascot dies.");
-                    }
+                    console.log("You Win this battle. Your Mascot lives.");
+                    self.socket.emit('mascotDestroyed', self.isPlayerA);
                 }
-                win = false;
             }
             
         })
