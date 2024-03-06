@@ -5,6 +5,7 @@ import Login from "./scenes/login";
 import Signup from "./scenes/signup";
 import FirebasePlugin from "./plugins/FirebasePlugin";
 import Profile from "./scenes/profile";
+import Rankings from "./scenes/rankings";
 
 const config = {
     type: Phaser.AUTO,
@@ -19,7 +20,8 @@ const config = {
         Load,
         Game,
         Profile,
-        Signup
+        Signup,
+        Rankings
     ],
     scale: {
         mode: Phaser.Scale.FIT,
