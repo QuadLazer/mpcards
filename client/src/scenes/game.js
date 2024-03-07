@@ -454,9 +454,52 @@ export default class Game extends Phaser.Scene {
         }
     }
 
-    updateMascotHealth(mascotA_Health, mascotB_Health){
-        if(mascotA_Health > mascotB_Health){
-            //something
+    calculatePower(yourRegion, enemyRegion, yourPower){
+        //NE beats S, S beats MW, MW beats W, W beats NE
+        let south = "S";
+        let northEast = "NE";
+        let midWest = "MW";
+        let west = "W";
+
+        if(yourRegion == south){
+            //beats MW
+            if(enemyRegion == midWest){
+                return (yourPower * 2);
+            }
+            //loses to NE
+            else if(enemyRegion == northEast){
+                return (yourPower / 2)
+            }
+        }
+        else if(yourRegion == northEast){
+            //beats S
+            if(enemyRegion == south){
+                return (yourPower * 2);
+            }
+            //loses to W
+            else if(enemyRegion == northEast){
+                return (yourPower / 2)
+            }
+        }
+        else if(yourRegion == midWest){
+            //beats W
+            if(enemyRegion == west){
+                return (yourPower * 2);
+            }
+            //loses to S
+            else if(enemyRegion == south){
+                return (yourPower / 2)
+            }
+        }
+        else if(yourRegion == west){
+            //beats NE
+            if(enemyRegion == northEast){
+                return (yourPower * 2);
+            }
+            //loses to MW
+            else if(enemyRegion == midWest){
+                return (yourPower / 2)
+            }
         }
     }
 }
