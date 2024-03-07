@@ -17,22 +17,11 @@ export default class Rankings extends Phaser.Scene {
         this.load.image('scrollBar2', 'assets/leaderboard_assets/scrollBar2.png');
     }
 
-    create() {
+    async create() {
         this.bg = this.add.image(0, 0, 'bg');
+        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         this.exit = this.add.image(60, 100, 'exit').setScale(0.75, 0.75).setInteractive();
         this.header = this.add.image(250, 390, 'rankings').setScale(0.75, 0.75);
-        this.userName = this.add.text(1230, 150, 'Loading...', 
-        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
-        this.userName.setStroke('#000000', 6);
-        this.userName.setShadow(4, 4, '#000000', 0);
-        this.userEmail = this.add.text(1230, 350, 'Loading...', 
-        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
-        this.userEmail.setStroke('#000000', 6);
-        this.userEmail.setShadow(4, 4, '#000000', 0);
-        this.userWinCount = this.add.text(1230, 550, 'Loading...', 
-        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
-        this.userWinCount.setStroke('#000000', 6);
-        this.userWinCount.setShadow(4, 4, '#000000', 0);
 
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
@@ -51,7 +40,7 @@ export default class Rankings extends Phaser.Scene {
             }),
 
             panel: {
-                child: createPanel(this),
+                child: await createPanel(this),
 
                 mask: { padding: 1, },
             },
@@ -74,82 +63,51 @@ export default class Rankings extends Phaser.Scene {
         })
             .layout()
 
-        this.achievements = [];
-        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
-
         this.exit.on('pointerup', function (pointer) {
             console.log("I was clicked!");
             this.scene.start('Game');
         }, this)
-
-        let firebaseApp = this.plugins.get('FirebasePlugin');
-        console.log(firebaseApp.getUser())
-        const userEmail = firebaseApp.getUser().email;
-
-        this.uname = '';
-        this.email = '';
-        this.winCount = 0;
-
-        const request = ( url, param, method = 'GET' ) => {
-
-            url +=  ( param).toString();        
-            return fetch( url ).then( response => response.json() );
-        };
-        const get = ( url, param ) => request( url, param, 'GET' );
-
-        get('http://localhost:3001/users/findUser/', userEmail)
-        .then(response => {
-            console.log(response);
-            this.uname = response.uname;
-            this.email = response.email;
-            this.winCount = response.win_count;
-        })
-
-        const achieve = get('http://localhost:3001/uha/fetchUserAch/',userEmail)
-        .then(response => {
-            console.log(response)
-            this.achievements = response.map(item => item.aid);
-        });
     }
     
     update() {
-        if (this.uname == '' || this.email == '') {
-            this.userName.setText('Loading...');
-            this.userEmail.setText('Loading...');
-            this.userWinCount.setText('Loading...');
-        } else {
-            this.userName.setText(this.uname);
-            this.userEmail.setText(this.email);
-            this.userWinCount.setText(this.winCount);
-        }
-
-        for (let i = 0; i < this.achievements.length; i++) {
-            let texture = 'sampleAch' + this.achievements[i];
-            //console.log(texture);
-            this.achDisplay[i].setTexture(texture);
-        }
-
         // Debugging pixel coords
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
     }
 }
 
-var CreateContent = function (linesCount) {
-    var numbers = [];
-    for (var i = 0; i < linesCount; i++) {
-        numbers.push(i.toString());
-    }
-    return numbers.join('\n');
+var GetRankedUsers = async function () {
+    const request = ( url, method = 'GET' ) => {      
+        return fetch( url ).then( response => response.json() );
+    };
+    const get = ( url) => request( url, 'GET' );
+
+    return new Promise((resolve, reject) => {
+        get('http://localhost:3001/users/fetchUsers/')
+        .then(response => {
+            console.log(response);
+            resolve(response);
+        }, error => {
+            console.log(error);
+            reject(error);
+        })
+    })
 }
 
-var createPanel = function (scene) {
-    console.log(scene);
-    var entries = scene.add.sprite(250, 100, 'entryBg').setScale(0.75, 0.75);
-    var text = scene.add.text(0, 0, 'test', { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
-    var cont = scene.add.container(0, 0, [entries, text]);
-    var container = scene.add.container()
-        .add(cont)
-        .setSize(200, text.height);
+var createPanel = async function (scene) {
+    // Get all users sorted from CreateContent
+    var entries = await GetRankedUsers();
+
+    // Create a container for each entry
+    var container = scene.add.container();
+    for (var i = 0; i < entries.length; i++) {
+        var bg = scene.add.sprite(250, 100 * (i + 1), 'entryBg').setScale(0.75, 0.75);
+        var uname = scene.add.text(50, (i + 1) * 90, (i + 1) + ". " + entries[i].uname, { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
+        var wins = scene.add.text(300, (i + 1) * 90, entries[i].win_count + " wins", { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
+        var cont = scene.add.container(0, 0, [bg, uname, wins]);
+        container.add(cont);
+    }
+    container.setSize(200, 100 * entries.length);
+    
 
     return container;
 }
