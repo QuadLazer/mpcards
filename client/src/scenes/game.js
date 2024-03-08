@@ -130,19 +130,23 @@ export default class Game extends Phaser.Scene {
                     this.cardPopUpText.setText('Value: ' + gameObject.getResVal());
                 }
                 else if (gameObject instanceof Effect) {
+                    let display = '';
                     if (gameObject.type == 'Buff') {
                         let hpText = 'Health + ' + gameObject.getHealthVal() + '\n';
-                        let hitText = 'Hit + ' + gameObject.getHitVal();
-                        let display = 'This is a buff type card\n';
+                        let hitText = 'Hit + ' + gameObject.getHitVal() + '\n';
+                        display = 'This is a buff type card\n';
                         if (gameObject.getHealthVal() == 0) {
                             display = display + hitText;
                         }
                         else {
                             display = display + hpText;
                         }
-                        this.cardPopUpText.setText(display);
+                        
                     }
+                    let aFee = "activate with: " + gameObject.cost + " resources";
+                    display = display + '\n' + aFee;
 
+                    this.cardPopUpText.setText(display);
                 }
                 else if(gameObject instanceof Card){
                     //this.cardPopUpText = this.add.text( 0, 0, 'This is a card.', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
@@ -397,7 +401,8 @@ export default class Game extends Phaser.Scene {
             lastTime = this.time.now;
             //double-click event
             if(clickDelay < 350) {
-                if (gameObject instanceof Effect) {
+                console.log(gameObject.cost);
+                if (gameObject instanceof Effect && this.resDropZone.data.values.pointSum >= gameObject.cost) {
                     console.log("Effects lie here");
                     if (gameObject.type == 'Buff' && this.dropZone.data.values.playerA_mascots > 0) {
                         console.log(yourDroppedCard);
@@ -407,6 +412,8 @@ export default class Game extends Phaser.Scene {
                         this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
                         //Need code here to apply card effect to token 
                         gameObject.destroy();
+                        self.cardPopUp.alpha = 0;
+                        self.cardPopUpText.alpha = 0;
                         
                     }
                 }

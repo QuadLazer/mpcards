@@ -11,6 +11,7 @@ export default class Effect extends Card {
         scene.add.existing(this);
 
         let inDropZone = false;
+        this.cost = Math.floor(Math.random()*3 + 2);
 
         if (type === 'Buff') {
             this.type = 'Buff';
