@@ -33,6 +33,26 @@ export default class Effect extends Card {
                 return this.healthUp;
             }
         }
+        else if (type === 'Debuff') {
+            this.type = 'Debuff';
+            this.hitDown = this.healthDown = 0;
+            this.value = Math.floor(Math.random()*2)+1;
+
+            if (this.value == 1) {
+                this.hitDown = -1 * (Math.floor(Math.random()*5) + 1);
+            }
+            else {
+                this.healthDown = -1 * (Math.floor(Math.random()*5) + 1);
+            }
+
+            this.getHitVal = () => {
+                return this.hitDown;
+            }
+
+            this.getHealthVal = () => {
+                return this.healthDown;
+            }
+        }
 
 
     }

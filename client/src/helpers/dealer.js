@@ -23,7 +23,8 @@ export default class Dealer {
             };
             for (let i = 0; i < 2; i++) {
                 //render player cards
-                let playerCard = new Card(scene, 475 + (i * 100), 670, playerSprite);
+                //let playerCard = new Card(scene, 475 + (i * 100), 670, playerSprite);
+                let playerDebuff = new Effect('Debuff',scene, 475 + (i * 100), 670, playerSprite);
 
                 let playerMascot = new Mascot(scene,675 + (i * 100), 670, mascotSprite);
 

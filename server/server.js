@@ -33,6 +33,10 @@ io.on('connection', function (socket) {
         io.emit('resDropped', gameObject, isPlayerA);
     });
 
+    socket.on('debuffed', function(modifier, isPlayerA) {
+        io.emit('debuffed',modifier, isPlayerA);
+    } );
+
     //the event that should trigger when mascot attacks another
     socket.on('mascotAttacked', function(gameObject, isPlayerA){
         io.emit('mascotAttacked', gameObject, isPlayerA);

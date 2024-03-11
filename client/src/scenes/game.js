@@ -14,6 +14,7 @@ import { GameObjects } from 'phaser';
 
 
 export default class Game extends Phaser.Scene {
+
     constructor() {
         super({
             key: 'Game'
@@ -111,6 +112,8 @@ export default class Game extends Phaser.Scene {
             self.isPlayerA = true;
         })
 
+        
+
         this.socket.on('dealCards', function () {
             self.dealer.dealCards();
         })
@@ -142,6 +145,16 @@ export default class Game extends Phaser.Scene {
                             display = display + hpText;
                         }
                         
+                    } else if (gameObject.type == 'Debuff') {
+                        let hpText = 'Health down ' + gameObject.getHealthVal() + '\n';
+                        let hitText = 'Hit down ' + gameObject.getHitVal() + '\n';
+                        display = 'This is a debuff type card\n';
+                        if (gameObject.getHealthVal() == 0) {
+                            display = display + hitText;
+                        }
+                        else {
+                            display = display + hpText;
+                        }
                     }
                     let aFee = "activate with: " + gameObject.cost + " resources";
                     display = display + '\n' + aFee;
@@ -181,9 +194,8 @@ export default class Game extends Phaser.Scene {
         });
     
 
-        this.socket.on('cardDropped', function (gameObject, isPlayerA) {
+        this.socket.on('cardDropped', (gameObject, isPlayerA) => {
             let mascotDropped = Boolean(false);
-
             //debugging why gameObject is not a Mascot object 
             if(gameObject instanceof Mascot){
                 console.log("Drop Zone Game Object is a MASCOT");
@@ -200,6 +212,7 @@ export default class Game extends Phaser.Scene {
             console.log("The (cardDropped Function) game object variables:");
             console.log(gameObject);
 
+
             //for player B
             if (isPlayerA !== self.isPlayerA) {
                 this.enemyMascot = gameObject;
@@ -211,7 +224,7 @@ export default class Game extends Phaser.Scene {
                 self.dropZone.data.values.cards++;
                 self.dropZone.data.values.playerB_mascots++;
                 console.log("Player A mascots: " + self.dropZone.data.values.playerA_mascots);
-                console.log("Player A mascots: " + self.dropZone.data.values.playerA_mascots);
+                console.log("Player B mascots: " + self.dropZone.data.values.playerB_mascots);
                 console.log("Opponent Mascot Dropped.");
                 console.log("Mascots now in zone: " + (self.dropZone.data.values.playerA_mascots + self.dropZone.data.values.playerB_mascots));
 
@@ -223,7 +236,7 @@ export default class Game extends Phaser.Scene {
                     self.dropZone.data.values.playerB_mascots++;
                     console.log("Opponent Mascot Dropped.")
                     self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), card.getHealthPoints(), {fill:'#ff5733'});
-                }
+                } 
                 
                 self.droppedCard = new Card(self, (self.dropZone.x), (self.dropZone.y - 210), sprite).disableInteractive();
             }
@@ -301,7 +314,7 @@ export default class Game extends Phaser.Scene {
         })
 
         //for mascot drop zone
-        this.input.on('drop', function (pointer, gameObject, dropZone) {
+        this.input.on('drop', function (pointer,gameObject, dropZone) {
             if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
                 yourDroppedCard = gameObject;
                 gameObject.x = (dropZone.x);
@@ -325,6 +338,7 @@ export default class Game extends Phaser.Scene {
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
                 self.socket.emit('mascotDropped', gameObject.getHealthPoints(), self.isPlayerA);
             }
+           
         
         })
 
@@ -351,6 +365,20 @@ export default class Game extends Phaser.Scene {
                 self.dropZone.data.playerA_mascots--;
                 self.droppedCard.destroy();
             }
+        })
+
+        this.socket.on('debuffed', function(modifier, isPlayerA)  {
+            if(isPlayerA !== self.isPlayerA) {
+                console.log("You've been debuffed");
+                console.log("amount " + modifier);
+                yourDroppedCard.increaseHP(modifier);
+
+            }
+            else {
+                console.log("Debuffing opponent mascot");
+                
+            }
+            
         })
 
         this.socket.on('mascotAttacked', function (gameObject, isPlayerA) {
@@ -404,6 +432,7 @@ export default class Game extends Phaser.Scene {
                 console.log(gameObject.cost);
                 if (gameObject instanceof Effect && this.resDropZone.data.values.pointSum >= gameObject.cost) {
                     console.log("Effects lie here");
+                    console.log(this.dropZone.data);
                     if (gameObject.type == 'Buff' && this.dropZone.data.values.playerA_mascots > 0) {
                         console.log(yourDroppedCard);
                         console.log(this.dropZone.data.values.playerA_mascots)
@@ -415,10 +444,19 @@ export default class Game extends Phaser.Scene {
                         self.cardPopUp.alpha = 0;
                         self.cardPopUpText.alpha = 0;
                         
+                    } else if (gameObject.type == 'Debuff') {
+                        
+                        if(this.dropZone.data.values.playerB_mascots > 0) {
+                            console.log("effect card played");
+                            self.socket.emit('debuffed', gameObject.getHealthVal(), self.isPlayerA);
+                            gameObject.destroy();
+                            self.cardPopUp.alpha = 0;
+                            self.cardPopUpText.alpha = 0;
                     }
                 }
             }
-        });
+        }
+    });
 
         this.controlButton.on('pointerup', function (pointer) {
             console.log("I was clicked!");
@@ -430,10 +468,19 @@ export default class Game extends Phaser.Scene {
             self.socket.emit('mascotAttacked', gameObject, self.isPlayerA);
         });
 
-
+        this.events.on('update', () => {
+        if (yourDroppedCard !== undefined) {
+            this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
+         }
+        });
+        
+        
     }
     
+    
     update() {
+        
+        
         // Debugging pixel coords
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
         if (this.controller.turnCheck() && this.isPlayerA) {
