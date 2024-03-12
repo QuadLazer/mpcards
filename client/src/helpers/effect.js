@@ -53,6 +53,14 @@ export default class Effect extends Card {
                 return this.healthDown;
             }
         }
+        else if (type === 'Raze') {
+            this.type = 'Raze';
+            this.value = Math.floor(Math.random()*3) + 1;
+
+            this.getVal = () => {
+                return this.value;
+            }
+        }
 
 
     }

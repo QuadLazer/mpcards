@@ -89,6 +89,7 @@ export default class Game extends Phaser.Scene {
         let droppedCard;
         let yourDroppedCard;
 
+
         //resource variables
         let resourceTotal = 0;
         this.resourceTotalText = this.add.text(50, 350, 'Resource pool: ' + resourceTotal, {color: '#ffaa' });
@@ -155,6 +156,10 @@ export default class Game extends Phaser.Scene {
                         else {
                             display = display + hpText;
                         }
+                    } else if (gameObject.type == 'Raze') {
+                        let destroyText = 'Resources down ' + gameObject.getVal() + '\n'
+                        display = 'This is a raze type card\n';
+                        display += destroyText;
                     }
                     let aFee = "activate with: " + gameObject.cost + " resources";
                     display = display + '\n' + aFee;
@@ -267,7 +272,10 @@ export default class Game extends Phaser.Scene {
                     console.log('Game object is being recognized as a Resource object')
                     console.log('Resource Card Value Dropped: ' + gameObject.getResVal());
                     resDropZone.data.values.pointSum += gameObject.getResVal();
-                    self.updateResourceTotalText(resDropZone.data.values.pointSum);
+                    resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
+                    console.log("pool val: " + resDropZone.data.values.pointSum );
+                    console.log("max capacity: " + resDropZone.data.values.maxCapacity);
+                    self.droppedCard(resDropZone.data.values.pointSum);
                 }
                 else{
                     console.log('Game object is not being recognized as a Resource object')
@@ -377,8 +385,24 @@ export default class Game extends Phaser.Scene {
             else {
                 console.log("Debuffing opponent mascot");
                 
+            } 
+        })
+
+        this.socket.on('razed', function(modifier, isPlayerA) {
+            if(isPlayerA !== self.isPlayerA) {
+                console.log("Your land has been destroyed");
+                if (self.resDropZone.data.values.pointSum > self.resDropZone.data.values.maxCapacity - modifier) {
+                    self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity - modifier;
+                }
+                self.resDropZone.data.values.maxCapacity -= modifier;
+                self.resDropZone.data.values.pointSum < 0 ? 0 : self.resDropZone.data.values.pointSum;
+                self.resDropZone.data.values.maxCapacity < 0 ? 0 : self.resDropZone.data.values.maxCapacity;
+                console.log("Max Capacity: " + self.resDropZone.data.values.maxCapacity);
+                console.log("resources available: " + self.resDropZone.data.values.pointSum);
             }
-            
+            else {
+                console.log("You are destroying your opponent's lands");
+            }
         })
 
         this.socket.on('mascotAttacked', function (gameObject, isPlayerA) {
@@ -434,6 +458,7 @@ export default class Game extends Phaser.Scene {
                     console.log("Effects lie here");
                     console.log(this.dropZone.data);
                     if (gameObject.type == 'Buff' && this.dropZone.data.values.playerA_mascots > 0) {
+                        this.resDropZone.data.values.pointSum -= gameObject.cost;
                         console.log(yourDroppedCard);
                         console.log(this.dropZone.data.values.playerA_mascots)
                         console.log(gameObject.getHitVal(), gameObject.getHealthVal());
@@ -447,16 +472,25 @@ export default class Game extends Phaser.Scene {
                     } else if (gameObject.type == 'Debuff') {
                         
                         if(this.dropZone.data.values.playerB_mascots > 0) {
+                            this.resDropZone.data.values.pointSum -= gameObject.cost;
                             console.log("effect card played");
                             self.socket.emit('debuffed', gameObject.getHealthVal(), self.isPlayerA);
                             gameObject.destroy();
                             self.cardPopUp.alpha = 0;
                             self.cardPopUpText.alpha = 0;
+                        }
+                    } else if (gameObject.type == 'Raze') {
+                        this.resDropZone.data.values.pointSum -= gameObject.cost;
+                        gameObject.destroy();
+                        self.socket.emit('razed',gameObject.getVal(), self.isPlayerA);
+                        self.cardPopUp.alpha = 0;
+                        self.cardPopUpText.alpha = 0;
                     }
                 }
+            console.log("pool val: " + this.resDropZone.data.values.pointSum );
+            console.log("max capacity: " + this.resDropZone.data.values.maxCapacity);
             }
-        }
-    });
+        });
 
         this.controlButton.on('pointerup', function (pointer) {
             console.log("I was clicked!");
@@ -468,10 +502,13 @@ export default class Game extends Phaser.Scene {
             self.socket.emit('mascotAttacked', gameObject, self.isPlayerA);
         });
 
+        this.resDropZone.data.values.maxCapacity = this.resDropZone.data.values.pointSum;
+
         this.events.on('update', () => {
         if (yourDroppedCard !== undefined) {
             this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
          }
+         this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
         });
         
         

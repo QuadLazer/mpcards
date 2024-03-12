@@ -23,7 +23,7 @@ export default class Zone {
         this.renderResourceZone = () => {
             let resDropZone = scene.add.zone(200, 470, 300, 200).setRectangleDropZone(300,200)
             scene.add.zone()
-            resDropZone.setData({ resources: 0, pointSum: 10});
+            resDropZone.setData({ resources: 0, pointSum: 10, maxCapacity: 0});
             resDropZone.name = 'resourceArea'
             return resDropZone;
         }
