@@ -16,9 +16,9 @@ const getAchievements = async () => {
     }
 }
 
-const getAchievementByName = async (achievementName) => {
+const getAchievementById = async (achievementId) => {
     try {
-        const achievement = await db.one(`SELECT * FROM achievement where aname = $1`,[achievementName]);
+        const achievement = await db.one(`SELECT * FROM achievement where id = $1`,[achievementId]);
         return achievement;
     } catch (error) {
 
@@ -32,4 +32,4 @@ const getAchievementByName = async (achievementName) => {
 
 
 
-module.exports = { getAchievements, getAchievementByName}
+module.exports = { getAchievements, getAchievementById}

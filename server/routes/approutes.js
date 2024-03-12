@@ -21,7 +21,7 @@ router.delete("/users/delete", eraseUser);
 router.put("/users/updateAccount", modifyUser);
 
 router.get("/ach/fetchAchievements", fetchAllAchievements);
-router.get("/ach/findAchievement/:achName", findAchievement);
+router.get("/ach/findAchievement/:achId", findAchievement);
 
 router.get("/uha/fetchUserAch/:email", findUserAchieved);
 router.get("/uha/addUserAch", addAchievementToUser);
