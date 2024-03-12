@@ -220,9 +220,9 @@ export default class Game extends Phaser.Scene {
 
             //for player B
             if (isPlayerA !== self.isPlayerA) {
-                this.enemyMascot = gameObject;
+                //this.enemyMascot = gameObject;
                 console.log("Opponent mascot variables:");
-                console.log(enemyMascot);
+                //console.log(enemyMascot);
                 let sprite = gameObject.textureKey;
                 console.log(sprite);
                 self.opponentCards.shift().destroy();
@@ -243,8 +243,13 @@ export default class Game extends Phaser.Scene {
                     self.hpText = self.add.text(((self.dropZone.x - 250) + (self.dropZone.data.values.cards * 150)), (self.dropZone.y - 100), card.getHealthPoints(), {fill:'#ff5733'});
                 } 
                 
-                self.droppedCard = new Card(self, (self.dropZone.x), (self.dropZone.y - 210), sprite).disableInteractive();
+                //this is Player B rendering the Mascot Card that Player A dropped
+                self.droppedCard = new Mascot(self, (self.dropZone.x), (self.dropZone.y - 210), sprite).disableInteractive();
+                console.log("dropped Card -------");
+                console.log(self.droppedCard);
             }
+            //yourDroppedCard = gameObject;
+            //console.log(yourDroppedCard);
         })
 
         this.socket.on('resDropped', function (gameObject, isPlayerA) {
@@ -324,7 +329,7 @@ export default class Game extends Phaser.Scene {
         //for mascot drop zone
         this.input.on('drop', function (pointer,gameObject, dropZone) {
             if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
-                yourDroppedCard = gameObject;
+
                 gameObject.x = (dropZone.x);
                 console.log(gameObject);
                 gameObject.inDropZone = true;
@@ -338,6 +343,7 @@ export default class Game extends Phaser.Scene {
                 console.log('Mascots In Zone:' + (dropZone.data.values.playerA_mascots + dropZone.data.values.playerB_mascots));
                 console.log("Player A Mascot Health: " + gameObject.getHealthPoints());
                 yourMascot = gameObject.getHealthPoints();
+                
 
                 //handZone.data.values.cards--;
                 gameObject.y = dropZone.y;
@@ -345,6 +351,10 @@ export default class Game extends Phaser.Scene {
                 self.updateMascotHealthText(gameObject.getHealthPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
                 self.socket.emit('mascotDropped', gameObject.getHealthPoints(), self.isPlayerA);
+
+                yourDroppedCard = gameObject;
+                console.log("your dropped card");
+                console.log(yourDroppedCard);
             }
            
         
@@ -368,11 +378,20 @@ export default class Game extends Phaser.Scene {
 
         this.socket.on('mascotDestroyed', function(isPlayerA){
             if(isPlayerA !== self.isPlayerA){
-                console.log("Your Mascot will be destroyed.");
-                self.dropZone.data.cards--;
-                self.dropZone.data.playerA_mascots--;
-                self.droppedCard.destroy();
+                console.log("You lost this battle. Your Mascot will be destroyed.");
+                self.dropZone.data.values.cards--;
+                self.dropZone.data.values.playerA_mascots = 0;
+                yourDroppedCard.destroy();
+                yourMascot = 0;
+                self.updateMascotHealthText(0);
             }
+            else{
+                self.droppedCard.destroy();
+                self.dropZone.data.values.playerB_mascots--;
+                self.enemyMascot = 0;
+            
+            }
+                
         })
 
         this.socket.on('debuffed', function(modifier, isPlayerA)  {
@@ -408,28 +427,25 @@ export default class Game extends Phaser.Scene {
         this.socket.on('mascotAttacked', function (gameObject, isPlayerA) {
             //this is emitted to all clients (player A and B), so this function goes thru both
             console.log("Mascot Attacked!!!!");
-            let win = false;
+            console.log(yourDroppedCard);
+            console.log("Dropped Card HP: " + yourDroppedCard.getHealthPoints());
+
             if(isPlayerA !== self.isPlayerA){
-                if(self.enemyMascot > self.yourMascot){
+                console.log("Enemy Mascot HP: " + self.enemyMascot);
+                console.log("Your Mascot HP: " + yourMascot);
+                if(self.enemyMascot > yourMascot){
                     console.log("You Lose this battle. Your Mascot dies.");
-                    win = true;
-                    
+                    self.socket.emit('mascotDestroyed', isPlayerA);
+                }
+                else if(self.enemyMascot == yourMascot){
+                    console.log("This battle ends in a tie.");
                 }
                 else{
                     console.log("You Win this battle. Your Mascot lives.");
                     self.socket.emit('mascotDestroyed', self.isPlayerA);
                 }
             }
-            else{
-                if(self.enemyMascot > self.yourMascot){
-                    console.log("You Win this battle. Your Mascot lives.");
-                    self.socket.emit('mascotDestroyed', self.isPlayerA);
-                }
-                else{
-                    console.log("You Lose this battle. Your Mascot dies.");
-                }
-            }
-            win = false;
+            
         })
             
 
@@ -560,10 +576,53 @@ export default class Game extends Phaser.Scene {
         }
     }
 
-    updateMascotHealth(mascotA_Health, mascotB_Health){
 
-        if(mascotA_Health > mascotB_Health){
-            //something
+    calculatePower(yourRegion, enemyRegion, yourPower){
+        //NE beats S, S beats MW, MW beats W, W beats NE
+        let south = "S";
+        let northEast = "NE";
+        let midWest = "MW";
+        let west = "W";
+
+        if(yourRegion == south){
+            //beats MW
+            if(enemyRegion == midWest){
+                return (yourPower * 2);
+            }
+            //loses to NE
+            else if(enemyRegion == northEast){
+                return (yourPower / 2)
+            }
+        }
+        else if(yourRegion == northEast){
+            //beats S
+            if(enemyRegion == south){
+                return (yourPower * 2);
+            }
+            //loses to W
+            else if(enemyRegion == northEast){
+                return (yourPower / 2)
+            }
+        }
+        else if(yourRegion == midWest){
+            //beats W
+            if(enemyRegion == west){
+                return (yourPower * 2);
+            }
+            //loses to S
+            else if(enemyRegion == south){
+                return (yourPower / 2)
+            }
+        }
+        else if(yourRegion == west){
+            //beats NE
+            if(enemyRegion == northEast){
+                return (yourPower * 2);
+            }
+            //loses to MW
+            else if(enemyRegion == midWest){
+                return (yourPower / 2)
+            }
         }
     }
 }
