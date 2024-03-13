@@ -33,9 +33,17 @@ io.on('connection', function (socket) {
         io.emit('resDropped', gameObject, isPlayerA);
     });
 
+    socket.on('debuffed', function(modifier,type, isPlayerA) {
+        io.emit('debuffed',modifier, type, isPlayerA);
+    } );
+
+    socket.on('razed', function(modifier, isPlayerA) {
+        io.emit('razed', modifier, isPlayerA);
+    })
+
     //the event that should trigger when mascot attacks another
-    socket.on('mascotAttacked', function(gameObject, isPlayerA){
-        io.emit('mascotAttacked', gameObject, isPlayerA);
+    socket.on('mascotAttacked', function(attackPoints, isPlayerA){
+        io.emit('mascotAttacked', attackPoints, isPlayerA);
     });
 
     socket.on('mascotDropped', function(hp, isPlayerA){

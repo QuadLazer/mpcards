@@ -23,6 +23,7 @@ export default class Mascot extends Card {
 
         this.name = "Test";
         this.healthPoints = Math.floor(Math.random()*15)+1;
+        this.attackPoints = 3;
         this.region = "S";
 
         scene.add.existing(this);
@@ -31,6 +32,10 @@ export default class Mascot extends Card {
         //get methods
         this.getHealthPoints = () => {
             return this.healthPoints;
+        }
+
+        this.getAttackPoints = () => {
+            return this.attackPoints;
         }
 
         this.getRegion = ()=> {
@@ -42,6 +47,18 @@ export default class Mascot extends Card {
         }
     
         //set methods
+        this.setName = (name) => {
+            this.name = name;
+        }
+        
+        this.setRegion = (region) => {
+            this.region = region;
+        }
+
+        this.setHP = (HP) => {
+            this.healthPoints = HP;
+        }
+
         this.decreaseHP = (amount) =>{
             this.healthPoints = this.healthPoints - amount;
             if(this.healthPoints < 0){
@@ -51,6 +68,14 @@ export default class Mascot extends Card {
     
         this.increaseHP = (amount) => {
             this.healthPoints = this.healthPoints + amount;
+        }
+
+        this.decreaseAttack = (amount) => {
+            this.attackPoints = this.attackPoints - amount > 0 ? this.attackPoints - amount : 0; 
+        }
+
+        this.increaseAttack = (amount) => {
+            this.attackPoints += amount;
         }
     
 
