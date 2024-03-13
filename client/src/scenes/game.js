@@ -127,7 +127,9 @@ export default class Game extends Phaser.Scene {
             if(gameObject instanceof GameObjects.Sprite){
                 if(gameObject instanceof Mascot){
                     //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-                    this.cardPopUpText.setText('HP: ' + gameObject.getHealthPoints());
+                    let display = 'HP: ' + gameObject.getHealthPoints() + '\n';
+                    display += 'Attack power: ' + gameObject.getAttackPoints();
+                    this.cardPopUpText.setText(display);
                 }
                 else if(gameObject instanceof Resource){
                     //this.cardPopUpText = this.add.text( 0, 0, 'Value: ' + gameObject.getResVal(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
@@ -394,11 +396,16 @@ export default class Game extends Phaser.Scene {
                 
         })
 
-        this.socket.on('debuffed', function(modifier, isPlayerA)  {
+        this.socket.on('debuffed', function(modifier, type, isPlayerA)  {
             if(isPlayerA !== self.isPlayerA) {
                 console.log("You've been debuffed");
                 console.log("amount " + modifier);
-                yourDroppedCard.increaseHP(modifier);
+                if (type == 'health') {
+                    yourDroppedCard.decreaseHP(modifier);
+                }
+                else {
+                    yourDroppedCard.decreaseAttack(modifier);
+                }
 
             }
             else {
@@ -478,8 +485,13 @@ export default class Game extends Phaser.Scene {
                         console.log(yourDroppedCard);
                         console.log(this.dropZone.data.values.playerA_mascots)
                         console.log(gameObject.getHitVal(), gameObject.getHealthVal());
-                        yourDroppedCard.increaseHP(gameObject.getHealthVal());
-                        this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
+                        if (gameObject.getHealthVal() > 0) {
+                            yourDroppedCard.increaseHP(gameObject.getHealthVal());
+                            this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
+                        }
+                        else {
+                            yourDroppedCard.increaseAttack(gameObject.getHitVal());
+                        }
                         //Need code here to apply card effect to token 
                         gameObject.destroy();
                         self.cardPopUp.alpha = 0;
@@ -490,7 +502,13 @@ export default class Game extends Phaser.Scene {
                         if(this.dropZone.data.values.playerB_mascots > 0) {
                             this.resDropZone.data.values.pointSum -= gameObject.cost;
                             console.log("effect card played");
-                            self.socket.emit('debuffed', gameObject.getHealthVal(), self.isPlayerA);
+                            if (gameObject.getHealthVal() > 0) {                               
+                                self.socket.emit('debuffed', gameObject.getHealthVal(), 'health', self.isPlayerA);
+                            }
+                            else {
+                                self.socket.emit('debuffed', gameObject.getHitVal(), 'hit', self.isPlayerA )
+                            }
+                            
                             gameObject.destroy();
                             self.cardPopUp.alpha = 0;
                             self.cardPopUpText.alpha = 0;

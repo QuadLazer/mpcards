@@ -39,10 +39,10 @@ export default class Effect extends Card {
             this.value = Math.floor(Math.random()*2)+1;
 
             if (this.value == 1) {
-                this.hitDown = -1 * (Math.floor(Math.random()*5) + 1);
+                this.hitDown = (Math.floor(Math.random()*5) + 1);
             }
             else {
-                this.healthDown = -1 * (Math.floor(Math.random()*5) + 1);
+                this.healthDown = (Math.floor(Math.random()*5) + 1);
             }
 
             this.getHitVal = () => {

@@ -33,8 +33,8 @@ io.on('connection', function (socket) {
         io.emit('resDropped', gameObject, isPlayerA);
     });
 
-    socket.on('debuffed', function(modifier, isPlayerA) {
-        io.emit('debuffed',modifier, isPlayerA);
+    socket.on('debuffed', function(modifier,type, isPlayerA) {
+        io.emit('debuffed',modifier, type, isPlayerA);
     } );
 
     socket.on('razed', function(modifier, isPlayerA) {
