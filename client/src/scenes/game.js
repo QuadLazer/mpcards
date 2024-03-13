@@ -431,25 +431,16 @@ export default class Game extends Phaser.Scene {
             }
         })
 
-        this.socket.on('mascotAttacked', function (gameObject, isPlayerA) {
+        this.socket.on('mascotAttacked', function (attackPoints, isPlayerA) {
             //this is emitted to all clients (player A and B), so this function goes thru both
             console.log("Mascot Attacked!!!!");
             console.log(yourDroppedCard);
             console.log("Dropped Card HP: " + yourDroppedCard.getHealthPoints());
 
             if(isPlayerA !== self.isPlayerA){
-                console.log("Enemy Mascot HP: " + self.enemyMascot);
-                console.log("Your Mascot HP: " + yourMascot);
-                if(self.enemyMascot > yourMascot){
-                    console.log("You Lose this battle. Your Mascot dies.");
-                    self.socket.emit('mascotDestroyed', isPlayerA);
-                }
-                else if(self.enemyMascot == yourMascot){
-                    console.log("This battle ends in a tie.");
-                }
-                else{
-                    console.log("You Win this battle. Your Mascot lives.");
-                    self.socket.emit('mascotDestroyed', self.isPlayerA);
+                yourDroppedCard.decreaseHP(attackPoints);
+                if(yourDroppedCard.getHealthPoints() == 0) {
+                    self.socket.emit('mascotDestroyed',isPlayerA);
                 }
             }
             
@@ -531,9 +522,10 @@ export default class Game extends Phaser.Scene {
             this.scene.start('Profile');
         }, this)
 
-        this.attackButton.on('pointerdown', (isPlayerA, gameObject) => { 
+        this.attackButton.on('pointerdown', () => { 
             this.updateClickCountText(++clickCount);
-            self.socket.emit('mascotAttacked', gameObject, self.isPlayerA);
+            let attack = yourDroppedCard.getAttackPoints();
+            self.socket.emit('mascotAttacked', attack, self.isPlayerA);
         });
 
         this.resDropZone.data.values.maxCapacity = this.resDropZone.data.values.pointSum;
