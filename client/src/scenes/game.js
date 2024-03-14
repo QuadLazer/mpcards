@@ -76,8 +76,16 @@ export default class Game extends Phaser.Scene {
         let btnEnd = this.add.text(1130,400, 'END TURN', { fill: '#BAFA11'});
         btnEnd.setInteractive();
         btnEnd.on('pointerdown', () => {
+            
             this.switchTurn();
-            this.socket.emit('switchTurn',this.currentTurn, this.isPlayerA);
+
+            this.socket.emit('switchTurn',self.currentTurn, this.isPlayerA);
+            if(!this.isPlayerA) {
+                this.switchTurn();
+            }
+            
+            //this.switchTurn();
+            self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity;
         });
       
         //hover mascot variables
@@ -134,8 +142,8 @@ export default class Game extends Phaser.Scene {
         this.socket.on('switchTurn', function(turn, isPlayerA) {
             if(isPlayerA !== self.isPlayerA) {
                 //this.currentTurn = turn;
-                console.log("before change ", this.currentTurn);
-                self.currentTurn = !turn;
+                console.log("before change ", self.currentTurn);
+                self.currentTurn = !self.currentTurn;
                 console.log(self.currentTurn);
             }
                 
@@ -444,7 +452,10 @@ export default class Game extends Phaser.Scene {
         })
 
         this.socket.on('razed', function(modifier, isPlayerA) {
-            if(isPlayerA !== self.isPlayerA) {
+            //if(isPlayerA !== self.isPlayerA && self.isPlayerA != undefined) {
+            if(self.currentTurn != true) {
+                console.log("myplayerA: " + isPlayerA);
+                console.log("comparator " + self.isPlayerA);
                 console.log("Your land has been destroyed");
                 if (self.resDropZone.data.values.pointSum > self.resDropZone.data.values.maxCapacity - modifier) {
                     self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity - modifier;
