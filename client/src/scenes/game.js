@@ -42,7 +42,7 @@ export default class Game extends Phaser.Scene {
 
     create() {
         var firebaseApp = this.plugins.get('FirebasePlugin');
-        this.isPlayerA;
+        //this.isPlayerA;
         this.opponentCards = [];
         this.mascotCardPlace = false;
         this.currentTurn = false;
@@ -77,12 +77,9 @@ export default class Game extends Phaser.Scene {
         btnEnd.setInteractive();
         btnEnd.on('pointerdown', () => {
             
-            this.switchTurn();
-
-            this.socket.emit('switchTurn',self.currentTurn, this.isPlayerA);
-            if(!this.isPlayerA) {
+            
                 this.switchTurn();
-            }
+                this.socket.emit('switchTurn',this.currentTurn, this.isPlayerA);
             
             //this.switchTurn();
             self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity;
@@ -126,6 +123,7 @@ export default class Game extends Phaser.Scene {
         this.socket.on('connect', function () {
             console.log('Connected!');
         });
+        self.isPlayerA = false;
 
         this.socket.on('isPlayerA', function () {
             console.log("I've set someone to true!");
@@ -146,6 +144,8 @@ export default class Game extends Phaser.Scene {
                 self.currentTurn = !self.currentTurn;
                 console.log(self.currentTurn);
             }
+
+            
                 
 
             
@@ -577,37 +577,27 @@ export default class Game extends Phaser.Scene {
             this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
          }
          this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
-         
-         if (initTurn == true && this.isPlayerA != undefined) {
-            
-            //this.checkInitTurn();
-            //this.isPlayerA = true;
-
-             initTurn = false;
-             console.log(this.currentTurn);
-             this.isPlayerA = true;
-             this.checkInitTurn();
-             console.log(this.currentTurn);
-             console.log(this.isPlayerA);
+         console.log("before set " + this.isPlayerA);
+         if(this.isPlayerA && initTurn) {
+            this.currentTurn = true;
+            initTurn = false;
          }
-
-        //  if (this.isPlayerA == undefined) {
-        //     this.isPlayerA = false;
+         else if(!this.isPlayerA && !initTurn) {
+            this.currentTurn = false;
+            initTurn = false;
+         }
+        //  if (initTurn == true && this.isPlayerA != undefined ) {
+        //     this.checkInitTurn();
+        //     initTurn = false;
+        //     console.log(this.currentTurn);
         //  }
-         //console.log(this.isPlayerA)
+        //  console.log("after set " + this.isPlayerA);
 
-        //   if(initTurn == true && this.isPlayerA == undefined) {
-        //      this.isPlayerA = false;
-        //      console.log(this.currentTurn);
-        //      console.log(this.isPlayerA);
 
-        
-        //   }
 
-         
-        
-         
          this.update();
+
+
          
         });
         
