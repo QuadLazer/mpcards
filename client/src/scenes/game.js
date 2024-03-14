@@ -41,9 +41,11 @@ export default class Game extends Phaser.Scene {
 
     create() {
         var firebaseApp = this.plugins.get('FirebasePlugin');
-        this.isPlayerA = false;
+        this.isPlayerA;
         this.opponentCards = [];
         this.mascotCardPlace = false;
+        this.currentTurn = false;
+        let initTurn = true;
         
 
         //zone variables
@@ -69,6 +71,13 @@ export default class Game extends Phaser.Scene {
             this.socket.disconnect();
             this.scene.start('Load');
         });
+
+        let btnEnd = this.add.text(1130,400, 'END TURN', { fill: '#BAFA11'});
+        btnEnd.setInteractive();
+        btnEnd.on('pointerdown', () => {
+            this.switchTurn();
+            this.socket.emit('switchTurn',this.currentTurn, this.isPlayerA);
+        });
       
         //hover mascot variables
         this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0).setDepth(100);
@@ -88,6 +97,7 @@ export default class Game extends Phaser.Scene {
         let yourMascot;
         let droppedCard;
         let yourDroppedCard;
+        
 
 
         //resource variables
@@ -113,11 +123,25 @@ export default class Game extends Phaser.Scene {
             self.isPlayerA = true;
         })
 
+
         
 
         this.socket.on('dealCards', function () {
             self.dealer.dealCards();
-        })
+        });
+
+        this.socket.on('switchTurn', function(turn, isPlayerA) {
+            if(isPlayerA !== self.isPlayerA) {
+                //this.currentTurn = turn;
+                console.log("before change ", this.currentTurn);
+                self.currentTurn = !turn;
+                console.log(self.currentTurn);
+            }
+                
+
+            
+
+        });
 
         //setPollOnMove - means that the interaction won't happen unless the user moves the mouse pointer themselves
         this.input.setPollOnMove();
@@ -269,7 +293,7 @@ export default class Game extends Phaser.Scene {
         //for resource drop zone
         this.input.on('drop', function (pointer, gameObject, resDropZone) {
             if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource
-                && gameObject.insResDropZone != true ) {
+                && gameObject.insResDropZone != true) {
                 gameObject.x = (resDropZone.x);
                 gameObject.insResDropZone = true;
 
@@ -330,7 +354,7 @@ export default class Game extends Phaser.Scene {
 
         //for mascot drop zone
         this.input.on('drop', function (pointer,gameObject, dropZone) {
-            if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot) {
+            if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot ) {
 
                 gameObject.x = (dropZone.x);
                 console.log(gameObject);
@@ -529,12 +553,25 @@ export default class Game extends Phaser.Scene {
         });
 
         this.resDropZone.data.values.maxCapacity = this.resDropZone.data.values.pointSum;
-
+      
+        
+        
         this.events.on('update', () => {
         if (yourDroppedCard !== undefined) {
             this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
          }
          this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
+         
+         if (initTurn == true && this.isPlayerA != undefined ) {
+            this.checkInitTurn();
+            initTurn = false;
+            console.log(this.currentTurn);
+         }
+         
+        
+         
+         this.update();
+         
         });
         
         
@@ -542,24 +579,39 @@ export default class Game extends Phaser.Scene {
     
     
     update() {
+
         
         
         // Debugging pixel coords
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
-        if (this.controller.turnCheck() && this.isPlayerA) {
+        if (this.currentTurn == true) {
             //console.log("Cond 1!");
             this.turnIndicator.setText('Your turn!');
-        } else if (this.controller.turnCheck() && !this.isPlayerA) {
+        } else {
             //console.log("Cond 2!");
             this.turnIndicator.setText('Opponent\'s turn!');
-        } else if (!this.controller.turnCheck() && !this.isPlayerA) {
-            //console.log("Cond 3!");
-            this.turnIndicator.setText('Your turn!');
-        } else if (!this.controller.turnCheck() && this.isPlayerA) {
-            //console.log("Cond 4!");
-            this.turnIndicator.setText('Opponent\'s turn!');
-        } 
+        }
+        // } else if (!this.controller.turnCheck() && !this.isPlayerA) {
+        //     //console.log("Cond 3!");
+        //     this.turnIndicator.setText('Your turn!');
+        // } else if (!this.controller.turnCheck() && this.isPlayerA) {
+        //     //console.log("Cond 4!");
+        //     this.turnIndicator.setText('Opponent\'s turn!');
+        // } 
     }
+
+    checkInitTurn() {
+        //this.currentTurn = this.isPlayerA;
+        this.currentTurn = this.isPlayerA;
+    }
+
+    switchTurn() {
+        this.currentTurn = !this.currentTurn;
+    }
+
+    
+        
+    
 
 
     updateClickCountText(clickCount) {
