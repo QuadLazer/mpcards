@@ -37,6 +37,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('testEndButton', 'assets/TestEnd.png');
         this.load.image('mascotCardFront', 'assets/gator_logo.png');
 
+
     }
 
     create() {
@@ -293,7 +294,7 @@ export default class Game extends Phaser.Scene {
         //for resource drop zone
         this.input.on('drop', function (pointer, gameObject, resDropZone) {
             if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource
-                && gameObject.insResDropZone != true) {
+                && gameObject.insResDropZone != true && self.currentTurn) {
                 gameObject.x = (resDropZone.x);
                 gameObject.insResDropZone = true;
 
@@ -306,7 +307,7 @@ export default class Game extends Phaser.Scene {
                     resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
                     console.log("pool val: " + resDropZone.data.values.pointSum );
                     console.log("max capacity: " + resDropZone.data.values.maxCapacity);
-                    self.droppedCard(resDropZone.data.values.pointSum);
+                    
                 }
                 else{
                     console.log('Game object is not being recognized as a Resource object')
@@ -353,8 +354,10 @@ export default class Game extends Phaser.Scene {
         })
 
         //for mascot drop zone
+        
         this.input.on('drop', function (pointer,gameObject, dropZone) {
-            if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot ) {
+            if (!gameObject.inDropZone && dropZone.data.values.playerA_mascots == 0 && dropZone.name == 'mascotArea' && gameObject instanceof Mascot
+            && self.currentTurn) {
 
                 gameObject.x = (dropZone.x);
                 console.log(gameObject);
@@ -385,6 +388,7 @@ export default class Game extends Phaser.Scene {
            
         
         })
+        
 
         this.socket.on('mascotDropped', function(hp, isPlayerA){
             console.log("transmitted HP: " + hp);
@@ -395,6 +399,7 @@ export default class Game extends Phaser.Scene {
             }
             
         })
+    
 
         this.input.on('dragleave', function (pointer, gameObject, dropZone) {
             dropZone.setAlpha(0.5);
