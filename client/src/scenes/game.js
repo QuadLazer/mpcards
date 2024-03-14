@@ -578,11 +578,32 @@ export default class Game extends Phaser.Scene {
          }
          this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
          
-         if (initTurn == true && this.isPlayerA != undefined ) {
-            this.checkInitTurn();
-            initTurn = false;
-            console.log(this.currentTurn);
+         if (initTurn == true && this.isPlayerA != undefined) {
+            
+            //this.checkInitTurn();
+            //this.isPlayerA = true;
+
+             initTurn = false;
+             console.log(this.currentTurn);
+             this.isPlayerA = true;
+             this.checkInitTurn();
+             console.log(this.currentTurn);
+             console.log(this.isPlayerA);
          }
+
+        //  if (this.isPlayerA == undefined) {
+        //     this.isPlayerA = false;
+        //  }
+         //console.log(this.isPlayerA)
+
+        //   if(initTurn == true && this.isPlayerA == undefined) {
+        //      this.isPlayerA = false;
+        //      console.log(this.currentTurn);
+        //      console.log(this.isPlayerA);
+
+        
+        //   }
+
          
         
          
