@@ -28,9 +28,14 @@ export default class Dealer {
 
                 let playerMascot = new Mascot(scene,675 + (i * 100), 670, mascotSprite);
 
+                //region setting for Player B
+                if(!scene.isPlayerA){
+                    playerMascot.setRegion("NE");
+                }
+
                 let playerEffect = new Effect('Buff',scene, 875 + (i * 100), 670, playerSprite)
 
-                 let playerResource = new Effect('Raze',scene, 1075 + (i * 100), 670, playerSprite);
+                let playerResource = new Effect('Raze',scene, 1075 + (i * 100), 670, playerSprite);
                 // let resourceTextureKey = playerResource.getResType();
                 // playerResource.setTexture(resourceTextureKey);
                 // console.log("Class obj val: " + playerResource.getResVal());

@@ -438,6 +438,7 @@ export default class Game extends Phaser.Scene {
             console.log("Dropped Card HP: " + yourDroppedCard.getHealthPoints());
 
             if(isPlayerA !== self.isPlayerA){
+                console.log("attack " + self.calculatePower(yourDroppedCard.getRegion(), self.droppedCard.getRegion(), attackPoints));
                 yourDroppedCard.decreaseHP(attackPoints);
                 if(yourDroppedCard.getHealthPoints() == 0) {
                     self.socket.emit('mascotDestroyed',isPlayerA);
