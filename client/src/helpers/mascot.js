@@ -23,7 +23,7 @@ export default class Mascot extends Card {
 
         this.name = "Test";
         this.healthPoints = Math.floor(Math.random()*15)+1;
-        this.attackPoints = 3;
+        this.attackPoints = Math.floor(Math.random()*15)+1;
         this.region = "S";
 
         scene.add.existing(this);
