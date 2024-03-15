@@ -47,6 +47,8 @@ export default class Game extends Phaser.Scene {
         this.mascotCardPlace = false;
         this.currentTurn = false;
         let initTurn = true;
+        let attackCount = 1;
+        let attackCap = attackCount;
         
 
         //zone variables
@@ -68,21 +70,22 @@ export default class Game extends Phaser.Scene {
         //button variables
         let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF'});
         btnQuit.setInteractive();
+        
         btnQuit.on('pointerdown', () => {
             this.socket.disconnect();
             this.scene.start('Load');
         });
-
+        
+        //End turn button, switch play capability
         let btnEnd = this.add.text(1130,400, 'END TURN', { fill: '#BAFA11'});
         btnEnd.setInteractive();
         btnEnd.on('pointerdown', () => {
-            
-            
+            if(this.currentTurn) {
                 this.switchTurn();
                 this.socket.emit('switchTurn',this.currentTurn, this.isPlayerA);
-            
-            //this.switchTurn();
-            self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity;
+                self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity;
+                attackCount = attackCap;
+            }
         });
       
         //hover mascot variables
@@ -144,11 +147,6 @@ export default class Game extends Phaser.Scene {
                 self.currentTurn = !self.currentTurn;
                 console.log(self.currentTurn);
             }
-
-            
-                
-
-            
 
         });
 
@@ -508,7 +506,8 @@ export default class Game extends Phaser.Scene {
             //double-click event
             if(clickDelay < 350) {
                 console.log(gameObject.cost);
-                if (gameObject instanceof Effect && this.resDropZone.data.values.pointSum >= gameObject.cost) {
+                if (gameObject instanceof Effect && this.resDropZone.data.values.pointSum >= gameObject.cost
+                    && this.currentTurn) {
                     console.log("Effects lie here");
                     console.log(this.dropZone.data);
                     if (gameObject.type == 'Buff' && this.dropZone.data.values.playerA_mascots > 0) {
@@ -523,7 +522,7 @@ export default class Game extends Phaser.Scene {
                         else {
                             yourDroppedCard.increaseAttack(gameObject.getHitVal());
                         }
-                        //Need code here to apply card effect to token 
+                        
                         gameObject.destroy();
                         self.cardPopUp.alpha = 0;
                         self.cardPopUpText.alpha = 0;
@@ -562,10 +561,16 @@ export default class Game extends Phaser.Scene {
             this.scene.start('Profile');
         }, this)
 
-        this.attackButton.on('pointerdown', () => { 
-            this.updateClickCountText(++clickCount);
-            let attack = yourDroppedCard.getAttackPoints();
-            self.socket.emit('mascotAttacked', attack, self.isPlayerA);
+        this.attackButton.on('pointerdown', () => {
+            if(this.currentTurn && yourDroppedCard != undefined && attackCount > 0){
+                this.updateClickCountText(++clickCount);
+                let attack = yourDroppedCard.getAttackPoints();
+                self.socket.emit('mascotAttacked', attack, self.isPlayerA);
+                attackCount -= 1;
+            } 
+            // this.updateClickCountText(++clickCount);
+            // let attack = yourDroppedCard.getAttackPoints();
+            // self.socket.emit('mascotAttacked', attack, self.isPlayerA);
         });
 
         this.resDropZone.data.values.maxCapacity = this.resDropZone.data.values.pointSum;
@@ -577,7 +582,7 @@ export default class Game extends Phaser.Scene {
             this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
          }
          this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
-         console.log("before set " + this.isPlayerA);
+         //console.log("before set " + this.isPlayerA);
          if(this.isPlayerA && initTurn) {
             this.currentTurn = true;
             initTurn = false;
@@ -586,19 +591,9 @@ export default class Game extends Phaser.Scene {
             this.currentTurn = false;
             initTurn = false;
          }
-        //  if (initTurn == true && this.isPlayerA != undefined ) {
-        //     this.checkInitTurn();
-        //     initTurn = false;
-        //     console.log(this.currentTurn);
-        //  }
-        //  console.log("after set " + this.isPlayerA);
-
-
 
          this.update();
-
-
-         
+    
         });
         
         
