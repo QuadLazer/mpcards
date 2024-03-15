@@ -2,7 +2,7 @@ const db = require('../db/index.js');
 
 const getUsers = async () => {
     try {
-        const users = await db.any("SELECT uname, email, win_count FROM g_user");
+        const users = await db.any("SELECT uname, email, win_count FROM g_user order by win_count desc, uname asc");
         console.log(users);
         return users
     } catch (err) {
