@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import Dealer from '../helpers/dealer';
 import Resource from '../helpers/resource';
 import Effect from '../helpers/effect';
+import Deck from '../helpers/deck';
 
 import FirebasePlugin from '../plugins/FirebasePlugin';
 
@@ -49,6 +50,10 @@ export default class Game extends Phaser.Scene {
         let initTurn = true;
         let attackCount = 1;
         let attackCap = attackCount;
+
+
+        this.deck = new Deck(this,250,250,'p1CardBack');
+        console.log(this.deck.cards);
         
 
         //zone variables
