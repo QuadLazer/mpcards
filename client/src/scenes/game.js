@@ -59,7 +59,7 @@ export default class Game extends Phaser.Scene {
         //zone variables
         this.zone = new Zone(this);
         this.dropZone = this.zone.renderZone();
-        //this.handZone = this.zone.renderHandZone();
+        this.handZone = this.zone.renderHandZone();
         this.outline = this.zone.renderOutline(this.dropZone);
 
         this.resDropZone = this.zone.renderResourceZone();

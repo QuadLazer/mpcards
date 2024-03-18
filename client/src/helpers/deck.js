@@ -6,10 +6,20 @@ export default class Deck {
 
     constructor(scene, x, y, texture) {
         this.scene = scene;
+        this.handzone = scene.handZone;
+        this.dealer = scene.dealer;
         this.cards = [];
         this.createDeck();
         this.deckSprite = this.scene.add.sprite(x,y,texture).setScale(.25,.25).setInteractive();
-        this.deckSprite.on('pointerdown', this.drawCard,this);
+        //this.deckSprite.on('pointerdown', this.drawCard,this);
+        // this.deckSprite.on('pointerdown', (pointer,gameObject,scene) =>{
+        //     if(scene.handZone.data.values.cards < 5) {
+        //         this.drawCard;
+        //         //scene.dealer.draw();
+        //         //this.dealer.draw();
+
+        //     }
+        // }, this)
     }
 
 
@@ -82,7 +92,10 @@ export default class Deck {
                 case 'Raze':
                     console.log('a raze effect was summoned from the deck');
                     break;
+
+                
             }
+            return next;
         }
         
     
