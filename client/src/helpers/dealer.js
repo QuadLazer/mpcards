@@ -112,6 +112,8 @@ export default class Dealer {
                 }
                 this.handzone.data.values.xpos.push(insert);
 
+                
+
         }
     }
 }

@@ -81,23 +81,15 @@ export default class Game extends Phaser.Scene {
             this.scene.start('Load');
         });
 
+        
+
         //For interacting with the deck
         this.input.on('gameobjectdown', (pointer, gameObject) => {
             console.log(this.handZone.data.values.xpos);
-            let arr = this.handZone.data.values.xpos;
-            let insert;
-            for(let i = 475; i < 975; i = i + 100 ) {
-                console.log(i);
-                let found = arr.find((element) => element == i);
-                if (found == undefined) {
-                    insert = i;
-                    break;
-                }
-                console.log(insert);
-            }
             if(gameObject instanceof Deck && this.currentTurn && this.handZone.data.values.cards < 5) {
                 this.dealer.draw(self);
                 this.handZone.data.values.cards++;
+                this.socket.emit('draw',this.isPlayerA);
                 
             }
         })
@@ -180,6 +172,16 @@ export default class Game extends Phaser.Scene {
                 console.log(self.currentTurn);
             }
 
+        });
+
+        this.socket.on('draw', function(isPlayerA) {
+            if(isPlayerA != self.isPlayerA) {
+                let cardBack;
+                cardBack = self.isPlayerA ? 'p2CardBack':'p1CardBack';
+                let opponentCard = new Card(self, 875 - (self.opponentCards.length * 100), 50, cardBack);
+                self.opponentCards.push((opponentCard).disableInteractive());
+      
+            }
         });
 
         //setPollOnMove - means that the interaction won't happen unless the user moves the mouse pointer themselves
@@ -317,14 +319,11 @@ export default class Game extends Phaser.Scene {
             //console.log(yourDroppedCard);
         })
 
-        this.socket.on('resDropped', function (gameObject, isPlayerA) {
+        this.socket.on('resDropped', function (isPlayerA) {
             if (isPlayerA !== self.isPlayerA) {
-                let sprite = gameObject.textureKey;
-                console.log(sprite);
+                
                 self.opponentCards.shift().destroy();
-                self.resDropZone.data.values.resources++;
-                console.log(self.resDropZone.getData('resources'));
-                //card.render((self.dropZone.x), (self.dropZone.y -100), sprite).disableInteractive();
+
             }
 
         })
@@ -341,6 +340,7 @@ export default class Game extends Phaser.Scene {
                 arr = arr.filter(item => item !== xval)
                 console.log(arr);
                 self.handZone.setData({xpos:arr})
+                self.socket.emit('resDropped',self.isPlayerA);
                 // self.handZone.data.xpos = self.handZone.data.xpos.filter(function(item) {
                 //     return item !== 5;
                 // })
@@ -413,6 +413,11 @@ export default class Game extends Phaser.Scene {
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
                 dropZone.data.values.playerA_mascots++;
+                let xval = gameObject.input.dragStartX
+                let arr = self.handZone.data.values.xpos;
+                arr = arr.filter(item => item !== xval)
+                console.log(arr);
+                self.handZone.setData({xpos:arr})
                 //Removing a card from handZone for draw card logic.
                 self.handZone.data.values.cards--;
                 console.log("Player A mascots: " + self.dropZone.data.values.playerA_mascots);
@@ -478,6 +483,7 @@ export default class Game extends Phaser.Scene {
 
         this.socket.on('debuffed', function(modifier, type, isPlayerA)  {
             if(isPlayerA !== self.isPlayerA) {
+                self.opponentCards.shift().destroy();
                 console.log("You've been debuffed");
                 console.log("amount " + modifier);
                 if (type == 'health') {
@@ -486,6 +492,7 @@ export default class Game extends Phaser.Scene {
                 else {
                     yourDroppedCard.decreaseAttack(modifier);
                 }
+                
 
             }
             else {
@@ -494,9 +501,16 @@ export default class Game extends Phaser.Scene {
             } 
         })
 
+        this.socket.on('buffed', function(isPlayerA) {
+            if(isPlayerA !== self.isPlayerA) {
+                self.opponentCards.shift().destroy();
+            }
+        })
+
         this.socket.on('razed', function(modifier, isPlayerA) {
             //if(isPlayerA !== self.isPlayerA && self.isPlayerA != undefined) {
             if(self.currentTurn != true) {
+                self.opponentCards.shift().destroy();
                 console.log("myplayerA: " + isPlayerA);
                 console.log("comparator " + self.isPlayerA);
                 console.log("Your land has been destroyed");
@@ -546,11 +560,14 @@ export default class Game extends Phaser.Scene {
 
         let lastTime = 0;
         this.input.on('gameobjectdown', (pointer,gameObject)=>{
+            
             let clickDelay = this.time.now - lastTime;
             lastTime = this.time.now;
             //double-click event
             if(clickDelay < 350) {
                 console.log(gameObject.cost);
+                let xval = gameObject.x
+                let arr = self.handZone.data.values.xpos;
                 if (gameObject instanceof Effect && this.resDropZone.data.values.pointSum >= gameObject.cost
                     && this.currentTurn) {
                     console.log("Effects lie here");
@@ -560,6 +577,7 @@ export default class Game extends Phaser.Scene {
                         console.log(yourDroppedCard);
                         console.log(this.dropZone.data.values.playerA_mascots)
                         console.log(gameObject.getHitVal(), gameObject.getHealthVal());
+                        self.socket.emit('buffed', self.isPlayerA);
                         if (gameObject.getHealthVal() > 0) {
                             yourDroppedCard.increaseHP(gameObject.getHealthVal());
                             this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
@@ -567,10 +585,13 @@ export default class Game extends Phaser.Scene {
                         else {
                             yourDroppedCard.increaseAttack(gameObject.getHitVal());
                         }
-                        
+                        self.handZone.data.values.cards--;
+                        arr = arr.filter(item => item !== xval)
+                        console.log(arr);
+                        self.handZone.setData({xpos:arr})
                         gameObject.destroy();
                         //Removing a card from handZone for draw card logic.
-                        self.handZone.data.values.cards--;
+                        
                         self.cardPopUp.alpha = 0;
                         self.cardPopUpText.alpha = 0;
                         
@@ -585,7 +606,9 @@ export default class Game extends Phaser.Scene {
                             else {
                                 self.socket.emit('debuffed', gameObject.getHitVal(), 'hit', self.isPlayerA )
                             }
-                            
+                            arr = arr.filter(item => item !== xval)
+                            console.log(arr);
+                            self.handZone.setData({xpos:arr})
                             gameObject.destroy();
                             //Removing a card from handZone for draw card logic.
                             self.handZone.data.values.cards--;
@@ -594,6 +617,9 @@ export default class Game extends Phaser.Scene {
                         }
                     } else if (gameObject.type == 'Raze') {
                         this.resDropZone.data.values.pointSum -= gameObject.cost;
+                        arr = arr.filter(item => item !== xval)
+                        console.log(arr);
+                        self.handZone.setData({xpos:arr})
                         gameObject.destroy();
                         //Removing a card from handZone for draw card logic.
                         self.handZone.data.values.cards--;
