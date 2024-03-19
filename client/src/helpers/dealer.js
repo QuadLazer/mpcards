@@ -8,6 +8,7 @@ export default class Dealer {
     gatorAttributes = ['gator', 4000, 'S'];
     //mascostList = ['gator', ];
     constructor(scene) {
+        
         this.deck = scene.deck;
         this.handzone = scene.handZone;
         this.dealCards = () => {
@@ -58,26 +59,43 @@ export default class Dealer {
         }
     }
 
-    draw() {
+    draw(scene) {
         if(this.handzone.data.values.cards < 5) {
+
+            let playerSprite;
+            let opponentSprite;
+            let mascotSprite;
+
+            if (scene.isPlayerA) {
+                playerSprite = 'p1CardFront';
+                opponentSprite = 'p2CardBack';
+                mascotSprite = 'mascotCardFront';
+            } else {
+                playerSprite = 'p2CardFront';
+                opponentSprite = 'p1CardBack';
+                mascotSprite = 'mascotCardFront';
+            };
+
             let card = this.deck.drawCard(scene);
                 console.log(card);
+                let addHand;
+                //let i = this.handzone.data.values.cards;
                 switch (card) {
                     case 'Mascot':
-                        new Mascot(scene, 475 + (i * 100), 670, mascotSprite);
+                        addHand = new Mascot(scene, 900, 670, mascotSprite);
                         break;
                     case 'Resource':
-                        let resource = new Resource(scene, 475 + (i * 100), 670, playerSprite);
+                        let resource = new Resource(scene, 900, 670, playerSprite);
                         resource.setTexture(resource.getResType());
                         break;
                     case 'Debuff':
-                        new Effect('Debuff',scene, 475 + (i * 100), 670, playerSprite);
+                        addHand = new Effect('Debuff',scene, 900, 670, playerSprite);
                         break;
                     case 'Buff':
-                        new Effect('Buff',scene, 475 + (i * 100), 670, playerSprite);
+                        addHand = new Effect('Buff',scene, 900, 670, playerSprite);
                         break;
                     case 'Raze':
-                        new Effect('Raze',scene, 475 + (i * 100), 670, playerSprite);
+                        addHand = new Effect('Raze',scene, 900, 670, playerSprite);
                         break;
                 }
 

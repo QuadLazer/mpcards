@@ -80,6 +80,14 @@ export default class Game extends Phaser.Scene {
             this.socket.disconnect();
             this.scene.start('Load');
         });
+
+        this.input.on('gameobjectdown', (pointer, gameObject) => {
+            if(gameObject instanceof Deck && this.currentTurn && this.handZone.data.values.cards < 5) {
+                this.dealer.draw(self);
+                this.handZone.data.values.cards++;
+                
+            }
+        })
         
         //End turn button, switch play capability
         let btnEnd = this.add.text(1130,400, 'END TURN', { fill: '#BAFA11'});
@@ -318,6 +326,8 @@ export default class Game extends Phaser.Scene {
                     resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
                     console.log("pool val: " + resDropZone.data.values.pointSum );
                     console.log("max capacity: " + resDropZone.data.values.maxCapacity);
+                    //Removing a card from handZone for draw card logic.
+                    self.handZone.data.values.cards--;
                     
                 }
                 else{
@@ -375,6 +385,8 @@ export default class Game extends Phaser.Scene {
                 gameObject.inDropZone = true;
                 dropZone.data.values.cards++;
                 dropZone.data.values.playerA_mascots++;
+                //Removing a card from handZone for draw card logic.
+                self.handZone.data.values.cards--;
                 console.log("Player A mascots: " + self.dropZone.data.values.playerA_mascots);
                 console.log("Player B mascots: " + self.dropZone.data.values.playerB_mascots);
 
@@ -529,6 +541,8 @@ export default class Game extends Phaser.Scene {
                         }
                         
                         gameObject.destroy();
+                        //Removing a card from handZone for draw card logic.
+                        self.handZone.data.values.cards--;
                         self.cardPopUp.alpha = 0;
                         self.cardPopUpText.alpha = 0;
                         
@@ -545,12 +559,16 @@ export default class Game extends Phaser.Scene {
                             }
                             
                             gameObject.destroy();
+                            //Removing a card from handZone for draw card logic.
+                            self.handZone.data.values.cards--;
                             self.cardPopUp.alpha = 0;
                             self.cardPopUpText.alpha = 0;
                         }
                     } else if (gameObject.type == 'Raze') {
                         this.resDropZone.data.values.pointSum -= gameObject.cost;
                         gameObject.destroy();
+                        //Removing a card from handZone for draw card logic.
+                        self.handZone.data.values.cards--;
                         self.socket.emit('razed',gameObject.getVal(), self.isPlayerA);
                         self.cardPopUp.alpha = 0;
                         self.cardPopUpText.alpha = 0;

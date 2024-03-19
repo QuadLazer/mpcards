@@ -2,15 +2,19 @@ import Card from './card';
 import Mascot from './mascot'
 import Resource from './resource'
 import Effect from './effect'
-export default class Deck {
+export default class Deck extends Card {
 
     constructor(scene, x, y, texture) {
+        super(scene, x, y, texture);
         this.scene = scene;
         this.handzone = scene.handZone;
         this.dealer = scene.dealer;
         this.cards = [];
         this.createDeck();
-        this.deckSprite = this.scene.add.sprite(x,y,texture).setScale(.25,.25).setInteractive();
+        this.setScale(0.25, 0.25);
+        this.setInteractive();
+        scene.input.setDraggable(this);
+        //this.deckSprite = this.scene.add.sprite(x,y,texture).setScale(.25,.25).setInteractive();
         //this.deckSprite.on('pointerdown', this.drawCard,this);
         // this.deckSprite.on('pointerdown', (pointer,gameObject,scene) =>{
         //     if(scene.handZone.data.values.cards < 5) {
