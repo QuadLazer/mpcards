@@ -6,6 +6,8 @@ import Signup from "./scenes/signup";
 import MainMenu from "./scenes/mainmenu";
 import FirebasePlugin from "./plugins/FirebasePlugin";
 import Profile from "./scenes/profile";
+import Rankings from "./scenes/rankings";
+import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -22,7 +24,12 @@ const config = {
         Profile,
         Signup,
         MainMenu,
+        Rankings
     ],
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+        },
     plugins: {
         global: [
             {
@@ -30,6 +37,13 @@ const config = {
                 plugin: FirebasePlugin,
                 start: true,
                 mapping: 'firebase'
+            }
+        ],
+        scene: [
+            {
+            key: 'rexUI',
+            plugin: UIPlugin,
+            mapping: 'rexUI'
             }
         ]
     }

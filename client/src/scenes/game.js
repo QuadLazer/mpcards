@@ -497,6 +497,13 @@ export default class Game extends Phaser.Scene {
                 console.log(error);
             });
         });
+
+        this.leaderboardButton = this.add.text(1134, 100, 'Rankings', { fontFamily: '"Monospace"'});
+        this.leaderboardButton.setInteractive();
+        this.leaderboardButton.on('pointerdown', function () {
+            self.scene.start('Rankings');
+        });
+
         this.input.on('gameobjectdown', function (pointer, gameObject) {
             console.log(gameObject);
         });
