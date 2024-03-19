@@ -78,7 +78,7 @@ export default class Game extends Phaser.Scene {
         
         btnQuit.on('pointerdown', () => {
             this.socket.disconnect();
-            this.scene.start('Load');
+            this.scene.start('MainMenu');
         });
 
         
@@ -535,6 +535,7 @@ export default class Game extends Phaser.Scene {
             console.log("Dropped Card HP: " + yourDroppedCard.getHealthPoints());
 
             if(isPlayerA !== self.isPlayerA){
+                console.log("attack " + self.calculatePower(yourDroppedCard.getRegion(), self.droppedCard.getRegion(), attackPoints));
                 yourDroppedCard.decreaseHP(attackPoints);
                 if(yourDroppedCard.getHealthPoints() == 0) {
                     self.socket.emit('mascotDestroyed',isPlayerA);
@@ -549,11 +550,19 @@ export default class Game extends Phaser.Scene {
         this.logoutButton.on('pointerdown', function () {
             firebaseApp.auth.signOut().then(() => {
                 console.log('Signed out');
+                this.socket.disconnect();
                 self.scene.start('Login');
             }).catch((error) => {
                 console.log(error);
             });
         });
+
+        this.leaderboardButton = this.add.text(1134, 100, 'Rankings', { fontFamily: '"Monospace"'});
+        this.leaderboardButton.setInteractive();
+        this.leaderboardButton.on('pointerdown', function () {
+            self.scene.start('Rankings');
+        });
+
         this.input.on('gameobjectdown', function (pointer, gameObject) {
             console.log(gameObject);
         });
@@ -635,6 +644,7 @@ export default class Game extends Phaser.Scene {
 
         this.controlButton.on('pointerup', function (pointer) {
             console.log("I was clicked!");
+            this.socket.disconnect();
             this.scene.start('Profile');
         }, this)
 
