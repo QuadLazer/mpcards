@@ -79,25 +79,38 @@ export default class Dealer {
             let card = this.deck.drawCard(scene);
                 console.log(card);
                 let addHand;
+                console.log(this.handzone.data.values.xpos);
+                let arr = this.handzone.data.values.xpos;
+                let insert;
+                for(let i = 475; i < 975; i = i + 100 ) {
+                    console.log(i);
+                    let found = arr.find((element) => element == i);
+                    if (found == undefined) {
+                        insert = i;
+                        break;
+                    }
+                    console.log(insert);
+            }
                 //let i = this.handzone.data.values.cards;
                 switch (card) {
                     case 'Mascot':
-                        addHand = new Mascot(scene, 900, 670, mascotSprite);
+                        addHand = new Mascot(scene, insert, 670, mascotSprite);
                         break;
                     case 'Resource':
-                        let resource = new Resource(scene, 900, 670, playerSprite);
+                        let resource = new Resource(scene, insert, 670, playerSprite);
                         resource.setTexture(resource.getResType());
                         break;
                     case 'Debuff':
-                        addHand = new Effect('Debuff',scene, 900, 670, playerSprite);
+                        addHand = new Effect('Debuff',scene, insert, 670, playerSprite);
                         break;
                     case 'Buff':
-                        addHand = new Effect('Buff',scene, 900, 670, playerSprite);
+                        addHand = new Effect('Buff',scene, insert, 670, playerSprite);
                         break;
                     case 'Raze':
-                        addHand = new Effect('Raze',scene, 900, 670, playerSprite);
+                        addHand = new Effect('Raze',scene, insert, 670, playerSprite);
                         break;
                 }
+                this.handzone.data.values.xpos.push(insert);
 
         }
     }

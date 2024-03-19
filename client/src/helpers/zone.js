@@ -16,7 +16,7 @@ export default class Zone {
         }
         this.renderHandZone = () => {
             let handZone = scene.add.zone(674, 670, 900, 200).setRectangleDropZone(900, 200);
-            handZone.setData({ cards: 0 });
+            handZone.setData({ cards: 0, xpos: [475,575,675,775,875] });
             return handZone;
         }
 

@@ -81,7 +81,20 @@ export default class Game extends Phaser.Scene {
             this.scene.start('Load');
         });
 
+        //For interacting with the deck
         this.input.on('gameobjectdown', (pointer, gameObject) => {
+            console.log(this.handZone.data.values.xpos);
+            let arr = this.handZone.data.values.xpos;
+            let insert;
+            for(let i = 475; i < 975; i = i + 100 ) {
+                console.log(i);
+                let found = arr.find((element) => element == i);
+                if (found == undefined) {
+                    insert = i;
+                    break;
+                }
+                console.log(insert);
+            }
             if(gameObject instanceof Deck && this.currentTurn && this.handZone.data.values.cards < 5) {
                 this.dealer.draw(self);
                 this.handZone.data.values.cards++;
@@ -134,23 +147,29 @@ export default class Game extends Phaser.Scene {
 
         this.socket = io('http://localhost:3000');
 
-        self.socket.emit('dealCards');
+        //self.socket.emit('dealCards');
 
         this.socket.on('connect', function () {
             console.log('Connected!');
         });
         self.isPlayerA = false;
+        self.dealt = false;
 
         this.socket.on('isPlayerA', function () {
             console.log("I've set someone to true!");
             self.isPlayerA = true;
         })
 
-
+        self.socket.emit('dealCards');
+        
         
 
         this.socket.on('dealCards', function () {
-            self.dealer.dealCards();
+            if(!self.dealt) {
+                self.dealer.dealCards();
+                self.dealt = true;
+            }
+            //self.dealer.dealCards();
         });
 
         this.socket.on('switchTurn', function(turn, isPlayerA) {
@@ -212,9 +231,9 @@ export default class Game extends Phaser.Scene {
 
                     this.cardPopUpText.setText(display);
                 }
-                else if(gameObject instanceof Card){
+                else if(gameObject instanceof Deck){
                     //this.cardPopUpText = this.add.text( 0, 0, 'This is a card.', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-                    this.cardPopUpText.setText('this is a card');
+                    this.cardPopUpText.setText('this is your draw deck');
                 }
                 this.tweens.add({
                     targets: [this.cardPopUp, this.cardPopUpText],
@@ -314,8 +333,17 @@ export default class Game extends Phaser.Scene {
         this.input.on('drop', function (pointer, gameObject, resDropZone) {
             if (!gameObject.inresDropZone && resDropZone.name == 'resourceArea' && gameObject instanceof Resource
                 && gameObject.insResDropZone != true && self.currentTurn) {
+                console.log(gameObject.input.dragStartX);
+                let xval = gameObject.input.dragStartX
                 gameObject.x = (resDropZone.x);
                 gameObject.insResDropZone = true;
+                let arr = self.handZone.data.values.xpos;
+                arr = arr.filter(item => item !== xval)
+                console.log(arr);
+                self.handZone.setData({xpos:arr})
+                // self.handZone.data.xpos = self.handZone.data.xpos.filter(function(item) {
+                //     return item !== 5;
+                // })
 
                 console.log('Game Obj Vars:')
                 console.log(gameObject);
