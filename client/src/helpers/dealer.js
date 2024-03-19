@@ -40,7 +40,7 @@ export default class Dealer {
                 let playerRaze = new Effect('Raze',scene, 1075 + (i * 100), 670, playerSprite);
                 let resourceTextureKey = playerResource.getResType();
                 playerResource.setTexture(resourceTextureKey);
-                let playerResource = new Effect('Raze',scene, 1075 + (i * 100), 670, playerSprite);
+                playerResource = new Effect('Raze',scene, 1075 + (i * 100), 670, playerSprite);
                 // let resourceTextureKey = playerResource.getResType();
                 // playerResource.setTexture(resourceTextureKey);
                 // console.log("Class obj val: " + playerResource.getResVal());

@@ -491,6 +491,7 @@ export default class Game extends Phaser.Scene {
         this.logoutButton.on('pointerdown', function () {
             firebaseApp.auth.signOut().then(() => {
                 console.log('Signed out');
+                this.socket.disconnect();
                 self.scene.start('Login');
             }).catch((error) => {
                 console.log(error);
@@ -559,6 +560,7 @@ export default class Game extends Phaser.Scene {
 
         this.controlButton.on('pointerup', function (pointer) {
             console.log("I was clicked!");
+            this.socket.disconnect();
             this.scene.start('Profile');
         }, this)
 

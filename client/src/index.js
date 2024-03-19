@@ -3,6 +3,7 @@ import Game from "./scenes/game";
 import Load from "./scenes/load";
 import Login from "./scenes/login";
 import Signup from "./scenes/signup";
+import MainMenu from "./scenes/mainmenu";
 import FirebasePlugin from "./plugins/FirebasePlugin";
 import Profile from "./scenes/profile";
 
@@ -19,7 +20,8 @@ const config = {
         Load,
         Game,
         Profile,
-        Signup
+        Signup,
+        MainMenu,
     ],
     plugins: {
         global: [

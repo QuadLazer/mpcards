@@ -26,7 +26,7 @@ export default class Login extends Phaser.Scene
         firebaseApp.auth.onAuthStateChanged(user => {
             if (user) {
                 console.log('Logged in as: ' + user.email);
-                this.scene.start('Game');
+                this.scene.start('MainMenu');
             }
         });
 
