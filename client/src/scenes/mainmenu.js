@@ -13,9 +13,22 @@ export default class MainMenu extends Phaser.Scene {
 
     create () {
         this.bg = this.add.image(0, 0, 'bg');
-        this.playButton = this.add.image(40, 40, 'playButton').setScale(0.75, 0.75).setInteractive();
-        this.profileButton = this.add.image(80, 80, 'profileButton').setScale(0.75, 0.75).setInteractive();
-        this.rankingsButton = this.add.image(100, 100, 'rankingsButton').setScale(0.75, 0.75).setInteractive();
-        this.title = this.add.image(600, 100, 'title').setScale(0.75, 0.75).setInteractive();
+        this.playButton = this.add.image(460, 500, 'playButton').setScale(0.75, 0.75).setInteractive();
+        this.profileButton = this.add.image(960, 570, 'profileButton').setScale(0.75, 0.75).setInteractive();
+        this.rankingsButton = this.add.image(950, 393, 'rankingsButton').setScale(0.75, 0.75).setInteractive();
+        this.title = this.add.image(650, 150, 'title').setScale(0.75, 0.75).setInteractive();
+        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780)); 
+
+        this.playButton.on('pointerup', function (pointer) {
+            this.scene.start('Loading');
+        }, this);
+
+        this.profileButton.on('pointerup', function (pointer) {
+            this.scene.start('Profile');
+        }, this);
+
+        this.rankingsButton.on('pointerup', function (pointer) {
+            this.scene.start('Rankings');
+        }, this)
     }
 }

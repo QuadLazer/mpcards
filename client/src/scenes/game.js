@@ -73,7 +73,7 @@ export default class Game extends Phaser.Scene {
         
         btnQuit.on('pointerdown', () => {
             this.socket.disconnect();
-            this.scene.start('Load');
+            this.scene.start('MainMenu');
         });
         
         //End turn button, switch play capability
