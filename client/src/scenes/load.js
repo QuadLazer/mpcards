@@ -2,6 +2,8 @@ export default class Loading extends Phaser.Scene {
     constructor() {
         super('Loading');
         this.users = [];
+        this.broadcastChannel = new BroadcastChannel('users');
+        this.broadcastChannel.addEventListener('message', this.handleBroadcastMessage.bind(this));
     }
 
     preload() {
@@ -20,11 +22,10 @@ export default class Loading extends Phaser.Scene {
             repeat: -1
         });
 
-        const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-        this.users = storedUsers;
+        
 
         this.addUser();
-        this.checkUser();
+        
 
         this.bg = this.add.image(0, 0, 'bg');
         this.title = this.add.image(1000, 390, 'findingMatch').setScale(0.75, 0.75).setInteractive();
@@ -50,8 +51,15 @@ export default class Loading extends Phaser.Scene {
         this.users.push(newUser);
         console.log(`User ${newUser.id} is waiting for a game`);
 
-        localStorage.setItem('users', JSON.stringify(this.users));
-        console.log("Users: " + this.users.length);
+        this.broadcastChannel.postMessage({type: 'joined', user: newUser});
+
+        if(this.users.length ===2) {
+            
+            this.loadGame(this.users);
+            this.users.length = 0;
+            this.broadcastChannel.close();
+ 
+        }
 
         //const check = JSON.parse(localStorage.getItem('users'))
         
@@ -72,4 +80,16 @@ export default class Loading extends Phaser.Scene {
     loadGame(users) {
         this.scene.start('Game',{users});
     }
+
+    handleBroadcastMessage(event) {
+        const message = event.data;
+        if (message.type === 'joined') {
+          this.users.push(message.user);
+          if (this.users.length === 2) {
+            this.loadGame(this.waitingUsers);
+            this.users.length = 0;
+            this.broadcastChannel.close();
+          }
+        }
+      }
 }
