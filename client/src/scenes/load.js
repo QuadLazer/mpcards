@@ -25,8 +25,6 @@ export default class Loading extends Phaser.Scene {
         this.loop = this.add.sprite(320, 360, 'loop').setScale(0.60, 0.60).setInteractive();
         this.loop.setDepth(1);
         this.loop.play("load");
-        this.loop.setStroke('#000000', 6);
-        this.loop.setShadow(4, 4, '#000000', 0);
         this.loopBorder = this.add.image(320, 360, 'loopBorder').setScale(0.75, 0.75).setInteractive();
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
