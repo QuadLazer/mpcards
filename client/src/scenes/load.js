@@ -22,11 +22,8 @@ export default class Loading extends Phaser.Scene {
             repeat: -1
         });
 
-        
-
         this.addUser();
         
-
         this.bg = this.add.image(0, 0, 'bg');
         this.title = this.add.image(1000, 390, 'findingMatch').setScale(0.75, 0.75).setInteractive();
         this.cancel = this.add.image(330, 600, 'cancel').setScale(0.75, 0.75).setInteractive();
@@ -60,22 +57,16 @@ export default class Loading extends Phaser.Scene {
             this.broadcastChannel.close();
  
         }
-
-        //const check = JSON.parse(localStorage.getItem('users'))
         
     }
 
     checkUser() {
         const check = JSON.parse(localStorage.getItem('users'));
         if(this.users.length > 1) {
-            //this.loadGame(this.users);
             localStorage.removeItem('users');
             this.loadGame(this.users);
         }
-
     }
-
-    
 
     loadGame(users) {
         this.scene.start('Game',{users});
@@ -86,7 +77,7 @@ export default class Loading extends Phaser.Scene {
         if (message.type === 'joined') {
           this.users.push(message.user);
           if (this.users.length === 2) {
-            this.loadGame(this.waitingUsers);
+            this.loadGame(this.users);
             this.users.length = 0;
             this.broadcastChannel.close();
           }
