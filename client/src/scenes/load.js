@@ -1,6 +1,6 @@
 export default class Loading extends Phaser.Scene {
     constructor() {
-        super('Loading')
+        super('Loading');
         this.users = [];
     }
 
@@ -20,18 +20,25 @@ export default class Loading extends Phaser.Scene {
             repeat: -1
         });
 
+        const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+        this.users = storedUsers;
+
+        this.addUser();
+        this.checkUser();
+
         this.bg = this.add.image(0, 0, 'bg');
         this.title = this.add.image(1000, 390, 'findingMatch').setScale(0.75, 0.75).setInteractive();
         this.cancel = this.add.image(330, 600, 'cancel').setScale(0.75, 0.75).setInteractive();
         this.loop = this.add.sprite(320, 360, 'loop').setScale(0.60, 0.60).setInteractive();
         this.loop.setDepth(1);
         this.loop.play("load");
-        this.loop.setStroke('#000000', 6);
-        this.loop.setShadow(4, 4, '#000000', 0);
+        //this.loop.setStroke('#000000', 6);
+        //this.loop.setShadow(4, 4, '#000000', 0);
         this.loopBorder = this.add.image(320, 360, 'loopBorder').setScale(0.75, 0.75).setInteractive();
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
-        this.addUser();
+        
+        
 
         this.cancel.on('pointerup', function (pointer) {
             this.scene.start('MainMenu');
@@ -43,12 +50,26 @@ export default class Loading extends Phaser.Scene {
         this.users.push(newUser);
         console.log(`User ${newUser.id} is waiting for a game`);
 
-        if(this.users.length === 2) {
-            this.loadGame(this.users);
-        }
+        localStorage.setItem('users', JSON.stringify(this.users));
+        console.log("Users: " + this.users.length);
+
+        //const check = JSON.parse(localStorage.getItem('users'))
+        
     }
 
+    checkUser() {
+        const check = JSON.parse(localStorage.getItem('users'));
+        if(this.users.length > 1) {
+            //this.loadGame(this.users);
+            localStorage.removeItem('users');
+            this.loadGame(this.users);
+        }
+
+    }
+
+    
+
     loadGame(users) {
-        this.scene.start('Game');
+        this.scene.start('Game',{users});
     }
 }
