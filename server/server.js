@@ -20,6 +20,10 @@ io.on('connection', function (socket) {
         io.emit('isPlayerA');
     };
 
+    socket.on('draw', function(isPlayerA) {
+        io.emit('draw', isPlayerA);
+    })
+
     socket.on('dealCards', function () {
         io.emit('dealCards');
     });
@@ -29,9 +33,13 @@ io.on('connection', function (socket) {
     });
 
     //needed if you want Player B to see resource cards of player A
-    socket.on('resDropped', function(gameObject, isPlayerA) {
-        io.emit('resDropped', gameObject, isPlayerA);
+    socket.on('resDropped', function(isPlayerA) {
+        io.emit('resDropped', isPlayerA);
     });
+
+    socket.on('buffed', function(isPlayerA) {
+        io.emit('buffed',isPlayerA);
+    })
 
     socket.on('debuffed', function(modifier,type, isPlayerA) {
         io.emit('debuffed',modifier, type, isPlayerA);

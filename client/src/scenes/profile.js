@@ -52,7 +52,7 @@ export default class Game extends Phaser.Scene {
 
         this.exit.on('pointerup', function (pointer) {
             console.log("I was clicked!");
-            this.scene.start('Game');
+            this.scene.start('MainMenu');
         }, this)
 
         let firebaseApp = this.plugins.get('FirebasePlugin');
