@@ -490,7 +490,6 @@ export default class Game extends Phaser.Scene {
                 enemyDestroyedMascots++;
                 if(enemyDestroyedMascots == 2){ // Player won the game
                     self.winPopUpText.setVisible(true).setDepth(100);
-                    console.log(firebaseApp.getUser().email);
                     const userData = JSON.stringify({
                         username: firebaseApp.getUser().email
                     });
