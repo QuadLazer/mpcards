@@ -54,7 +54,14 @@ export default class Game extends Phaser.Scene {
 
         this.deck = new Deck(this,250,250,'p1CardBack');
         console.log(this.deck.cards);
-        
+
+        //mascot destroyed counts
+        let yourDestroyedMascots = 0;
+        let enemyDestroyedMascots = 0;
+
+        //win and lose text 
+        this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
+        this.winPopUpText = this.add.text(671, 371, 'YOU WIN', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
 
         //zone variables
         this.zone = new Zone(this);
@@ -471,12 +478,23 @@ export default class Game extends Phaser.Scene {
                 yourDroppedCard.destroy();
                 yourMascot = 0;
                 self.updateMascotHealthText(0);
+
+                yourDestroyedMascots++;
+                console.log("mascots destroyed: " + yourDestroyedMascots);
+
+                if(yourDestroyedMascots == 2){
+                    self.losePopUpText.setVisible(true).setDepth(100);
+                }
             }
             else{
                 self.droppedCard.destroy();
                 self.dropZone.data.values.playerB_mascots--;
                 self.enemyMascot = 0;
-            
+                
+                enemyDestroyedMascots++;
+                if(enemyDestroyedMascots == 2){
+                    self.winPopUpText.setVisible(true).setDepth(100);
+                }
             }
                 
         })
