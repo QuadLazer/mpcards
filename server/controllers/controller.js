@@ -8,6 +8,7 @@ const getUser = userModel.getUser;
 const addUser = userModel.addUser;
 const deleteUser = userModel.deleteUser;
 const updateUser = userModel.updateUser;
+const updateWinCount = userModel.updateWinCount;
 const getAchievements = achievementsModel.getAchievements;
 const getAchById = achievementsModel.getAchievementById;
 const getUserAchieved = userAchieveModel.getUserAchievements;
@@ -51,6 +52,16 @@ const modifyUser = async (req, res, next) => {
     try {
         let {username, email, newUsername, newEmail, newPassword} = req.body
         const updated = await updateUser(username, email, newUsername, newEmail, newPassword);
+        return res.status(200).send(updated)
+    } catch (error) {
+        next (error)
+    }
+}
+
+const modifyWinCount = async (req, res, next) => {
+    try {
+        let {username} = req.body
+        const updated = await updateWinCount(username);
         return res.status(200).send(updated)
     } catch (error) {
         next (error)
@@ -124,7 +135,7 @@ const addAchievementToUser = async (req, res, next) => {
     }
 }
 
-module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, otherFunction, register,
+module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, modifyWinCount, otherFunction, register,
 fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser}
 //exports.fetchAllUsers = fetchAllUsers;
 //exports.otherFunction = otherFunction;
