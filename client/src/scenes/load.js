@@ -58,10 +58,12 @@ export default class Loading extends Phaser.Scene {
         });
 
         this.socket.on('successMatch', () => {
-            this.loadGame(this.users);
-            this.users.length = 0;
-            this.socket.disconnect();
-        })
+            setTimeout(() => {
+                this.loadGame(this.users);
+                this.users.length = 0;
+                this.socket.disconnect();
+            }, 500);
+        });
         
 
         this.cancel.on('pointerup', function (pointer) {
