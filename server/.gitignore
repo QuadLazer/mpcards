@@ -1,6 +1,6 @@
 
 # Vendor
-node_modules
+node_modules/
 
 # Secrets
 noshare.js
