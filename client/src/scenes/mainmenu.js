@@ -28,10 +28,12 @@ export default class MainMenu extends Phaser.Scene {
 
         this.profileButton.on('pointerup', function (pointer) {
             this.scene.start('Profile');
+            this.socket.disconnect();
         }, this);
 
         this.rankingsButton.on('pointerup', function (pointer) {
             this.scene.start('Rankings');
+            this.socket.disconnect();
         }, this)
     }
 }

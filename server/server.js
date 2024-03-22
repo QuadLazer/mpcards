@@ -13,15 +13,15 @@ app.use(express.static(__dirname + './public'));
 
 io.on('connection', function (socket) {
     console.log("Online: " + socket.id);
-    socket.on('inGame', function() {
-        console.log('A user connected: ' + socket.id);
-
+    if (!players.includes(socket.id)) {
         players.push(socket.id);
+    }
+
+        console.log(players.length);
 
         if (players.length === 1) {
             io.emit('isPlayerA');
-        };
-    })
+    };
 
     socket.on('draw', function(isPlayerA) {
         io.emit('draw', isPlayerA);
@@ -72,6 +72,7 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         console.log('A user disconnected: ' + socket.id);
         players = players.filter(player => player !== socket.id);
+        console.log(players.length);
     });
 
     socket.on('queueAdd', function(uuid) {

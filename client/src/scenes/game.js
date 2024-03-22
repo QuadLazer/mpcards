@@ -146,7 +146,7 @@ export default class Game extends Phaser.Scene {
 
         this.socket = io('http://localhost:3000');
 
-        self.socket.emit('inGame');
+        //self.socket.emit('inGame');
 
         //self.socket.emit('dealCards');
 
