@@ -71,7 +71,7 @@ const register = async (req, res, next) => {
     try {
         let { email, password } = req.body
         if (!validator.validate(email) || password.length < 6) {
-            return res.status(400);
+            throw res.status(400);
         }
         const hash = await argon2.hash(password)
         console.log(email);
