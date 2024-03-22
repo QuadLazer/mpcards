@@ -55,6 +55,14 @@ export default class Game extends Phaser.Scene {
         let yourDestroyedMascots = 0;
         let enemyDestroyedMascots = 0;
 
+
+        this.deck = new Deck(this,250,250,'p1CardBack');
+        console.log(this.deck.cards);
+
+        //mascot destroyed counts
+        let yourDestroyedMascots = 0;
+        let enemyDestroyedMascots = 0;
+
         //win and lose text 
         this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
         this.winPopUpText = this.add.text(671, 371, 'YOU WIN', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
@@ -141,6 +149,8 @@ export default class Game extends Phaser.Scene {
         let self = this;
 
         this.socket = io('http://localhost:3000');
+
+        //self.socket.emit('inGame');
 
         //self.socket.emit('dealCards');
 
@@ -488,6 +498,7 @@ export default class Game extends Phaser.Scene {
                 self.enemyMascot = 0;
                 
                 enemyDestroyedMascots++;
+
                 if(enemyDestroyedMascots == 2){ // Player won the game
                     self.winPopUpText.setVisible(true).setDepth(100);
                     const userData = JSON.stringify({
