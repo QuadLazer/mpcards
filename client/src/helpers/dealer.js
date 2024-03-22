@@ -91,6 +91,7 @@ export default class Dealer {
             
         }
     }
+}
 
     draw(scene) {
         if(this.handzone.data.values.cards < 5) {
