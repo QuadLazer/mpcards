@@ -59,9 +59,7 @@ export default class Game extends Phaser.Scene {
         this.deck = new Deck(this,250,250,'p1CardBack');
         console.log(this.deck.cards);
 
-        //mascot destroyed counts
-        let yourDestroyedMascots = 0;
-        let enemyDestroyedMascots = 0;
+        
 
         //win and lose text 
         this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
