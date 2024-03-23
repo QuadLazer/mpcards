@@ -51,6 +51,10 @@ export default class Game extends Phaser.Scene {
         let attackCount = 1;
         let attackCap = attackCount;
 
+        //mascot destroyed counts
+        let yourDestroyedMascots = 0;
+        let enemyDestroyedMascots = 0;
+
 
         this.deck = new Deck(this,250,250,'p1CardBack');
         console.log(this.deck.cards);
@@ -494,8 +498,24 @@ export default class Game extends Phaser.Scene {
                 self.enemyMascot = 0;
                 
                 enemyDestroyedMascots++;
-                if(enemyDestroyedMascots == 2){
+
+                if(enemyDestroyedMascots == 2){ // Player won the game
                     self.winPopUpText.setVisible(true).setDepth(100);
+                    const userData = JSON.stringify({
+                        username: firebaseApp.getUser().email
+                    });
+                    const options = {
+                        method: 'PUT',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userData,
+                    }
+                    fetch("http://localhost:3001/users/updateWinCount",options).then(response =>{
+                        console.log(JSON.stringify(response));
+                    })
+
                 }
             }
                 
