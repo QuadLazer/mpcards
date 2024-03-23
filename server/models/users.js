@@ -17,21 +17,17 @@ const getUsers = async () => {
 const getUser = async (identifier) => {
     try {
         const getUser = await db.oneOrNone(`SELECT uname, email, win_count FROM g_user WHERE email = $1 OR uname = $1`, [identifier]);
-        if(!getUser)  throw {name: "NotValidUser", message: "Not a valid account!", status: false }
+        if(!getUser)  throw error;
         return getUser 
     } catch (error) {
-        if (error.name === "NotValidUser"){
-            console.log("No user found with that email address")
-            throw error
-        }else{
-            throw {
-                name: "DatabaseQueryError",
+        throw {
+                name: "QueryResultError",
                 message: "Error fetching user",
                 cause: error
             }
-        }
     }
 }
+
 const addUser = async(username, email, password) => { 
     try { //id, uname, password, email
 
@@ -65,7 +61,7 @@ const addUser = async(username, email, password) => {
 
 const deleteUser = async (username, email) => {
     try {
-        const checkUser = await db.oneOrNone(`
+        const checkUser = await db.one(`
         SELECT * FROM g_user WHERE uname = $1 AND email = $2
         `, [username, email])
         if (!checkUser) return { message: "User not found", status: false }

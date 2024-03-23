@@ -12,6 +12,7 @@ const getAchievements = achievementsModel.getAchievements;
 const getAchById = achievementsModel.getAchievementById;
 const getUserAchieved = userAchieveModel.getUserAchievements;
 const addAchievement = userAchieveModel.addUserAchievement;
+const deleteAchievement = userAchieveModel.deleteAchievement;
 
 
 
@@ -50,6 +51,18 @@ const eraseUser = async (req, res, next) => {
 const modifyUser = async (req, res, next) => {
     try {
         let {username, email, newUsername, newEmail, newPassword} = req.body
+        if(newEmail && !validator.validate(newEmail)) {
+            console.log("not a valid email");
+            throw { name: "DatabaseQueryError", message: "malformed email", status: false }
+        }
+        if (newPassword && newPassword.length < 6) {
+            console.log("attempting new password set with length " + newPassword.length);
+            throw { name: "DatabaseQueryError", message: "password too weak", status: false }
+        
+        }
+        if (newPassword) {
+            newPassword = await argon2.hash(newPassword)
+        }
         const updated = await updateUser(username, email, newUsername, newEmail, newPassword);
         return res.status(200).send(updated)
     } catch (error) {
@@ -124,8 +137,18 @@ const addAchievementToUser = async (req, res, next) => {
     }
 }
 
+const removeAchievement = async (req, res, next) => {
+    try {
+        let {email,achievementName} = req.body
+        const deleted = await deleteAchievement(email,achievementName);
+        return res.status(200).send(deleted)
+    } catch (error) {
+        next (error)
+    }
+}
+
 module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, otherFunction, register,
-fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser}
+fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser, removeAchievement}
 //exports.fetchAllUsers = fetchAllUsers;
 //exports.otherFunction = otherFunction;
 //module.exports = fetchAllUsers;

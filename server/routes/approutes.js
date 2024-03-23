@@ -12,6 +12,7 @@ const fetchAllAchievements = controllers.fetchAllAchievements;
 const findAchievement = controllers.findAchievement;
 const findUserAchieved = controllers.findUserAchieved;
 const addAchievementToUser = controllers.addAchievementToUser;
+const removeAchievement = controllers.removeAchievement;
 
 router.get("/users/fetchUsers", fetchAllUsers);
 router.get("/users/findUser/:userEmail", findUser);
@@ -24,7 +25,8 @@ router.get("/ach/fetchAchievements", fetchAllAchievements);
 router.get("/ach/findAchievement/:achId", findAchievement);
 
 router.get("/uha/fetchUserAch/:email", findUserAchieved);
-router.get("/uha/addUserAch", addAchievementToUser);
+router.post("/uha/addUserAch", addAchievementToUser);
+router.delete("/uha/delUserAch",removeAchievement);
 
 module.exports = router;
 
