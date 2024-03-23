@@ -159,5 +159,26 @@ const updateUser = async (username, email, newUsername, newEmail, newPassword) =
     }
 }
 
+const updateWinCount = async (username) => {
+    try {
+        const checkUser = await db.oneOrNone(`
+        SELECT * FROM g_user WHERE uname = $1
+        `, [username])
+        if (!checkUser) return { message: "User not found", status: false }
+        const updated = await db.any(`
+        UPDATE g_user SET win_count = win_count + 1
+        WHERE uname = $1
+        RETURNING uname, email, win_count
+        `, [username]);
+        return { message: "User updated successfully", status: true, user: updated }
+    } catch (error) {
+        console.log(error);
+        throw {
+            name: "DatabaseQueryError",
+            message: "Error updating user",
+            cause: error
+        };
+    }
+}
 
-module.exports = { getUsers, getUser, addUser, deleteUser, updateUser}
+module.exports = { getUsers, getUser, addUser, deleteUser, updateUser, updateWinCount}

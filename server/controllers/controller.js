@@ -8,6 +8,7 @@ const getUser = userModel.getUser;
 const addUser = userModel.addUser;
 const deleteUser = userModel.deleteUser;
 const updateUser = userModel.updateUser;
+const updateWinCount = userModel.updateWinCount;
 const getAchievements = achievementsModel.getAchievements;
 const getAchById = achievementsModel.getAchievementById;
 const getUserAchieved = userAchieveModel.getUserAchievements;
@@ -64,6 +65,16 @@ const modifyUser = async (req, res, next) => {
             newPassword = await argon2.hash(newPassword)
         }
         const updated = await updateUser(username, email, newUsername, newEmail, newPassword);
+        return res.status(200).send(updated)
+    } catch (error) {
+        next (error)
+    }
+}
+
+const modifyWinCount = async (req, res, next) => {
+    try {
+        let {username} = req.body
+        const updated = await updateWinCount(username);
         return res.status(200).send(updated)
     } catch (error) {
         next (error)
@@ -147,8 +158,9 @@ const removeAchievement = async (req, res, next) => {
     }
 }
 
-module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, otherFunction, register,
+module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, modifyWinCount, otherFunction, register,
 fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser, removeAchievement}
+
 //exports.fetchAllUsers = fetchAllUsers;
 //exports.otherFunction = otherFunction;
 //module.exports = fetchAllUsers;
