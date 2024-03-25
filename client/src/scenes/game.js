@@ -51,10 +51,19 @@ export default class Game extends Phaser.Scene {
         let attackCount = 1;
         let attackCap = attackCount;
 
+        //mascot destroyed counts
+        let yourDestroyedMascots = 0;
+        let enemyDestroyedMascots = 0;
+
 
         this.deck = new Deck(this,250,250,'p1CardBack');
         console.log(this.deck.cards);
+
         
+
+        //win and lose text 
+        this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
+        this.winPopUpText = this.add.text(671, 371, 'YOU WIN', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
 
         //zone variables
         this.zone = new Zone(this);
@@ -138,6 +147,8 @@ export default class Game extends Phaser.Scene {
         let self = this;
 
         this.socket = io('http://localhost:3000');
+
+        //self.socket.emit('inGame');
 
         //self.socket.emit('dealCards');
 
@@ -471,12 +482,39 @@ export default class Game extends Phaser.Scene {
                 yourDroppedCard.destroy();
                 yourMascot = 0;
                 self.updateMascotHealthText(0);
+
+                yourDestroyedMascots++;
+                console.log("mascots destroyed: " + yourDestroyedMascots);
+
+                if(yourDestroyedMascots == 2){
+                    self.losePopUpText.setVisible(true).setDepth(100);
+                }
             }
             else{
                 self.droppedCard.destroy();
                 self.dropZone.data.values.playerB_mascots--;
                 self.enemyMascot = 0;
-            
+                
+                enemyDestroyedMascots++;
+
+                if(enemyDestroyedMascots == 2){ // Player won the game
+                    self.winPopUpText.setVisible(true).setDepth(100);
+                    const userData = JSON.stringify({
+                        username: firebaseApp.getUser().email
+                    });
+                    const options = {
+                        method: 'PUT',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userData,
+                    }
+                    fetch("http://localhost:3001/users/updateWinCount",options).then(response =>{
+                        console.log(JSON.stringify(response));
+                    })
+
+                }
             }
                 
         })

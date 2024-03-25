@@ -2,7 +2,7 @@ const db = require('../db/index.js');
 
 const getUserAchievements = async (email) => {
     try {
-        const checkEmail = await db.oneOrNone(`SELECT id FROM g_user WHERE email = $1`,[email])
+        const checkEmail = await db.one(`SELECT id FROM g_user WHERE email = $1`,[email])
         if(!checkEmail) throw {name: "NotValidUser", message: "Not a valid account!", status: false }
         const userID = checkEmail.id;
 
@@ -54,5 +54,25 @@ const addUserAchievement = async(email,achievementName) => {
     }
 }
 
-module.exports = {getUserAchievements, addUserAchievement}
+const deleteAchievement = async (email,achievementName) => {
+    try {
+        const checkEmail = await db.oneOrNone(`SELECT id FROM g_user WHERE email = $1`,[email])
+        if (!checkEmail) throw {name: "NotValidUser", message: "Not a valid account!", status: false }
+        const userID = Number(checkEmail.id);
+        const deleted = await db.none(`
+        DELETE FROM user_has_achieved WHERE user_id = $1 AND aid = $2 
+        `, [userID,achievementName]);
+        console.log(deleted)
+        return { message: "User was deleted", status: true }
+    } catch (error) {
+        console.log(error)
+        throw {
+            name: "DatabaseQueryError",
+            message: "Error deleting user",
+            cause: error
+        }
+    }
+}
+
+module.exports = {getUserAchievements, addUserAchievement, deleteAchievement}
 
