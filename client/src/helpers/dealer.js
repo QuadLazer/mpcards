@@ -32,7 +32,8 @@ export default class Dealer {
                 console.log(card);
                 switch (card) {
                     case 'Mascot':
-                        new Mascot(scene, 475 + (i * 100), 670, mascotSprite);
+                        //new Mascot(scene, 475 + (i * 100), 670, mascotSprite);
+                        this.randomizeMascot(475 + (i * 100), 670, scene);
                         break;
                     case 'Resource':
                         let resource = new Resource(scene, 475 + (i * 100), 670, playerSprite);
@@ -94,7 +95,8 @@ export default class Dealer {
                 //let i = this.handzone.data.values.cards;
                 switch (card) {
                     case 'Mascot':
-                        addHand = new Mascot(scene, insert, 670, mascotSprite);
+                        //addHand = new Mascot(scene, insert, 670, mascotSprite);
+                        addhand = this.randomizeMascot(insert, 670, scene);
                         break;
                     case 'Resource':
                         let resource = new Resource(scene, insert, 670, playerSprite);
@@ -114,6 +116,30 @@ export default class Dealer {
 
                 
 
+        }
+    }
+
+    //randomize mascot card 
+    randomizeMascot(x, y, scene){
+        let rv = Math.floor((Math.random() * 4) + 1);
+        let mascotSprite = '';
+        switch(rv) {
+            case 1:
+                mascotSprite = 'mascotCardFront';
+                return new Mascot(scene, x, y, mascotSprite).setRegion('S');
+                break;
+            case 2:
+                mascotSprite = 'seahawksCardFront';
+                return new Mascot(scene, x, y, mascotSprite).setRegion('NE');
+                break;
+            case 3:
+                mascotSprite = 'wolvesCardFront';
+                return new Mascot(scene, x, y, mascotSprite).setRegion('W');
+                break;
+            case 4:
+                mascotSprite = 'spartansCardFront';
+                return new Mascot(scene, x, y, mascotSprite).setRegion('MW');
+                break;
         }
     }
 }

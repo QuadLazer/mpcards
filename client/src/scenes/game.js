@@ -37,6 +37,12 @@ export default class Game extends Phaser.Scene {
 
         this.load.image('testEndButton', 'assets/TestEnd.png');
         this.load.image('mascotCardFront', 'assets/gator_logo.png');
+        //NE
+        this.load.image('seahawksCardFront', 'assets/seahawks_logo.png');
+        //W
+        this.load.image('wolvesCardFront', 'assets/wolves_logo.png');
+        //MW
+        this.load.image('spartansCardFront', 'assets/spartans_logo.png');
 
 
     }
@@ -204,7 +210,8 @@ export default class Game extends Phaser.Scene {
                 if(gameObject instanceof Mascot){
                     //this.cardPopUpText = this.add.text( 0, 0, 'HP: ' + gameObject.getHealthPoints(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
                     let display = 'HP: ' + gameObject.getHealthPoints() + '\n';
-                    display += 'Attack power: ' + gameObject.getAttackPoints();
+                    display += 'Attack power: ' + gameObject.getAttackPoints() + '\n';
+                    display += 'Region: ' + gameObject.getRegion();
                     this.cardPopUpText.setText(display);
                 }
                 else if(gameObject instanceof Resource){
