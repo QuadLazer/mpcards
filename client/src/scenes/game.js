@@ -33,6 +33,19 @@ export default class Game extends Phaser.Scene {
         this.load.image('re3', 'assets/resourceCardFront3.png');
         this.load.image('quit', 'assets/quit.png');
 
+        this.load.image('opponentBack', 'assets/game_assets/opponentBack.png');
+        this.load.image('buffHealth', 'assets/game_assets/buffHealth.png');
+        this.load.image('buffHit', 'assets/game_assets/buffHit.png');
+        this.load.image('debuffHealth', 'assets/game_assets/debuffHealth.png');
+        this.load.image('debuffHit', 'assets/game_assets/debuffHit.png');
+        this.load.image('razeCard', 'assets/game_assets/razeCard.png');
+        this.load.image('resourceCard', 'assets/game_assets/resourceCard.png');
+        this.load.image('gatorMascot', 'assets/game_assets/gatorMascot.png');
+        this.load.image('seahawkMascot', 'assets/game_assets/seahawkMascot.png');
+        this.load.image('spartanMascot', 'assets/game_assets/spartanMascot.png');
+        this.load.image('wolfMascot', 'assets/game_assets/wolfMascot.png');
+        this.load.image('drawBack', 'assets/game_assets/drawBack.png');
+
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
 
         this.load.image('testEndButton', 'assets/TestEnd.png');
@@ -62,14 +75,14 @@ export default class Game extends Phaser.Scene {
         let enemyDestroyedMascots = 0;
 
 
-        this.deck = new Deck(this,250,250,'p1CardBack');
+        this.deck = new Deck(this,250,250,'drawBack');
         console.log(this.deck.cards);
 
         
 
         //win and lose text 
-        this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
-        this.winPopUpText = this.add.text(671, 371, 'YOU WIN', {fill:'#ff5733', fontSize:'100px'}).setOrigin(0.5).setVisible(false);
+        this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px', fontFamily: 'Woodchuck'}).setOrigin(0.5).setVisible(false);
+        this.winPopUpText = this.add.text(671, 371, 'YOU WIN', {fill:'#ff5733', fontSize:'100px', fontFamily: 'Woodchuck'}).setOrigin(0.5).setVisible(false);
 
         //zone variables
         this.zone = new Zone(this);
@@ -83,12 +96,12 @@ export default class Game extends Phaser.Scene {
 
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
-        this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: '"Monospace"'});
+        this.turnIndicator = this.add.text(30, 100, 'this is text!', { fontFamily: 'Woodchuck'});
         this.pointer = this.input.activePointer;
 
 
         //button variables
-        let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF'});
+        let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF', fontFamily: 'Woodchuck'});
         btnQuit.setInteractive();
         
         btnQuit.on('pointerdown', () => {
@@ -110,7 +123,7 @@ export default class Game extends Phaser.Scene {
         })
         
         //End turn button, switch play capability
-        let btnEnd = this.add.text(1130,400, 'END TURN', { fill: '#BAFA11'});
+        let btnEnd = this.add.text(1130,400, 'END TURN', { fill: '#BAFA11', fontFamily: 'Woodchuck'});
         btnEnd.setInteractive();
         btnEnd.on('pointerdown', () => {
             if(this.currentTurn) {
@@ -123,18 +136,18 @@ export default class Game extends Phaser.Scene {
       
         //hover mascot variables
         this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0).setDepth(100);
-        this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0).setDepth(100);
+        this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Woodchuck', color: '#0xff0000' }).setOrigin(0).setDepth(100);
         this.cardPopUp.alpha = 0;
 
         //attack button
         let clickCount = 0;
         this.clickCountText = this.add.text(44, 650, '');
-        this.attackButton = this.add.text(100, 600, 'Attack', {fill:'#ff5733'}).setInteractive();
+        this.attackButton = this.add.text(100, 600, 'Attack', {fill:'#ff5733', fontFamily: 'Woodchuck'}).setInteractive();
         this.updateClickCountText(clickCount);
 
         //mascot display 
         let mascotHealth = 0;
-        this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c'});
+        this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c', fontFamily: 'Woodchuck'});
         let enemyMascot;
         let yourMascot;
         let droppedCard;
@@ -144,7 +157,7 @@ export default class Game extends Phaser.Scene {
 
         //resource variables
         let resourceTotal = 0;
-        this.resourceTotalText = this.add.text(50, 350, 'Resource pool: ' + resourceTotal, {color: '#ffaa' });
+        this.resourceTotalText = this.add.text(50, 350, 'Resource Pool: ' + resourceTotal, {color: '#ffaa', fontFamily: 'Woodchuck' });
 
         this.dealer = new Dealer(this);
         this.controller = new Controller(this);
@@ -194,7 +207,8 @@ export default class Game extends Phaser.Scene {
         this.socket.on('draw', function(isPlayerA) {
             if(isPlayerA != self.isPlayerA) {
                 let cardBack;
-                cardBack = self.isPlayerA ? 'p2CardBack':'p1CardBack';
+                //cardBack = self.isPlayerA ? 'p2CardBack':'p1CardBack';
+                cardBack = 'opponentBack';
                 let opponentCard = new Card(self, 875 - (self.opponentCards.length * 100), 50, cardBack);
                 self.opponentCards.push((opponentCard).disableInteractive());
       
@@ -216,7 +230,7 @@ export default class Game extends Phaser.Scene {
                 }
                 else if(gameObject instanceof Resource){
                     //this.cardPopUpText = this.add.text( 0, 0, 'Value: ' + gameObject.getResVal(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-                    this.cardPopUpText.setText('Value: ' + gameObject.getResVal());
+                    this.cardPopUpText.setText('This is a Resource Card' + '\n' + 'Value: ' + gameObject.getResVal());
                 }
                 else if (gameObject instanceof Effect) {
                     let display = '';
