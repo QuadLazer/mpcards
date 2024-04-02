@@ -65,7 +65,7 @@ export default class Effect extends Card {
             this.textureKey = textureKey;
         }
 
-        this.setScale(0.50, 0.50);
+        this.setScale(0.55, 0.50);
         this.setInteractive();
         scene.input.setDraggable(this);
 

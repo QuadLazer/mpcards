@@ -31,20 +31,20 @@ export default class Dealer {
                 switch (card) {
                     case 'Mascot':
                         //new Mascot(scene, 475 + (i * 100), 670, mascotSprite);
-                        this.randomizeMascot(475 + (i * 100), 670, scene);
+                        this.randomizeMascot(475 + (i * 100), 700, scene);
                         break;
                     case 'Resource':
-                        let resource = new Resource(scene, 475 + (i * 100), 670, playerSprite);
+                        let resource = new Resource(scene, 475 + (i * 100), 700, playerSprite);
                         resource.setTexture(resource.getResType());
                         break;
                     case 'Debuff':
-                        new Effect('Debuff',scene, 475 + (i * 100), 670, playerSprite);
+                        new Effect('Debuff',scene, 475 + (i * 100), 700, playerSprite);
                         break;
                     case 'Buff':
-                        new Effect('Buff',scene, 475 + (i * 100), 670, playerSprite);
+                        new Effect('Buff',scene, 475 + (i * 100), 700, playerSprite);
                         break;
                     case 'Raze':
-                        new Effect('Raze',scene, 475 + (i * 100), 670, playerSprite);
+                        new Effect('Raze',scene, 475 + (i * 100), 700, playerSprite);
                         break;
 
 
@@ -94,20 +94,20 @@ export default class Dealer {
                 switch (card) {
                     case 'Mascot':
                         //addHand = new Mascot(scene, insert, 670, mascotSprite);
-                        addHand = this.randomizeMascot(insert, 670, scene);
+                        addHand = this.randomizeMascot(insert, 700, scene);
                         break;
                     case 'Resource':
-                        let resource = new Resource(scene, insert, 670, playerSprite);
+                        let resource = new Resource(scene, insert, 700, playerSprite);
                         resource.setTexture(resource.getResType());
                         break;
                     case 'Debuff':
-                        addHand = new Effect('Debuff',scene, insert, 670, playerSprite);
+                        addHand = new Effect('Debuff',scene, insert, 700, playerSprite);
                         break;
                     case 'Buff':
-                        addHand = new Effect('Buff',scene, insert, 670, playerSprite);
+                        addHand = new Effect('Buff',scene, insert, 700, playerSprite);
                         break;
                     case 'Raze':
-                        addHand = new Effect('Raze',scene, insert, 670, playerSprite);
+                        addHand = new Effect('Raze',scene, insert, 700, playerSprite);
                         break;
                 }
                 this.handzone.data.values.xpos.push(insert);

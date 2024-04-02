@@ -32,6 +32,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('re2', 'assets/resourceCardFront2.png');
         this.load.image('re3', 'assets/resourceCardFront3.png');
         this.load.image('quit', 'assets/quit.png');
+        this.load.image('bg', 'assets/bgtest.png');
 
         this.load.image('opponentBack', 'assets/game_assets/opponentBack.png');
         this.load.image('buffHealth', 'assets/game_assets/buffHealth.png');
@@ -62,6 +63,8 @@ export default class Game extends Phaser.Scene {
 
     create() {
         var firebaseApp = this.plugins.get('FirebasePlugin');
+        this.bg = this.add.image(0, 0, 'bg');
+        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         //this.isPlayerA;
         this.opponentCards = [];
         this.mascotCardPlace = false;

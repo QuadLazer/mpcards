@@ -6,7 +6,7 @@ export default class Resource extends Card {
         super(scene, x, y, textureKey);
         //this.scene = scene;
 
-        this.setScale(0.50, 0.50);
+        this.setScale(0.55, 0.50);
         this.setInteractive();
         scene.input.setDraggable(this);
         this.value = Math.floor(Math.random()*3)+1;
