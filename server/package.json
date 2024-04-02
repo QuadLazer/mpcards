@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/dbtests.js",
+    "test": "mocha test/dbtests.js --exit",
     "start": "nodemon  server.js",
     "dbstart": "nodemon dbserver.js",
     "dev": "concurrently \"npm:start\" \"npm run dbstart\""

@@ -5,8 +5,6 @@ import Resource from './resource'
 import Effect from './effect'
 // import Deck from './deck'
 export default class Dealer {
-    gatorAttributes = ['gator', 4000, 'S'];
-    //mascostList = ['gator', ];
     constructor(scene) {
         
         this.deck = scene.deck;
@@ -96,7 +94,7 @@ export default class Dealer {
                 switch (card) {
                     case 'Mascot':
                         //addHand = new Mascot(scene, insert, 670, mascotSprite);
-                        addhand = this.randomizeMascot(insert, 670, scene);
+                        addHand = this.randomizeMascot(insert, 670, scene);
                         break;
                     case 'Resource':
                         let resource = new Resource(scene, insert, 670, playerSprite);
@@ -122,23 +120,23 @@ export default class Dealer {
     //randomize mascot card 
     randomizeMascot(x, y, scene){
         let rv = Math.floor((Math.random() * 4) + 1);
-        let mascotSprite = '';
+        let sprite = '';
         switch(rv) {
             case 1:
-                mascotSprite = 'mascotCardFront';
-                return new Mascot(scene, x, y, mascotSprite).setRegion('S');
+                sprite = 'mascotCardFront';
+                return new Mascot(scene, x, y, sprite).setRegion('S');
                 break;
             case 2:
-                mascotSprite = 'seahawksCardFront';
-                return new Mascot(scene, x, y, mascotSprite).setRegion('NE');
+                sprite = 'seahawksCardFront';
+                return new Mascot(scene, x, y, sprite).setRegion('NE');
                 break;
             case 3:
-                mascotSprite = 'wolvesCardFront';
-                return new Mascot(scene, x, y, mascotSprite).setRegion('W');
+                sprite = 'wolvesCardFront';
+                return new Mascot(scene, x, y, sprite).setRegion('W');
                 break;
             case 4:
-                mascotSprite = 'spartansCardFront';
-                return new Mascot(scene, x, y, mascotSprite).setRegion('MW');
+                sprite = 'spartansCardFront';
+                return new Mascot(scene, x, y, sprite).setRegion('MW');
                 break;
         }
     }
