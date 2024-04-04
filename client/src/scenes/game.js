@@ -792,12 +792,13 @@ export default class Game extends Phaser.Scene {
                             yourDroppedCard.increaseHP(gameObject.getHealthVal());
                             self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                             this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
+                            self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         }
                         else {
                             yourDroppedCard.increaseAttack(gameObject.getHitVal());
                             self.textYourHit.setText(yourDroppedCard.getAttackPoints());
+                            self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         }
-                        self.socket.emit('updateEnemy', yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         self.handZone.data.values.cards--;
                         arr = arr.filter(item => item !== xval)
                         console.log(arr);
