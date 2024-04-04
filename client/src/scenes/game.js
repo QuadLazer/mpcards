@@ -55,6 +55,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('halfHealthBar', 'assets/game_assets/halfHealthBar.png');
         this.load.image('miniAttack', 'assets/game_assets/miniAttack.png');
         this.load.image('miniHealth', 'assets/game_assets/miniHealth.png');
+        this.load.image('quitIcon', 'assets/menu_assets/logOut.png');
 
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
 
@@ -108,7 +109,30 @@ export default class Game extends Phaser.Scene {
         this.enemyUsername.setStroke('#000000', 6);
         this.enemyUsername.setShadow(4, 4, '#000000', 0);
 
+        this.quitIcon = this.add.image(60, 60, 'quitIcon').setScale(0.75, 0.75).setInteractive();
 
+        this.enemyRec = this.add.graphics();
+        this.enemyRec.lineStyle(4, 0xffffff, 1);
+        this.enemyRec.strokeRect(599, 160, 150, 200);
+
+        this.enemyMiniHealth = this.add.image(785, 250, 'miniHealth').setScale(0.75, 0.75);
+        this.enemyMiniHit = this.add.image(785, 300, 'miniAttack').setScale(0.75, 0.75);
+        this.yourMiniHealth = this.add.image(785, 450, 'miniHealth').setScale(0.75, 0.75);
+        this.yourMiniHit = this.add.image(785, 500, 'miniAttack').setScale(0.75, 0.75);
+
+        this.textEnemyHealth = this.add.text(815, 230, '0', { fontSize:'28px', fontFamily: 'Woodchuck'});
+        this.textEnemyHealth.setStroke('#000000', 6);
+        this.textEnemyHealth.setShadow(4, 4, '#000000', 0);
+        this.textEnemyHit = this.add.text(815, 280, '0', { fontSize:'28px', fontFamily: 'Woodchuck'});
+        this.textEnemyHit.setStroke('#000000', 6);
+        this.textEnemyHit.setShadow(4, 4, '#000000', 0);
+        this.textYourHealth = this.add.text(815, 430, '0', { fontSize:'28px', fontFamily: 'Woodchuck'});
+        this.textYourHealth.setStroke('#000000', 6);
+        this.textYourHealth.setShadow(4, 4, '#000000', 0);
+        this.textYourHit = this.add.text(815, 480, '0', { fontSize:'28px', fontFamily: 'Woodchuck'});
+        this.textYourHit.setStroke('#000000', 6);
+        this.textYourHit.setShadow(4, 4, '#000000', 0);
+        
 
         //win and lose text 
         this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px', fontFamily: 'Woodchuck'}).setOrigin(0.5).setVisible(false);
@@ -133,15 +157,18 @@ export default class Game extends Phaser.Scene {
 
 
         //button variables
-        let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF', fontFamily: 'Woodchuck'});
-        btnQuit.setInteractive();
+        //let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF', fontFamily: 'Woodchuck'});
+        //btnQuit.setInteractive();
         
-        btnQuit.on('pointerdown', () => {
+        this.quitIcon.on('pointerdown', () => {
+            this.quitIcon.setTint(0x878787);
+        });
+
+        this.quitIcon.on('pointerup', () => {
+            this.quitIcon.setTint();
             this.socket.disconnect();
             this.scene.start('MainMenu');
         });
-
-        
 
         //For interacting with the deck
         this.input.on('gameobjectdown', (pointer, gameObject) => {
@@ -169,6 +196,7 @@ export default class Game extends Phaser.Scene {
         */
 
         this.endTurnIcon.on('pointerdown', () => {
+            this.endTurnIcon.setTint(0x878787);
             if(this.currentTurn) {
                 this.switchTurn();
                 this.socket.emit('switchTurn',this.currentTurn, this.isPlayerA);
@@ -176,6 +204,10 @@ export default class Game extends Phaser.Scene {
                 attackCount = attackCap;
             }
         });
+
+        this.endTurnIcon.on('pointerup', () => {
+            this.endTurnIcon.setTint();
+        })
       
         //hover mascot variables
         //this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0, 1).setDepth(100);
@@ -191,6 +223,7 @@ export default class Game extends Phaser.Scene {
 
         //mascot display 
         let mascotHealth = 0;
+
         this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c', fontFamily: 'Woodchuck'});
         let enemyMascot;
         let yourMascot;
@@ -297,6 +330,13 @@ export default class Game extends Phaser.Scene {
       
             }
         });
+
+        this.socket.on('updateEnemy', function(isPlayerA, health, hit) {
+            if(isPlayerA !== self.isPlayerA) {
+                self.textEnemyHealth.setText(health);
+                self.textEnemyHit.setText(hit);
+            }
+        })
 
         //setPollOnMove - means that the interaction won't happen unless the user moves the mouse pointer themselves
         this.input.setPollOnMove();
@@ -549,6 +589,9 @@ export default class Game extends Phaser.Scene {
                 gameObject.y = dropZone.y;
                 //gameObject.disableInteractive();
                 self.updateMascotHealthText(gameObject.getHealthPoints());
+                self.textYourHealth.setText(gameObject.getHealthPoints());
+                self.textYourHit.setText(gameObject.getAttackPoints());
+                self.socket.emit('updateEnemy', self.isPlayerA, gameObject.getHealthPoints(), gameObject.getAttackPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
                 self.socket.emit('mascotDropped', gameObject.getHealthPoints(), self.isPlayerA);
 
@@ -585,6 +628,9 @@ export default class Game extends Phaser.Scene {
                 self.dropZone.data.values.playerA_mascots = 0;
                 yourDroppedCard.destroy();
                 yourMascot = 0;
+                self.textYourHealth.setText(0);
+                self.textYourHit.setText(0);
+                self.socket.emit('updateEnemy', self.isPlayerA, 0, 0);
                 self.updateMascotHealthText(0);
 
                 yourDestroyedMascots++;
@@ -600,6 +646,8 @@ export default class Game extends Phaser.Scene {
                 self.droppedCard.destroy();
                 self.dropZone.data.values.playerB_mascots--;
                 self.enemyMascot = 0;
+                self.textEnemyHealth.setText(0);
+                self.textEnemyHit.setText(0);
                 
                 enemyDestroyedMascots++;
                 self.enemyhealthBar.setTexture('halfHealthBar');
@@ -634,11 +682,13 @@ export default class Game extends Phaser.Scene {
                 console.log("amount " + modifier);
                 if (type == 'health') {
                     yourDroppedCard.decreaseHP(modifier);
+                    self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                 }
                 else {
                     yourDroppedCard.decreaseAttack(modifier);
+                    self.textYourHit.setText(yourDroppedCard.getAttackPoints());
                 }
-                
+                self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
 
             }
             else {
@@ -683,9 +733,11 @@ export default class Game extends Phaser.Scene {
             if(isPlayerA !== self.isPlayerA){
                 console.log("attack " + self.calculatePower(yourDroppedCard.getRegion(), self.droppedCard.getRegion(), attackPoints));
                 yourDroppedCard.decreaseHP(attackPoints);
+                self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                 if(yourDroppedCard.getHealthPoints() == 0) {
                     self.socket.emit('mascotDestroyed',isPlayerA);
                 }
+                self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
             }
             
         })
@@ -738,11 +790,14 @@ export default class Game extends Phaser.Scene {
                         self.socket.emit('buffed', self.isPlayerA);
                         if (gameObject.getHealthVal() > 0) {
                             yourDroppedCard.increaseHP(gameObject.getHealthVal());
+                            self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                             this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
                         }
                         else {
                             yourDroppedCard.increaseAttack(gameObject.getHitVal());
+                            self.textYourHit.setText(yourDroppedCard.getAttackPoints());
                         }
+                        self.socket.emit('updateEnemy', yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         self.handZone.data.values.cards--;
                         arr = arr.filter(item => item !== xval)
                         console.log(arr);
@@ -813,6 +868,7 @@ export default class Game extends Phaser.Scene {
         */
         this.attackIcon.on('pointerdown', () => {
             console.log("I was clicked!");
+            this.attackIcon.setTint(0x878787);
             if(this.currentTurn && yourDroppedCard != undefined && attackCount > 0){
                 //this.updateClickCountText(++clickCount);
                 let attack = yourDroppedCard.getAttackPoints();
@@ -823,6 +879,10 @@ export default class Game extends Phaser.Scene {
             // let attack = yourDroppedCard.getAttackPoints();
             // self.socket.emit('mascotAttacked', attack, self.isPlayerA);
         });
+
+        this.attackIcon.on('pointerup', () => {
+            this.attackIcon.setTint();
+        })
 
         this.resDropZone.data.values.maxCapacity = this.resDropZone.data.values.pointSum;
       

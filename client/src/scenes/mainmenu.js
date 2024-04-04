@@ -37,11 +37,21 @@ export default class MainMenu extends Phaser.Scene {
             this.socket = io('http://localhost:3000');
         }
 
+        this.playButton.on('pointerdown', function (pointer) {
+            this.playButton.setTint(0x878787);
+        }, this);
+
         this.playButton.on('pointerup', function (pointer) {
+            this.playButton.setTint();
             this.scene.start('Loading', {socket: this.socket});
         }, this);
 
+        this.logOut.on('pointerdown', function (pointer) {
+            this.logOut.setTint(0x878787);
+        }, this);
+
         this.logOut.on('pointerup', function (pointer) {
+            this.logOut.setTint();
             this.socket.disconnect();
             firebaseApp.auth.signOut().then((firebaseApp) => {
                 console.log('Signed out');
@@ -51,14 +61,24 @@ export default class MainMenu extends Phaser.Scene {
             });
         }, this);
 
+        this.profileButton.on('pointerdown', function (pointer) {
+            this.profileButton.setTint(0x878787);
+        }, this);
+
         this.profileButton.on('pointerup', function (pointer) {
+            this.profileButton.setTint();
             this.scene.start('Profile');
             this.socket.disconnect();
         }, this);
 
+        this.rankingsButton.on('pointerdown', function (pointer) {
+            this.rankingsButton.setTint(0x878787);
+        }, this);
+
         this.rankingsButton.on('pointerup', function (pointer) {
+            this.rankingsButton.setTint(0x878787);
             this.scene.start('Rankings');
             this.socket.disconnect();
-        }, this)
+        }, this);
     }
 }
