@@ -46,10 +46,11 @@ export default class Game extends Phaser.Scene {
         this.load.image('spartanMascot', 'assets/game_assets/spartanMascot.png');
         this.load.image('wolfMascot', 'assets/game_assets/wolfMascot.png');
         this.load.image('drawBack', 'assets/game_assets/drawBack.png');
+        this.load.image('hoverTooltip', 'assets/game_assets/hoverTooltip.png');
 
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
 
-        this.load.image('testEndButton', 'assets/TestEnd.png');
+        //this.load.image('testEndButton', 'assets/TestEnd.png');
         this.load.image('mascotCardFront', 'assets/gator_logo.png');
         //NE
         this.load.image('seahawksCardFront', 'assets/seahawks_logo.png');
@@ -138,8 +139,9 @@ export default class Game extends Phaser.Scene {
         });
       
         //hover mascot variables
-        this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0).setDepth(100);
-        this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Woodchuck', color: '#0xff0000' }).setOrigin(0).setDepth(100);
+        //this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0, 1).setDepth(100);
+        this.cardPopUp = this.add.image(0, 0, 'hoverTooltip').setScale(0.7, 0.7).setOrigin(0.1, 0.95);
+        this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Woodchuck', color: '#0xff0000' }).setDepth(100);
         this.cardPopUp.alpha = 0;
 
         //attack button
@@ -164,7 +166,7 @@ export default class Game extends Phaser.Scene {
 
         this.dealer = new Dealer(this);
         this.controller = new Controller(this);
-        this.controlButton = this.controller.render();
+        //this.controlButton = this.controller.render();
 
         let self = this;
 
@@ -229,17 +231,17 @@ export default class Game extends Phaser.Scene {
                     let display = 'HP: ' + gameObject.getHealthPoints() + '\n';
                     display += 'Attack power: ' + gameObject.getAttackPoints() + '\n';
                     display += 'Region: ' + gameObject.getRegion();
-                    this.cardPopUpText.setText(display);
+                    this.cardPopUpText.setText(display).setOrigin(0, 1.9).setFontSize('18px');
                 }
                 else if(gameObject instanceof Resource){
                     //this.cardPopUpText = this.add.text( 0, 0, 'Value: ' + gameObject.getResVal(), { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-                    this.cardPopUpText.setText('This is a Resource Card' + '\n' + 'Value: ' + gameObject.getResVal());
+                    this.cardPopUpText.setText('This is a Resource Card' + '\n' + 'Value: ' + gameObject.getResVal()).setOrigin(0, 2.6).setFontSize('18px');
                 }
                 else if (gameObject instanceof Effect) {
                     let display = '';
                     if (gameObject.type == 'Buff') {
-                        let hpText = 'Health + ' + gameObject.getHealthVal() + '\n';
-                        let hitText = 'Hit + ' + gameObject.getHitVal() + '\n';
+                        let hpText = 'Health +' + gameObject.getHealthVal() + '\n';
+                        let hitText = 'Hit +' + gameObject.getHitVal() + '\n';
                         display = 'This is a buff type card\n';
                         if (gameObject.getHealthVal() == 0) {
                             display = display + hitText;
@@ -249,8 +251,8 @@ export default class Game extends Phaser.Scene {
                         }
                         
                     } else if (gameObject.type == 'Debuff') {
-                        let hpText = 'Health down ' + gameObject.getHealthVal() + '\n';
-                        let hitText = 'Hit down ' + gameObject.getHitVal() + '\n';
+                        let hpText = 'Enemy Health -' + gameObject.getHealthVal() + '\n';
+                        let hitText = 'Enemy Hit -' + gameObject.getHitVal() + '\n';
                         display = 'This is a debuff type card\n';
                         if (gameObject.getHealthVal() == 0) {
                             display = display + hitText;
@@ -259,18 +261,18 @@ export default class Game extends Phaser.Scene {
                             display = display + hpText;
                         }
                     } else if (gameObject.type == 'Raze') {
-                        let destroyText = 'Resources down ' + gameObject.getVal() + '\n'
+                        let destroyText = 'Enemy Resources -' + gameObject.getVal() + '\n'
                         display = 'This is a raze type card\n';
                         display += destroyText;
                     }
-                    let aFee = "activate with: " + gameObject.cost + " resources";
+                    let aFee = "Activate with: " + gameObject.cost + " resources";
                     display = display + '\n' + aFee;
 
-                    this.cardPopUpText.setText(display);
+                    this.cardPopUpText.setText(display).setOrigin(0, 1.8).setFontSize('14px');
                 }
                 else if(gameObject instanceof Deck){
                     //this.cardPopUpText = this.add.text( 0, 0, 'This is a card.', { fontFamily: 'Arial', color: '#0xff0000' }).setOrigin(0);
-                    this.cardPopUpText.setText('this is your draw deck');
+                    this.cardPopUpText.setText('This is your draw deck!').setOrigin(0, 4.8).setFontSize('18px');
                 }
                 this.tweens.add({
                     targets: [this.cardPopUp, this.cardPopUpText],
@@ -606,7 +608,7 @@ export default class Game extends Phaser.Scene {
             
         })
             
-
+        /*
         this.logoutButton = this.add.text(1134, 0, 'Logout', { fontFamily: '"Monospace"'});
         this.logoutButton.setInteractive();
         this.logoutButton.on('pointerdown', function () {
@@ -618,12 +620,15 @@ export default class Game extends Phaser.Scene {
                 console.log(error);
             });
         });
+        */
 
+        /*
         this.leaderboardButton = this.add.text(1134, 100, 'Rankings', { fontFamily: '"Monospace"'});
         this.leaderboardButton.setInteractive();
         this.leaderboardButton.on('pointerdown', function () {
             self.scene.start('Rankings');
         });
+        */
 
         this.input.on('gameobjectdown', function (pointer, gameObject) {
             console.log(gameObject);
@@ -704,11 +709,13 @@ export default class Game extends Phaser.Scene {
             }
         });
 
+        /*
         this.controlButton.on('pointerup', function (pointer) {
             console.log("I was clicked!");
             this.socket.disconnect();
             this.scene.start('Profile');
-        }, this)
+        }, this);
+        */
 
         this.attackButton.on('pointerdown', () => {
             if(this.currentTurn && yourDroppedCard != undefined && attackCount > 0){
