@@ -15,8 +15,10 @@ export default class Login extends Phaser.Scene
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
     }
 
-    create ()
+    create (loginFlag)
     {
+        let flag = true;
+        flag = loginFlag;
         var firebaseApp = this.plugins.get('FirebasePlugin');
         console.log(firebaseApp);
 
@@ -24,9 +26,11 @@ export default class Login extends Phaser.Scene
 
         // check if user already logged in
         firebaseApp.auth.onAuthStateChanged(user => {
-            if (user) {
+            console.log(flag);
+            if (user && flag) {
                 console.log('Logged in as: ' + user.email);
-                this.scene.start('MainMenu');
+                this.scene.start('MainMenu', loginFlag);
+                flag = false;
             }
         });
 
@@ -59,7 +63,7 @@ export default class Login extends Phaser.Scene
                     firebaseApp.signInWithEmailAndPassword(inputUsername.value, inputPassword.value)
                     .then(cred => {
                         console.log(cred);
-                        this.scene.scene.start('MainMenu');
+                        this.scene.scene.start('MainMenu', loginFlag);
                     })
                     .catch(function(error) {
                         // Handle Errors here

@@ -31,6 +31,17 @@ io.on('connection', function (socket) {
         io.emit('dealCards');
     });
 
+    socket.on('updateEnemy', function(isPlayerA, health, hit) {
+        io.emit('updateEnemy', isPlayerA, health, hit);
+    })
+
+    socket.on('usersPlaying', function(email) {
+        if (players.length === 2) {
+            console.log("Received email!");
+            io.emit('usersPlaying', email);
+        }
+    })
+
     socket.on('cardDropped', function (gameObject, isPlayerA) {
         io.emit('cardDropped', gameObject, isPlayerA);
     });

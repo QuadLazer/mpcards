@@ -11,7 +11,7 @@ export default class Deck extends Card {
         this.dealer = scene.dealer;
         this.cards = [];
         this.createDeck();
-        this.setScale(0.25, 0.25);
+        this.setScale(0.50, 0.50);
         this.setInteractive();
         scene.input.setDraggable(this);
         //this.deckSprite = this.scene.add.sprite(x,y,texture).setScale(.25,.25).setInteractive();
@@ -64,11 +64,11 @@ export default class Deck extends Card {
 
             if (scene.isPlayerA) {
                 playerSprite = 'p1CardFront';
-                opponentSprite = 'p2CardBack';
+                opponentSprite = 'opponentBack';
                 mascotSprite = 'mascotCardFront';
             } else {
                 playerSprite = 'p2CardFront';
-                opponentSprite = 'p1CardBack';
+                opponentSprite = 'opponentBack';
                 mascotSprite = 'mascotCardFront';
             };
 
