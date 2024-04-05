@@ -224,7 +224,7 @@ export default class Game extends Phaser.Scene {
         //mascot display 
         let mascotHealth = 0;
 
-        this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c', fontFamily: 'Woodchuck'});
+        //this.mascotHealthText = this.add.text(400, 445, 'Mascot Health: ' + mascotHealth , {color: '#46ff8c', fontFamily: 'Woodchuck'});
         let enemyMascot;
         let yourMascot;
         let droppedCard;
@@ -588,7 +588,7 @@ export default class Game extends Phaser.Scene {
                 //handZone.data.values.cards--;
                 gameObject.y = dropZone.y;
                 //gameObject.disableInteractive();
-                self.updateMascotHealthText(gameObject.getHealthPoints());
+                //self.updateMascotHealthText(gameObject.getHealthPoints());
                 self.textYourHealth.setText(gameObject.getHealthPoints());
                 self.textYourHit.setText(gameObject.getAttackPoints());
                 self.socket.emit('updateEnemy', self.isPlayerA, gameObject.getHealthPoints(), gameObject.getAttackPoints());
@@ -631,7 +631,7 @@ export default class Game extends Phaser.Scene {
                 self.textYourHealth.setText(0);
                 self.textYourHit.setText(0);
                 self.socket.emit('updateEnemy', self.isPlayerA, 0, 0);
-                self.updateMascotHealthText(0);
+                //self.updateMascotHealthText(0);
 
                 yourDestroyedMascots++;
                 self.yourhealthBar.setTexture('halfHealthBar');
@@ -791,7 +791,7 @@ export default class Game extends Phaser.Scene {
                         if (gameObject.getHealthVal() > 0) {
                             yourDroppedCard.increaseHP(gameObject.getHealthVal());
                             self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
-                            this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
+                            //this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
                             self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         }
                         else {
@@ -891,7 +891,7 @@ export default class Game extends Phaser.Scene {
         
         this.events.on('update', () => {
         if (yourDroppedCard !== undefined) {
-            this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
+            //this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
          }
          this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
          //console.log("before set " + this.isPlayerA);
