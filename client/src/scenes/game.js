@@ -101,11 +101,11 @@ export default class Game extends Phaser.Scene {
         this.endText.setShadow(4, 4, '#000000', 0);
 
         this.yourhealthBar = this.add.image(200, 680, 'fullHealthBar');
-        this.yourUsername = this.add.text(50, 720, 'testuser1',  { fontSize:'36px', fontFamily: 'Woodchuck'});
+        this.yourUsername = this.add.text(50, 720, 'Loading...',  { fontSize:'36px', fontFamily: 'Woodchuck'});
         this.yourUsername.setStroke('#000000', 6);
         this.yourUsername.setShadow(4, 4, '#000000', 0);
         this.enemyhealthBar = this.add.image(1120, 100, 'fullHealthBar').setScale(0.75, 0.75);
-        this.enemyUsername = this.add.text(1100, 15, 'testuser2',  { fontSize:'36px', fontFamily: 'Woodchuck'});
+        this.enemyUsername = this.add.text(1100, 15, 'Loading...',  { fontSize:'36px', fontFamily: 'Woodchuck'});
         this.enemyUsername.setStroke('#000000', 6);
         this.enemyUsername.setShadow(4, 4, '#000000', 0);
 
@@ -284,23 +284,6 @@ export default class Game extends Phaser.Scene {
             }
         });
 
-            const request = ( url, param, method = 'GET' ) => {
-
-            url +=  ( param).toString();        
-            return fetch( url ).then( response => response.json() );
-            };
-            const get = ( url, param ) => request( url, param, 'GET' );
-
-            get('http://localhost:3001/users/findUser/', firebaseApp.getUser().email)
-            .then(response => {
-                console.log(response);
-                self.yourUsername.setText(response.uname.length > 8 ? response.uname.substring(0,8) + "..." : response.uname);
-            })
-
-        console.log("Emitting...");
-        self.socket.emit('usersPlaying', firebaseApp.getUser().email);
-
-
 
         this.socket.on('dealCards', function () {
             if(!self.dealt) {
@@ -340,6 +323,23 @@ export default class Game extends Phaser.Scene {
 
         //setPollOnMove - means that the interaction won't happen unless the user moves the mouse pointer themselves
         this.input.setPollOnMove();
+
+            setTimeout(() => {
+                const request = ( url, param, method = 'GET' ) => {
+
+                    url +=  ( param).toString();        
+                    return fetch( url ).then( response => response.json() );
+                    };
+                    const get = ( url, param ) => request( url, param, 'GET' );
+        
+                    get('http://localhost:3001/users/findUser/', firebaseApp.getUser().email)
+                    .then(response => {
+                        console.log(response);
+                        self.yourUsername.setText(response.uname.length > 8 ? response.uname.substring(0,8) + "..." : response.uname);
+                    })
+                console.log("Emitting...");
+                self.socket.emit('usersPlaying', firebaseApp.getUser().email);
+            }, 1000);
 
         //this animates the pop up
         this.input.on('gameobjectover', function (pointer, gameObject) {
