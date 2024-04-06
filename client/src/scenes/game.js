@@ -511,6 +511,9 @@ export default class Game extends Phaser.Scene {
                     console.log("max capacity: " + resDropZone.data.values.maxCapacity);
                     //Removing a card from handZone for draw card logic.
                     self.handZone.data.values.cards--;
+                    if (self.handZone.data.values.cards == 0) {
+                        console.log("You earned the 'All In!' achievement!");
+                    }
                     
                 }
                 else{
@@ -598,6 +601,9 @@ export default class Game extends Phaser.Scene {
                 yourDroppedCard = gameObject;
                 console.log("your dropped card");
                 console.log(yourDroppedCard);
+                if (self.handZone.data.values.cards == 0) {
+                    console.log("You earned the 'All In!' achievement!");
+                }
             }
            
         
@@ -653,6 +659,9 @@ export default class Game extends Phaser.Scene {
                 self.enemyhealthBar.setTexture('halfHealthBar');
 
                 if(enemyDestroyedMascots == 2){ // Player won the game
+                    if (yourDroppedCard.region == 'S') {
+                        console.log("You earned the 'Gator-Aid' achievement!");
+                    }
                     self.enemyhealthBar.setTexture('emptyHealthBar');
                     self.winPopUpText.setVisible(true).setDepth(100);
                     const userData = JSON.stringify({
@@ -797,6 +806,9 @@ export default class Game extends Phaser.Scene {
                         else {
                             yourDroppedCard.increaseAttack(gameObject.getHitVal());
                             self.textYourHit.setText(yourDroppedCard.getAttackPoints());
+                            if (yourDroppedCard.getAttackPoints() >= 20) {
+                                console.log("You earned the 'Scalebreaker' achievement!");
+                            }
                             self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         }
                         self.handZone.data.values.cards--;
@@ -844,6 +856,9 @@ export default class Game extends Phaser.Scene {
                 }
             console.log("pool val: " + this.resDropZone.data.values.pointSum );
             console.log("max capacity: " + this.resDropZone.data.values.maxCapacity);
+                if (self.handZone.data.values.cards == 0) {
+                    console.log("You earned the 'All In!' achievement!");
+                }
             }
         });
 

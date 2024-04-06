@@ -142,7 +142,7 @@ var createPanel = async function (scene) {
             var bg = scene.add.sprite(250, 100 * (i * 2.5) + 60, 'lockAch').setScale(0.75, 0.75);
             var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'lockAchIcon').setScale(0.75, 0.75);
         }
-        var title = scene.add.text(180, 100 * (i * 2.5) - 10, titles[i], { color: 'white', fontStyle: 'bold', 
+        var title = scene.add.text(180, 100 * (i * 2.5) - 5, titles[i], { color: 'white', 
         fontFamily: 'Woodchuck', fontSize: '36px'})
         title.setStroke('#000000', 6);
         title.setShadow(6, 5, '#000000', 0);
