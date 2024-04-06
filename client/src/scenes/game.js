@@ -229,6 +229,7 @@ export default class Game extends Phaser.Scene {
         let yourMascot;
         let droppedCard;
         let yourDroppedCard;
+        let enemyRegion;
         
 
 
@@ -593,7 +594,7 @@ export default class Game extends Phaser.Scene {
                 self.textYourHit.setText(gameObject.getAttackPoints());
                 self.socket.emit('updateEnemy', self.isPlayerA, gameObject.getHealthPoints(), gameObject.getAttackPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
-                self.socket.emit('mascotDropped', gameObject.getHealthPoints(), self.isPlayerA);
+                self.socket.emit('mascotDropped', gameObject.getHealthPoints(), gameObject.getRegion(), self.isPlayerA);
 
                 yourDroppedCard = gameObject;
                 console.log("your dropped card");
@@ -604,12 +605,14 @@ export default class Game extends Phaser.Scene {
         })
         
 
-        this.socket.on('mascotDropped', function(hp, isPlayerA){
+        this.socket.on('mascotDropped', function(hp, region, isPlayerA){
             console.log("transmitted HP: " + hp);
+            console.log("transmitted region: " + region);
 
             //player b now knows their opponent's mascot health
             if(isPlayerA !== self.isPlayerA){
                 self.enemyMascot = hp;
+                self.enemyRegion = region;
             }
             
         })
@@ -728,11 +731,19 @@ export default class Game extends Phaser.Scene {
             //this is emitted to all clients (player A and B), so this function goes thru both
             console.log("Mascot Attacked!!!!");
             console.log(yourDroppedCard);
-            console.log("Dropped Card HP: " + yourDroppedCard.getHealthPoints());
+            console.log("Your Dropped Card HP: " + yourDroppedCard.getHealthPoints());
+            console.log("Your Dropped Card Region: " + yourDroppedCard.getRegion());
+            console.log("Opponent Card Region: " + self.enemyRegion);
+            //console.log("attack: " + self.calculatePower(self.enemyRegion, yourDroppedCard.getRegion(),  attackPoints));
+            //let newAtttackPoints = self.calculatePower(yourDroppedCard.getRegion(), self.enemyRegion, attackPoints);
+            //console.log("attack: " + newAtttackPoints);
 
             if(isPlayerA !== self.isPlayerA){
-                console.log("attack " + self.calculatePower(yourDroppedCard.getRegion(), self.droppedCard.getRegion(), attackPoints));
-                yourDroppedCard.decreaseHP(attackPoints);
+                //console.log("attack " + self.calculatePower(yourDroppedCard.getRegion(), self.droppedCard.getRegion(), attackPoints));
+                //yourDroppedCard.decreaseHP(attackPoints);
+                let newAtttackPoints = self.calculatePower(self.enemyRegion,yourDroppedCard.getRegion(),  attackPoints);
+                console.log("Damage Dealt: " + newAtttackPoints);
+                yourDroppedCard.decreaseHP(newAtttackPoints);
                 self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                 if(yourDroppedCard.getHealthPoints() == 0) {
                     self.socket.emit('mascotDestroyed',isPlayerA);
@@ -989,6 +1000,9 @@ export default class Game extends Phaser.Scene {
             else if(enemyRegion == northEast){
                 return (yourPower / 2)
             }
+            else{
+                return yourPower;
+            }
         }
         else if(yourRegion == northEast){
             //beats S
@@ -996,8 +1010,11 @@ export default class Game extends Phaser.Scene {
                 return (yourPower * 2);
             }
             //loses to W
-            else if(enemyRegion == northEast){
+            else if(enemyRegion == west){
                 return (yourPower / 2)
+            }
+            else{
+                return yourPower;
             }
         }
         else if(yourRegion == midWest){
@@ -1009,6 +1026,9 @@ export default class Game extends Phaser.Scene {
             else if(enemyRegion == south){
                 return (yourPower / 2)
             }
+            else{
+                return yourPower;
+            }
         }
         else if(yourRegion == west){
             //beats NE
@@ -1018,6 +1038,9 @@ export default class Game extends Phaser.Scene {
             //loses to MW
             else if(enemyRegion == midWest){
                 return (yourPower / 2)
+            }
+            else{
+                return yourPower;
             }
         }
     }
