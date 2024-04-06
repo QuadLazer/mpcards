@@ -7,6 +7,7 @@ import MainMenu from "./scenes/mainmenu";
 import FirebasePlugin from "./plugins/FirebasePlugin";
 import Profile from "./scenes/profile";
 import Rankings from "./scenes/rankings";
+import Achievements from "./scenes/achievements";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 const config = {
@@ -24,7 +25,8 @@ const config = {
         Profile,
         Signup,
         MainMenu,
-        Rankings
+        Rankings,
+        Achievements
     ],
     scale: {
         mode: Phaser.Scale.FIT,
