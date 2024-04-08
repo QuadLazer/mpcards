@@ -49,9 +49,9 @@ export default class Deck extends Card {
         }
 
         shuffleDeck() {
-            //Bypass first mascot in shuffling
+            //Bypass two mascots in shuffling
             for (let i = 0; i < this.cards.length; i++ ) {
-                const j = Math.floor(Math.random() *(i + 1) + 1);
+                const j = Math.floor(Math.random() *(i + 1) + 2);
                 [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
             }
         }
