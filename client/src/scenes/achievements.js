@@ -109,8 +109,9 @@ export default class Achievements extends Phaser.Scene {
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
 
         //this.cardPopUp = this.add.image(0, 0, 'hoverTooltip').setScale(0.7, 0.7).setOrigin(0.1, 0.95);
-        this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0, 1).setDepth(100);
+        this.cardPopUp =  this.add.rectangle( 60, 60, 250, 90, 0xff0000).setOrigin(0, 1).setDepth(100);
         this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Woodchuck', color: '#0xff0000' }).setDepth(100);
+        this.cardPopUp.alpha = 0;
         this.cardPopUp.alpha = 0;
         this.input.on('gameobjectover', function (pointer, gameObject) {
             if(gameObject.type == 'rexScrollableBlock') {
@@ -137,6 +138,14 @@ export default class Achievements extends Phaser.Scene {
                 duration: 100
             });
         },this);
+
+        this.input.on('pointermove', function (pointer, gameObject) {
+            this.cardPopUp.x = pointer.x;
+            this.cardPopUp.y = pointer.y;
+            this.cardPopUpText.x = pointer.x + 5;
+            this.cardPopUpText.y = pointer.y + 5;
+            this.cardPopUp.setDepth(1); 
+        }, this);
 
         
     }
