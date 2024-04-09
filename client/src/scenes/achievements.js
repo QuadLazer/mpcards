@@ -6,7 +6,7 @@ export default class Achievements extends Phaser.Scene {
         super({
             key: 'Achievements'
         });
-        this.descriptions = [];
+        //this.descriptions = [];
     }
 
     preload() {
@@ -23,9 +23,11 @@ export default class Achievements extends Phaser.Scene {
         this.load.image('scrollBar1', 'assets/leaderboard_assets/scrollBar1.png');
         this.load.image('scrollBar2', 'assets/leaderboard_assets/scrollBar2.png');
         this.load.image('ach', 'assets/achievements_assets/achievements.png');
+        //this.descriptions = [];
     }
 
     async create() {
+        this.descriptions = [];
         this.bg = this.add.image(0, 0, 'bg');
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         this.exit = this.add.image(60, 100, 'exit').setScale(0.75, 0.75).setInteractive();
@@ -131,8 +133,8 @@ export default class Achievements extends Phaser.Scene {
             this.tweens.add({
                 targets: [this.cardPopUp, this.cardPopUpText],
                 alpha: {from:0, to:1},
-                repeat: 0,
-                duration: 5
+                repeat: 5,
+                duration: 100
             });
         },this);
 
