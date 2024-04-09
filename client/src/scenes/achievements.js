@@ -1,15 +1,18 @@
 import FirebasePlugin from '../plugins/FirebasePlugin.js'
 
+
 export default class Achievements extends Phaser.Scene {
     constructor() {
         super({
             key: 'Achievements'
         });
+        this.descriptions = [];
     }
 
     preload() {
         this.load.image('bg', 'assets/bgtest.png');
         this.load.image('exit', 'assets/exitArrow.png');
+        this.load.image('hoverTooltip', 'assets/game_assets/hoverTooltip.png');
         this.load.image('lockAch', 'assets/achievements_assets/lockedAchievement.png');
         this.load.image('earnedAch', 'assets/achievements_assets/earnedAchievement.png');
         this.load.image('lockAchIcon', 'assets/achievements_assets/lockedAchIcon.png');
@@ -33,6 +36,12 @@ export default class Achievements extends Phaser.Scene {
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
         this.pointer = this.input.activePointer;
+
+        this.cardPopUp = this.add.image(0, 0, 'hoverTooltip').setScale(0.7, 0.7).setOrigin(0.1, 0.95);
+        this.cardPopUpText ='';
+        this.cardPopUp.alpha = 0;
+
+  
         
 
         //Scroll panel
@@ -72,6 +81,8 @@ export default class Achievements extends Phaser.Scene {
         })
             .layout()
 
+            
+
         console.log(scrollablePanel.isOverflow);
         this.exit.on('pointerup', function (pointer) {
             console.log("I was clicked!");
@@ -81,12 +92,72 @@ export default class Achievements extends Phaser.Scene {
         this.arrow.on('pointerup', function (pointer) {
             this.scene.start('Rankings');
         }, this)
+
+
+        
+
+        
+
+        
     }
     
     update() {
         // Debugging pixel coords
+        
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+
+        //this.cardPopUp = this.add.image(0, 0, 'hoverTooltip').setScale(0.7, 0.7).setOrigin(0.1, 0.95);
+        this.cardPopUp =  this.add.rectangle( 0, 0, 250, 90, 0xff0000).setOrigin(0, 1).setDepth(100);
+        this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Woodchuck', color: '#0xff0000' }).setDepth(100);
+        this.cardPopUp.alpha = 0;
+        this.input.on('gameobjectover', function (pointer, gameObject) {
+            if(gameObject.type == 'rexScrollableBlock') {
+                console.log(gameObject.children[0].list[0].list[3]._text);
+            let compare = new String(gameObject.children[0].list[0].list[3]._text);
+            if( compare.substring(0,40) == this.descriptions[0].substring(0,40)){
+                console.log(true);
+                this.cardPopUpText.setText('Test' ).setOrigin(0, 2.6).setFontSize('18px');
+            }
+            console.log(this.descriptions[0]);
+            this.cardPopUpText.setText('Test' ).setOrigin(0, 2.6).setFontSize('18px');
+
+            }
+            console.log(gameObject.type);
+ 
+            this.cardPopUpText.setText('Test' ).setOrigin(0, 2.6).setFontSize('18px');
+
+            console.log(this.descriptions[0]);
+            
+            this.tweens.add({
+                targets: [this.cardPopUp, this.cardPopUpText],
+                alpha: {from:0, to:1},
+                repeat: 0,
+                duration: 5
+            });
+        },this);
+
+        
     }
+}
+
+var getPercentData = async function () {
+    const request = ( url,method = 'GET' ) => {
+
+        //url +=  (param).toString();        
+        return fetch(url).then( response => response.json() );
+    };
+    const get = ( url) => request( url, 'GET' );
+    return new Promise((resolve, reject) => {
+        get('http://localhost:3001/ach/fetchPercentAchieved')
+            .then(response => {
+                console.log(response)
+                resolve(response);
+            })
+            .catch(error => {
+                console.log(error);
+                reject(error);
+            });
+        });
 }
 
 var GetAch = async function (userEmail) {
@@ -114,10 +185,24 @@ var createPanel = async function (scene) {
     console.log(firebaseApp.getUser())
     const userEmail = firebaseApp.getUser().email;
     var entries = await GetAch(userEmail);
+    var allAchievements = await getPercentData();
+    
+    
     // Get all users sorted from CreateContent
     console.log(entries);
+    console.log(allAchievements);
+    let aName = allAchievements.map(item =>item.aname);
+    let aDesc = allAchievements.map(item =>item.description);
+    let aPct = allAchievements.map(item =>item.pct);
+    let aid = allAchievements.map(item =>item.id);
+
+    scene.descriptions = [...aDesc];
+
+    
+    
 
     let achievements = entries.map(item => item.aid);
+    console.log(achievements);
     // Create a container for each entry
 
     let titles = [
@@ -134,23 +219,24 @@ var createPanel = async function (scene) {
     
     var container = scene.add.container();
     for (var i = 0; i < 3; i++) {
-        console.log(entries[i]);
-        if (achievements.includes(i)) {
+   
+
+        if (achievements.includes(aid[i])) {
             var bg = scene.add.sprite(250, 100 * (i * 2.5) + 60, 'earnedAch').setScale(0.75, 0.75);
-            var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'sampleAch' + i).setScale(0.75, 0.75);
+            var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'sampleAch' + aid[i]).setScale(0.75, 0.75);
         } else {
             var bg = scene.add.sprite(250, 100 * (i * 2.5) + 60, 'lockAch').setScale(0.75, 0.75);
             var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'lockAchIcon').setScale(0.75, 0.75);
         }
-        var title = scene.add.text(180, 100 * (i * 2.5) - 5, titles[i], { color: 'white', 
+        var title = scene.add.text(180, 100 * (i * 2.5) - 5, aName[i], { color: 'white', 
         fontFamily: 'Woodchuck', fontSize: '36px'})
         title.setStroke('#000000', 6);
         title.setShadow(6, 5, '#000000', 0);
-        var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, flavorTexts[i], { color: 'white', fontFamily: 'Woodchuck', 
+        var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, aDesc[i].length > 40 ? aDesc[i].substring(0,40) + "..." : aDesc[i], { color: 'white', fontFamily: 'Woodchuck', 
         fontSize: '28px', wordWrap: { width: 270, useAdvancedWrap: true }})
         flavorText.setStroke('#000000', 6);
         flavorText.setShadow(4, 4, '#000000', 0);
-        var percentage = scene.add.text(380, 100 * (i * 2.5) - 15, 'xx% \nEarned', { color: 'white', fontFamily: 'Woodchuck', 
+        var percentage = scene.add.text(380, 100 * (i * 2.5) - 15, aPct[i] + '%\nEarned', { color: 'white', fontFamily: 'Woodchuck', 
         fontSize: '20px', align: 'right'})
         percentage.setStroke('#000000', 6);
         percentage.setShadow(4, 4, '#000000', 0);
