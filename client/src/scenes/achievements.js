@@ -6,7 +6,6 @@ export default class Achievements extends Phaser.Scene {
         super({
             key: 'Achievements'
         });
-        //this.descriptions = [];
     }
 
     preload() {
@@ -23,7 +22,7 @@ export default class Achievements extends Phaser.Scene {
         this.load.image('scrollBar1', 'assets/leaderboard_assets/scrollBar1.png');
         this.load.image('scrollBar2', 'assets/leaderboard_assets/scrollBar2.png');
         this.load.image('ach', 'assets/achievements_assets/achievements.png');
-        //this.descriptions = [];
+
     }
 
     async create() {
@@ -37,14 +36,7 @@ export default class Achievements extends Phaser.Scene {
 
         // Debugging pixel coords
         this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
-        this.pointer = this.input.activePointer;
-
-        this.cardPopUp = this.add.image(0, 0, 'hoverTooltip').setScale(0.7, 0.7).setOrigin(0.1, 0.95);
-        this.cardPopUpText ='';
-        this.cardPopUp.alpha = 0;
-
-  
-        
+        this.pointer = this.input.activePointer;        
 
         //Scroll panel
         
@@ -105,47 +97,61 @@ export default class Achievements extends Phaser.Scene {
     
     update() {
         // Debugging pixel coords
-        
+        this.myText = '';
         this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
 
-        //this.cardPopUp = this.add.image(0, 0, 'hoverTooltip').setScale(0.7, 0.7).setOrigin(0.1, 0.95);
-        this.cardPopUp =  this.add.rectangle( 60, 60, 250, 90, 0xff0000).setOrigin(0, 1).setDepth(100);
-        this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Woodchuck', color: '#0xff0000' }).setDepth(100);
-        this.cardPopUp.alpha = 0;
-        this.cardPopUp.alpha = 0;
         this.input.on('gameobjectover', function (pointer, gameObject) {
             if(gameObject.type == 'rexScrollableBlock') {
                 console.log(gameObject.children[0].list[0].list[3]._text);
             let compare = new String(gameObject.children[0].list[0].list[3]._text);
             if( compare.substring(0,40) == this.descriptions[0].substring(0,40)){
                 console.log(true);
-                this.cardPopUpText.setText('Test' ).setOrigin(0, 2.6).setFontSize('18px');
+                
             }
-            console.log(this.descriptions[0]);
-            this.cardPopUpText.setText('Test' ).setOrigin(0, 2.6).setFontSize('18px');
-
-            }
-            console.log(gameObject.type);
- 
-            this.cardPopUpText.setText('Test' ).setOrigin(0, 2.6).setFontSize('18px');
-
-            console.log(this.descriptions[0]);
+            this.cardPopUp = this.add.image(0, 0, 'hoverTooltip').setScale(0.7, 0.7).setOrigin(0.1, 0.95);
+            this.cardPopUpText = this.add.text( 0, 0, '', { fontFamily: 'Woodchuck', color: '#0xff0000',wordWrap: { width: 220, useAdvancedWrap: true } }).setDepth(100);
             
+            if(pointer.y < 350) {
+                this.myText = this.descriptions[0];
+                this.cardPopUpText.setText(this.myText).setOrigin(0, 3).setFontSize('18px');
+
+            }
+            else {
+                this.myText = this.descriptions[1];
+                this.cardPopUpText.setText(this.myText).setOrigin(0, 3).setFontSize('18px');
+
+            }
+            
+            this.cardPopUpText.setText(this.myText).setOrigin(0, 3).setFontSize('18px');
+            this.cardPopUp.alpha = 0;
             this.tweens.add({
                 targets: [this.cardPopUp, this.cardPopUpText],
                 alpha: {from:0, to:1},
-                repeat: 5,
-                duration: 100
+                repeat: 0,
+                duration: 5
             });
+
+            this.input.on('pointermove', function (pointer, gameObject) {
+                this.cardPopUp.x = pointer.x;
+                this.cardPopUp.y = pointer.y;
+                this.cardPopUpText.x = pointer.x + 5;
+                this.cardPopUpText.y = pointer.y + 5;
+                this.cardPopUp.setDepth(1); 
+            }, this);
+    
+            this.input.on('gameobjectout', function (pointer, gameObject) {
+    
+                    this.cardPopUp.alpha = 0;
+                    this.cardPopUpText.alpha = 0;
+                
+                //self.cardPopUpText.destroy();
+            },this);
+            console.log(this.descriptions[0]);
+
+            } 
         },this);
 
-        this.input.on('pointermove', function (pointer, gameObject) {
-            this.cardPopUp.x = pointer.x;
-            this.cardPopUp.y = pointer.y;
-            this.cardPopUpText.x = pointer.x + 5;
-            this.cardPopUpText.y = pointer.y + 5;
-            this.cardPopUp.setDepth(1); 
-        }, this);
+        
 
         
     }
