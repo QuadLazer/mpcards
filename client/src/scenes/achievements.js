@@ -142,8 +142,14 @@ var createPanel = async function (scene) {
             var bg = scene.add.sprite(250, 100 * (i * 2.5) + 60, 'lockAch').setScale(0.75, 0.75);
             var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'lockAchIcon').setScale(0.75, 0.75);
         }
-        var title = scene.add.text(180, 100 * (i * 2.5) - 5, titles[i], { color: 'white', 
-        fontFamily: 'Woodchuck', fontSize: '36px'})
+        var title;
+        if (titles[i].length > 9) {
+            title = scene.add.text(180, 100 * (i * 2.5) - 5, titles[i], { color: 'white', 
+        fontFamily: 'Woodchuck-Bold', fontSize: '30px'})
+        } else {
+            title = scene.add.text(180, 100 * (i * 2.5) - 5, titles[i], { color: 'white', 
+        fontFamily: 'Woodchuck-Bold', fontSize: '36px'})
+        }
         title.setStroke('#000000', 6);
         title.setShadow(6, 5, '#000000', 0);
         var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, flavorTexts[i], { color: 'white', fontFamily: 'Woodchuck', 

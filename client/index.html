@@ -3,8 +3,23 @@
   <head>
     <meta charset="utf-8">
     <title>Phaser 3 Project Template</title>
-    <link rel="preload" as="font" href="/assets/Woodchuck-Bold.woff2" type="font/woff2" />
+    <style media='screen' type='text/css'>
+      @font-face {
+        font-family: Woodchuck;
+        src: url('/assets/Woodchuck-Regular.woff2');
+        font-weight:400;
+        font-weight:normal;
+      }
+      @font-face {
+        font-family: Woodchuck-Bold;
+        src: url('/assets/Woodchuck-Bold.woff2');
+        font-weight:500;
+        font-weight:bold;
+      }
+</style>
   </head>
   <body>
+    <div style="font-family:Woodchuck; position:absolute; left:-1000px; visibility:hidden;">.</div>
+    <div style="font-family:Woodchuck-Bold; position:absolute; left:-1000px; visibility:hidden;">.</div>
   </body>
 </html>
