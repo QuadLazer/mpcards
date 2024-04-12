@@ -127,7 +127,7 @@ var createPanel = async function (scene) {
     ]
 
     let flavorTexts = [
-        "Land a finishing blow with the Southern Mascot!",
+        "Land a finishing blow w/ the Southern Mascot!",
         "Break 20 attack points with one mascot!",
         "Empty your hand in one round!",
     ]
