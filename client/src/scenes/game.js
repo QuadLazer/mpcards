@@ -159,6 +159,76 @@ export default class Game extends Phaser.Scene {
         this.turnIndicator.setShadow(4, 4, '#000000', 0);
         this.pointer = this.input.activePointer;
 
+        function dbcalls(gatorAidFlag,scalebreakerFlag,allinFlag) {
+            if(gatorAidFlag | scalebreakerFlag | allinFlag ) {
+                let userAchData; 
+                let optionsAchieve; 
+                
+
+                if(gatorAidFlag) {
+                    userAchData = JSON.stringify({
+                        email: firebaseApp.getUser().email,
+                        achievementName: 1
+                    });
+
+                    optionsAchieve =  {
+                        method: 'POST',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userAchData,
+                    }
+
+                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    console.log(JSON.stringify(response));
+                });
+                }
+
+                if(scalebreakerFlag) {
+                    userAchData = JSON.stringify({
+                        email: firebaseApp.getUser().email,
+                        achievementName: 2
+                    });
+
+                    optionsAchieve =  {
+                        method: 'POST',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userAchData,
+                    }
+
+                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    console.log(JSON.stringify(response));
+                });
+                }
+
+                if(allinFlag) {
+                    userAchData = JSON.stringify({
+                        email: firebaseApp.getUser().email,
+                        achievementName: 3
+                    });
+
+                    optionsAchieve =  {
+                        method: 'POST',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userAchData,
+                    }
+
+                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    console.log(JSON.stringify(response));
+                });
+                }
+
+                
+            }
+        }
+
 
         //button variables
         //let btnQuit = this.add.text(1130,200, 'QUIT', { fill: '#CCAAFF', fontFamily: 'Woodchuck'});
@@ -518,6 +588,7 @@ export default class Game extends Phaser.Scene {
                     self.handZone.data.values.cards--;
                     if (self.handZone.data.values.cards == 0) {
                         console.log("You earned the 'All In!' achievement!");
+                        allinFlag = true;
                     }
                     
                 }
@@ -608,6 +679,7 @@ export default class Game extends Phaser.Scene {
                 console.log(yourDroppedCard);
                 if (self.handZone.data.values.cards == 0) {
                     console.log("You earned the 'All In!' achievement!");
+                    allinFlag = true;
                 }
             }
            
@@ -651,77 +723,12 @@ export default class Game extends Phaser.Scene {
                 console.log("mascots destroyed: " + yourDestroyedMascots);
 
                 if(yourDestroyedMascots == 2){
-                    gatorAidFlag = true;
+                    
                     self.yourhealthBar.setTexture('emptyHealthBar');
                     self.losePopUpText.setVisible(true).setDepth(100);
-
-                    if(gatorAidFlag | self.scalebreakerFlag | self.allinFlag ) {
-                        let userAchData; 
-                        let optionsAchieve; 
-                        
-
-                        if(gatorAidFlag) {
-                            userAchData = JSON.stringify({
-                                email: firebaseApp.getUser().email,
-                                achievementName: 1
-                            });
-
-                            optionsAchieve =  {
-                                method: 'POST',
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                                },
-                                body: userAchData,
-                            }
-
-                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
-                            console.log(JSON.stringify(response));
-                        });
-                        }
-
-                        if(self.scalebreakerFlag) {
-                            userAchData = JSON.stringify({
-                                email: firebaseApp.getUser().email,
-                                achievementName: 2
-                            });
-
-                            optionsAchieve =  {
-                                method: 'POST',
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                                },
-                                body: userAchData,
-                            }
-
-                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
-                            console.log(JSON.stringify(response));
-                        });
-                        }
-
-                        if(self.allinFlag) {
-                            userAchData = JSON.stringify({
-                                email: firebaseApp.getUser().email,
-                                achievementName: 3
-                            });
-
-                            optionsAchieve =  {
-                                method: 'POST',
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                                },
-                                body: userAchData,
-                            }
-
-                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
-                            console.log(JSON.stringify(response));
-                        });
-                        }
-    
-                        
-                    }
+                    
+                    //Update Achievements
+                    dbcalls(gatorAidFlag,scalebreakerFlag,allinFlag);
                     
                 }
             }
@@ -739,7 +746,7 @@ export default class Game extends Phaser.Scene {
                     //allinFlag = true;
                     if (yourDroppedCard.region == 'S') {
                         console.log("You earned the 'Gator-Aid' achievement!");
-                        //gatorAidFlag = true;
+                        gatorAidFlag = true;
                     }
                     self.enemyhealthBar.setTexture('emptyHealthBar');
                     self.winPopUpText.setVisible(true).setDepth(100);
@@ -759,73 +766,7 @@ export default class Game extends Phaser.Scene {
                     });
                     
                     //Update Achievements
-                    if(gatorAidFlag | scalebreakerFlag | allinFlag ) {
-                        let userAchData; 
-                        let optionsAchieve; 
-                        
-
-                        if(gatorAidFlag) {
-                            userAchData = JSON.stringify({
-                                email: firebaseApp.getUser().email,
-                                achievementName: 1
-                            });
-
-                            optionsAchieve =  {
-                                method: 'POST',
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                                },
-                                body: userAchData,
-                            }
-
-                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
-                            console.log(JSON.stringify(response));
-                        });
-                        }
-
-                        if(scalebreakerFlag) {
-                            userAchData = JSON.stringify({
-                                email: firebaseApp.getUser().email,
-                                achievementName: 2
-                            });
-
-                            optionsAchieve =  {
-                                method: 'POST',
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                                },
-                                body: userAchData,
-                            }
-
-                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
-                            console.log(JSON.stringify(response));
-                        });
-                        }
-
-                        if(allinFlag) {
-                            userAchData = JSON.stringify({
-                                email: firebaseApp.getUser().email,
-                                achievementName: 3
-                            });
-
-                            optionsAchieve =  {
-                                method: 'POST',
-                                headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                                },
-                                body: userAchData,
-                            }
-
-                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
-                            console.log(JSON.stringify(response));
-                        });
-                        }
-    
-                        
-                    }
+                    dbcalls(gatorAidFlag,scalebreakerFlag,allinFlag)
 
                 }
             }
@@ -964,6 +905,7 @@ export default class Game extends Phaser.Scene {
                             self.textYourHit.setText(yourDroppedCard.getAttackPoints());
                             if (yourDroppedCard.getAttackPoints() >= 20) {
                                 console.log("You earned the 'Scalebreaker' achievement!");
+                                scalebreakerFlag = true;
                             }
                             self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         }
@@ -1014,6 +956,8 @@ export default class Game extends Phaser.Scene {
             console.log("max capacity: " + this.resDropZone.data.values.maxCapacity);
                 if (self.handZone.data.values.cards == 0) {
                     console.log("You earned the 'All In!' achievement!");
+                    allinFlag = true;
+                    //dfd
                 }
             }
         });
@@ -1075,7 +1019,7 @@ export default class Game extends Phaser.Scene {
             initTurn = false;
          }
 
-         this.update();
+         //this.update();
     
         });
         
