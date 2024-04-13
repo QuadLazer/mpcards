@@ -581,7 +581,8 @@ export default class Game extends Phaser.Scene {
                     console.log('Game object is being recognized as a Resource object')
                     console.log('Resource Card Value Dropped: ' + gameObject.getResVal());
                     resDropZone.data.values.pointSum += gameObject.getResVal();
-                    resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
+                    resDropZone.data.values.maxCapacity += gameObject.getResVal();
+                    //resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
                     console.log("pool val: " + resDropZone.data.values.pointSum );
                     console.log("max capacity: " + resDropZone.data.values.maxCapacity);
                     //Removing a card from handZone for draw card logic.
@@ -842,6 +843,8 @@ export default class Game extends Phaser.Scene {
                 self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                 if(yourDroppedCard.getHealthPoints() == 0) {
                     self.socket.emit('mascotDestroyed',isPlayerA);
+                    //yourDroppedCard = undefined;
+                    
                 }
                 self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
             }
@@ -985,7 +988,12 @@ export default class Game extends Phaser.Scene {
         this.attackIcon.on('pointerdown', () => {
             console.log("I was clicked!");
             this.attackIcon.setTint(0x878787);
-            if(this.currentTurn && yourDroppedCard != undefined && attackCount > 0){
+            
+            if(this.currentTurn && yourDroppedCard != undefined && self.enemyRegion != undefined && attackCount > 0){
+                if (yourDroppedCard.getHealthPoints() == 0) {
+                    yourDroppedCard = undefined;
+                    return;
+                }
                 //this.updateClickCountText(++clickCount);
                 let attack = yourDroppedCard.getAttackPoints();
                 self.socket.emit('mascotAttacked', attack, self.isPlayerA);
