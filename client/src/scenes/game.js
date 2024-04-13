@@ -651,8 +651,78 @@ export default class Game extends Phaser.Scene {
                 console.log("mascots destroyed: " + yourDestroyedMascots);
 
                 if(yourDestroyedMascots == 2){
+                    gatorAidFlag = true;
                     self.yourhealthBar.setTexture('emptyHealthBar');
                     self.losePopUpText.setVisible(true).setDepth(100);
+
+                    if(gatorAidFlag | self.scalebreakerFlag | self.allinFlag ) {
+                        let userAchData; 
+                        let optionsAchieve; 
+                        
+
+                        if(gatorAidFlag) {
+                            userAchData = JSON.stringify({
+                                email: firebaseApp.getUser().email,
+                                achievementName: 1
+                            });
+
+                            optionsAchieve =  {
+                                method: 'POST',
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                                },
+                                body: userAchData,
+                            }
+
+                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                            console.log(JSON.stringify(response));
+                        });
+                        }
+
+                        if(self.scalebreakerFlag) {
+                            userAchData = JSON.stringify({
+                                email: firebaseApp.getUser().email,
+                                achievementName: 2
+                            });
+
+                            optionsAchieve =  {
+                                method: 'POST',
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                                },
+                                body: userAchData,
+                            }
+
+                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                            console.log(JSON.stringify(response));
+                        });
+                        }
+
+                        if(self.allinFlag) {
+                            userAchData = JSON.stringify({
+                                email: firebaseApp.getUser().email,
+                                achievementName: 3
+                            });
+
+                            optionsAchieve =  {
+                                method: 'POST',
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                                },
+                                body: userAchData,
+                            }
+
+                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                            console.log(JSON.stringify(response));
+                        });
+                        }
+    
+                        
+                    }
+                    
                 }
             }
             else{
@@ -666,10 +736,10 @@ export default class Game extends Phaser.Scene {
                 self.enemyhealthBar.setTexture('halfHealthBar');
 
                 if(enemyDestroyedMascots == 2){ // Player won the game
-                    allinFlag = true;
+                    //allinFlag = true;
                     if (yourDroppedCard.region == 'S') {
                         console.log("You earned the 'Gator-Aid' achievement!");
-                        gatorAidFlag = true;
+                        //gatorAidFlag = true;
                     }
                     self.enemyhealthBar.setTexture('emptyHealthBar');
                     self.winPopUpText.setVisible(true).setDepth(100);
