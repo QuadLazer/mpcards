@@ -87,6 +87,10 @@ export default class Game extends Phaser.Scene {
         let yourDestroyedMascots = 0;
         let enemyDestroyedMascots = 0;
 
+        let gatorAidFlag = false;
+        let scalebreakerFlag = false;
+        let allinFlag = false;
+
         //static items
         this.deck = new Deck(this, 1050, 390,'drawBack');
         console.log(this.deck.cards);
@@ -662,8 +666,10 @@ export default class Game extends Phaser.Scene {
                 self.enemyhealthBar.setTexture('halfHealthBar');
 
                 if(enemyDestroyedMascots == 2){ // Player won the game
+                    allinFlag = true;
                     if (yourDroppedCard.region == 'S') {
                         console.log("You earned the 'Gator-Aid' achievement!");
+                        gatorAidFlag = true;
                     }
                     self.enemyhealthBar.setTexture('emptyHealthBar');
                     self.winPopUpText.setVisible(true).setDepth(100);
@@ -680,7 +686,76 @@ export default class Game extends Phaser.Scene {
                     }
                     fetch("http://localhost:3001/users/updateWinCount",options).then(response =>{
                         console.log(JSON.stringify(response));
-                    })
+                    });
+                    
+                    //Update Achievements
+                    if(gatorAidFlag | scalebreakerFlag | allinFlag ) {
+                        let userAchData; 
+                        let optionsAchieve; 
+                        
+
+                        if(gatorAidFlag) {
+                            userAchData = JSON.stringify({
+                                email: firebaseApp.getUser().email,
+                                achievementName: 1
+                            });
+
+                            optionsAchieve =  {
+                                method: 'POST',
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                                },
+                                body: userAchData,
+                            }
+
+                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                            console.log(JSON.stringify(response));
+                        });
+                        }
+
+                        if(scalebreakerFlag) {
+                            userAchData = JSON.stringify({
+                                email: firebaseApp.getUser().email,
+                                achievementName: 2
+                            });
+
+                            optionsAchieve =  {
+                                method: 'POST',
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                                },
+                                body: userAchData,
+                            }
+
+                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                            console.log(JSON.stringify(response));
+                        });
+                        }
+
+                        if(allinFlag) {
+                            userAchData = JSON.stringify({
+                                email: firebaseApp.getUser().email,
+                                achievementName: 3
+                            });
+
+                            optionsAchieve =  {
+                                method: 'POST',
+                                headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                                },
+                                body: userAchData,
+                            }
+
+                            fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                            console.log(JSON.stringify(response));
+                        });
+                        }
+    
+                        
+                    }
 
                 }
             }
