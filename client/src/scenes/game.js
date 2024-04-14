@@ -244,7 +244,7 @@ export default class Game extends Phaser.Scene {
 
         let self = this;
 
-        this.socket = io('https://mpcards-socket.onrender.com');
+        this.socket = io('mpcards-socket.onrender.com');
 
         //self.socket.emit('inGame');
 
@@ -332,7 +332,7 @@ export default class Game extends Phaser.Scene {
                     };
                     const get = ( url, param ) => request( url, param, 'GET' );
         
-                    get('https://mpcards-dbserver.onrender.com/users/findUser/', firebaseApp.getUser().email)
+                    get('mpcards-dbserver.onrender.com/users/findUser/', firebaseApp.getUser().email)
                     .then(response => {
                         console.log(response);
                         self.yourUsername.setText(response.uname.length > 8 ? response.uname.substring(0,8) + "..." : response.uname);
