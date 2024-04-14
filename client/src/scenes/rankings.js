@@ -12,8 +12,8 @@ export default class Rankings extends Phaser.Scene {
         this.load.image('entryBg', 'assets/leaderboard_assets/entryBg.png');
         this.load.image('rankings', 'assets/leaderboard_assets/rankings.png');
         this.load.image('rightArrow', 'assets/leaderboard_assets/rightArrow.png');
-        this.load.image('scrollBar1', 'assets/leaderboard_assets/scrollBar1.png');
-        this.load.image('scrollBar2', 'assets/leaderboard_assets/scrollBar2.png');
+        this.load.image('scrollBar1', 'assets/leaderboard_assets/scrollbar1.png');
+        this.load.image('scrollBar2', 'assets/leaderboard_assets/scrollbar2.png');
         this.load.image('leaderb', 'assets/leaderboard_assets/leaderboard.png');
     }
 
