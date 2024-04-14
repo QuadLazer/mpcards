@@ -1,4 +1,4 @@
-const connString = require('../noshare.js');
+const connString = require('/etc/secrets/noshare.js');
 
 let pgp;
 
