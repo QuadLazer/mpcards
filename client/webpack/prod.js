@@ -16,6 +16,9 @@ module.exports = {
     maxEntrypointSize: 2500000,
     maxAssetSize: 1200000
   },
+  devServer: {
+    allowedHosts: 'all',
+  },
   module: {
     rules: [
       {
