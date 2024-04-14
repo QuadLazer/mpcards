@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, Firestore, setDoc, doc, getDoc, DocumentSnapshot } from 'firebase/firestore';
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth';
-import { getConfig } from './FirebaseConfig';
+import { getConfig } from './etc/secrets/FirebaseConfig.js';
 
 const firebaseConfig = getConfig();
 
