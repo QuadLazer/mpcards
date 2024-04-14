@@ -244,7 +244,7 @@ export default class Game extends Phaser.Scene {
 
         let self = this;
 
-        this.socket = io('mpcards-socket.onrender.com:3000');
+        this.socket = io('mpcards-socket.onrender.com:3000/');
 
         //self.socket.emit('inGame');
 
