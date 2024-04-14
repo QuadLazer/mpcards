@@ -89,7 +89,7 @@ var GetRankedUsers = async function () {
     const get = ( url) => request( url, 'GET' );
 
     return new Promise((resolve, reject) => {
-        get('http://localhost:3001/users/fetchUsers/')
+        get('https://mpcards-dbserver.onrender.com/users/fetchUsers/')
         .then(response => {
             console.log(response);
             resolve(response);

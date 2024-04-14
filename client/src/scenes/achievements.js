@@ -97,7 +97,7 @@ var GetAch = async function (userEmail) {
     };
     const get = ( url, param ) => request( url, param, 'GET' );
     return new Promise((resolve, reject) => {
-        get('http://localhost:3001/uha/fetchUserAch/', userEmail)
+        get('https://mpcards-dbserver.onrender.com/uha/fetchUserAch/', userEmail)
             .then(response => {
                 console.log(response)
                 resolve(response);
