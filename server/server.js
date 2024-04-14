@@ -122,6 +122,6 @@ io.on('connection', function (socket) {
     })
 });
 
-http.listen(3000, function () {
+http.listen(function () {
     console.log('Server started!');
 });
