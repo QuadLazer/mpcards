@@ -70,7 +70,7 @@ export default class Game extends Phaser.Scene {
         };
         const get = ( url, param ) => request( url, param, 'GET' );
 
-        get('http://localhost:3001/users/findUser/', userEmail)
+        get('https://mpcards-dbserver.onrender.com/users/findUser/', userEmail)
         .then(response => {
             console.log(response);
             this.uname = response.uname;
@@ -78,7 +78,7 @@ export default class Game extends Phaser.Scene {
             this.winCount = response.win_count;
         })
 
-        const achieve = get('http://localhost:3001/uha/fetchUserAch/',userEmail)
+        const achieve = get('https://mpcards-dbserver.onrender.com/uha/fetchUserAch/',userEmail)
         .then(response => {
             console.log(response)
             this.achievements = response.map(item => item.aid);
