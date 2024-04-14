@@ -105,4 +105,6 @@ http.listen(3000, function () {
     var host = http.address().address
     var port = http.address().port
     console.log('Now listening on http://%s:%s' , host, port);
+    console.log('Host: ' + host);
+    console.log('Port: ' + port);
 });
