@@ -14,8 +14,6 @@ export default class MainMenu extends Phaser.Scene {
         this.load.image('logOut', 'assets/menu_assets/logOut.png');
         this.load.image('bg', 'assets/bgtest.png');
         this.load.image('infoButton', 'assets/instruct_assets/infoIcon.png');
-        this.load.image('scrollBar1', 'assets/leaderboard_assets/scrollBar1.png');
-        this.load.image('scrollBar2', 'assets/leaderboard_assets/scrollBar2.png');
     }
     
 
@@ -34,11 +32,11 @@ export default class MainMenu extends Phaser.Scene {
         
         if (this.socket == null) {
             console.log("I was null!");
-            this.socket = io('http://localhost:3000');
+            this.socket = io('https://mpcards-socket.onrender.com');
         } else {
             console.log("I'm already set!");
             this.socket.close();
-            this.socket = io('http://localhost:3000');
+            this.socket = io('https://mpcards-socket.onrender.com');
         }
 
         this.playButton.on('pointerdown', function (pointer) {
