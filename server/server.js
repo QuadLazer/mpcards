@@ -1,34 +1,13 @@
 const express = require('express');
 const app = express();
 const http = require('http').createServer(express);
-const io = require("socket.io")(http);
+const io = require("socket.io")(http, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    }
+  });
 let players = [];
-
-app.use(function(req, res, next) {
-    // res.header("Access-Control-Allow-Origin", "*");
-    const allowedOrigins = '*';
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-         res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-credentials", true);
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
-    next();
-  });
-
-app.use(function(req, res, next) {
-    // res.header("Access-Control-Allow-Origin", "*");
-    const allowedOrigins = ['http://localhost:3000', 'http://gamebrag.onrender.com', 'https://gamebrag.onrender.com'];
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-         res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-credentials", true);
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, UPDATE");
-    next();
-  });
 
 app.use(express.static(__dirname + '/public'));
 
@@ -122,6 +101,6 @@ io.on('connection', function (socket) {
     })
 });
 
-http.listen(function () {
+http.listen(3000, function () {
     console.log('Server started!');
 });
