@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 const http = require('http').createServer(express);
-const io = require("socket.io")(http, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"]
-    }
-  });
+const io = require("socket.io")(http);
 let players = [];
+
+app.use(cors({ 
+    origin: '*', 
+    credentials: true 
+}))
 
 app.use(express.static(__dirname + '/public'));
 
