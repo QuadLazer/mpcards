@@ -32,11 +32,11 @@ export default class MainMenu extends Phaser.Scene {
         
         if (this.socket == null) {
             console.log("I was null!");
-            this.socket = io('mpcards-socket.onrender.com');
+            this.socket = io('mpcards-socket.onrender.com:3000');
         } else {
             console.log("I'm already set!");
             this.socket.close();
-            this.socket = io('mpcards-socket.onrender.com');
+            this.socket = io('mpcards-socket.onrender.com:3000');
         }
 
         this.playButton.on('pointerdown', function (pointer) {
