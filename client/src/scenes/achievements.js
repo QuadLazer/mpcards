@@ -1,5 +1,6 @@
 import FirebasePlugin from '../plugins/FirebasePlugin.js'
 
+
 export default class Achievements extends Phaser.Scene {
     constructor() {
         super({
@@ -10,6 +11,7 @@ export default class Achievements extends Phaser.Scene {
     preload() {
         this.load.image('bg', 'assets/bgtest.png');
         this.load.image('exit', 'assets/exitArrow.png');
+        this.load.image('hoverTooltip', 'assets/game_assets/hoverTooltip.png');
         this.load.image('lockAch', 'assets/achievements_assets/lockedAchievement.png');
         this.load.image('earnedAch', 'assets/achievements_assets/earnedAchievement.png');
         this.load.image('lockAchIcon', 'assets/achievements_assets/lockedAchIcon.png');
@@ -20,9 +22,11 @@ export default class Achievements extends Phaser.Scene {
         this.load.image('scrollBar1', 'assets/leaderboard_assets/scrollBar1.png');
         this.load.image('scrollBar2', 'assets/leaderboard_assets/scrollBar2.png');
         this.load.image('ach', 'assets/achievements_assets/achievements.png');
+
     }
 
     async create() {
+        this.descriptions = [];
         this.bg = this.add.image(0, 0, 'bg');
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         this.exit = this.add.image(60, 100, 'exit').setScale(0.75, 0.75).setInteractive();
@@ -31,9 +35,8 @@ export default class Achievements extends Phaser.Scene {
         this.arrow = this.add.image(750, 100, 'exit').setScale(0.75, 0.75).setInteractive(); 
 
         // Debugging pixel coords
-        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
-        this.pointer = this.input.activePointer;
-        
+
+        this.pointer = this.input.activePointer;        
 
         //Scroll panel
         
@@ -72,6 +75,8 @@ export default class Achievements extends Phaser.Scene {
         })
             .layout()
 
+            
+
         console.log(scrollablePanel.isOverflow);
         this.exit.on('pointerup', function (pointer) {
             console.log("I was clicked!");
@@ -81,12 +86,38 @@ export default class Achievements extends Phaser.Scene {
         this.arrow.on('pointerup', function (pointer) {
             this.scene.start('Rankings');
         }, this)
+
+
+        
+
+        
+
+        
     }
     
     update() {
-        // Debugging pixel coords
-        this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+         
     }
+}
+
+var getPercentData = async function () {
+    const request = ( url,method = 'GET' ) => {
+
+        //url +=  (param).toString();        
+        return fetch(url).then( response => response.json() );
+    };
+    const get = ( url) => request( url, 'GET' );
+    return new Promise((resolve, reject) => {
+        get('http://localhost:3001/ach/fetchPercentAchieved')
+            .then(response => {
+                console.log(response)
+                resolve(response);
+            })
+            .catch(error => {
+                console.log(error);
+                reject(error);
+            });
+        });
 }
 
 var GetAch = async function (userEmail) {
@@ -114,10 +145,24 @@ var createPanel = async function (scene) {
     console.log(firebaseApp.getUser())
     const userEmail = firebaseApp.getUser().email;
     var entries = await GetAch(userEmail);
+    var allAchievements = await getPercentData();
+    
+    
     // Get all users sorted from CreateContent
     console.log(entries);
+    console.log(allAchievements);
+    let aName = allAchievements.map(item =>item.aname);
+    let aDesc = allAchievements.map(item =>item.description);
+    let aPct = allAchievements.map(item =>item.pct);
+    let aid = allAchievements.map(item =>item.id);
+
+    scene.descriptions = [...aDesc];
+
+    
+    
 
     let achievements = entries.map(item => item.aid);
+    console.log(achievements);
     // Create a container for each entry
 
     let titles = [
@@ -134,10 +179,11 @@ var createPanel = async function (scene) {
     
     var container = scene.add.container();
     for (var i = 0; i < 3; i++) {
-        console.log(entries[i]);
-        if (achievements.includes(i)) {
+   
+
+        if (achievements.includes(aid[i])) {
             var bg = scene.add.sprite(250, 100 * (i * 2.5) + 60, 'earnedAch').setScale(0.75, 0.75);
-            var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'sampleAch' + i).setScale(0.75, 0.75);
+            var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'sampleAch' + aid[i]).setScale(0.75, 0.75);
         } else {
             var bg = scene.add.sprite(250, 100 * (i * 2.5) + 60, 'lockAch').setScale(0.75, 0.75);
             var Icon = scene.add.sprite(120, 100 * (i * 2.5) + 55, 'lockAchIcon').setScale(0.75, 0.75);
@@ -152,11 +198,11 @@ var createPanel = async function (scene) {
         }
         title.setStroke('#000000', 6);
         title.setShadow(6, 5, '#000000', 0);
-        var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, flavorTexts[i], { color: 'white', fontFamily: 'Woodchuck', 
+        var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, aDesc[i].length > 40 ? aDesc[i].substring(0,40) + "..." : aDesc[i], { color: 'white', fontFamily: 'Woodchuck', 
         fontSize: '28px', wordWrap: { width: 270, useAdvancedWrap: true }})
         flavorText.setStroke('#000000', 6);
         flavorText.setShadow(4, 4, '#000000', 0);
-        var percentage = scene.add.text(380, 100 * (i * 2.5) - 15, 'xx% \nEarned', { color: 'white', fontFamily: 'Woodchuck', 
+        var percentage = scene.add.text(380, 100 * (i * 2.5) - 15, aPct[i] + '%\nEarned', { color: 'white', fontFamily: 'Woodchuck', 
         fontSize: '20px', align: 'right'})
         percentage.setStroke('#000000', 6);
         percentage.setShadow(4, 4, '#000000', 0);

@@ -68,8 +68,8 @@ io.on('connection', function (socket) {
         io.emit('mascotAttacked', attackPoints, isPlayerA);
     });
 
-    socket.on('mascotDropped', function(hp, isPlayerA){
-        io.emit('mascotDropped', hp);
+    socket.on('mascotDropped', function(hp, region, isPlayerA){
+        io.emit('mascotDropped', hp, region, isPlayerA);
     });
 
     socket.on('mascotDestroyed', function(isPlayerA){

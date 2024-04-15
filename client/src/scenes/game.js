@@ -79,6 +79,7 @@ export default class Game extends Phaser.Scene {
         this.opponentCards = [];
         this.mascotCardPlace = false;
         this.currentTurn = false;
+        this.hasDrawn = false;
         let initTurn = true;
         let attackCount = 1;
         let attackCap = attackCount;
@@ -86,6 +87,10 @@ export default class Game extends Phaser.Scene {
         //mascot destroyed counts
         let yourDestroyedMascots = 0;
         let enemyDestroyedMascots = 0;
+
+        let gatorAidFlag = false;
+        let scalebreakerFlag = false;
+        let allinFlag = false;
 
         //static items
         this.deck = new Deck(this, 1050, 390,'drawBack');
@@ -149,11 +154,81 @@ export default class Game extends Phaser.Scene {
         this.resOutline = this.zone.renderResOutline(this.resDropZone);
 
         // Debugging pixel coords
-        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+   
         this.turnIndicator = this.add.text(90, 200, 'this is text!', { fontSize: '48px', fontFamily: 'Woodchuck'});
         this.turnIndicator.setStroke('#000000', 6);
         this.turnIndicator.setShadow(4, 4, '#000000', 0);
         this.pointer = this.input.activePointer;
+
+        function dbcalls(gatorAidFlag,scalebreakerFlag,allinFlag) {
+            if(gatorAidFlag | scalebreakerFlag | allinFlag ) {
+                let userAchData; 
+                let optionsAchieve; 
+                
+
+                if(gatorAidFlag) {
+                    userAchData = JSON.stringify({
+                        email: firebaseApp.getUser().email,
+                        achievementName: 1
+                    });
+
+                    optionsAchieve =  {
+                        method: 'POST',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userAchData,
+                    }
+
+                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    console.log(JSON.stringify(response));
+                });
+                }
+
+                if(scalebreakerFlag) {
+                    userAchData = JSON.stringify({
+                        email: firebaseApp.getUser().email,
+                        achievementName: 2
+                    });
+
+                    optionsAchieve =  {
+                        method: 'POST',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userAchData,
+                    }
+
+                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    console.log(JSON.stringify(response));
+                });
+                }
+
+                if(allinFlag) {
+                    userAchData = JSON.stringify({
+                        email: firebaseApp.getUser().email,
+                        achievementName: 3
+                    });
+
+                    optionsAchieve =  {
+                        method: 'POST',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                        body: userAchData,
+                    }
+
+                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    console.log(JSON.stringify(response));
+                });
+                }
+
+                
+            }
+        }
 
 
         //button variables
@@ -173,9 +248,10 @@ export default class Game extends Phaser.Scene {
         //For interacting with the deck
         this.input.on('gameobjectdown', (pointer, gameObject) => {
             console.log(this.handZone.data.values.xpos);
-            if(gameObject instanceof Deck && this.currentTurn && this.handZone.data.values.cards < 5) {
+            if(gameObject instanceof Deck && this.currentTurn && this.handZone.data.values.cards < 5 && this.hasDrawn === false) {
                 this.dealer.draw(self);
                 this.handZone.data.values.cards++;
+                this.hasDrawn = true;
                 this.socket.emit('draw',this.isPlayerA);
                 
             }
@@ -202,6 +278,7 @@ export default class Game extends Phaser.Scene {
                 this.socket.emit('switchTurn',this.currentTurn, this.isPlayerA);
                 self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity;
                 attackCount = attackCap;
+                this.hasDrawn = false;
             }
         });
 
@@ -229,6 +306,7 @@ export default class Game extends Phaser.Scene {
         let yourMascot;
         let droppedCard;
         let yourDroppedCard;
+        let enemyRegion;
         
 
 
@@ -506,13 +584,15 @@ export default class Game extends Phaser.Scene {
                     console.log('Game object is being recognized as a Resource object')
                     console.log('Resource Card Value Dropped: ' + gameObject.getResVal());
                     resDropZone.data.values.pointSum += gameObject.getResVal();
-                    resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
+                    resDropZone.data.values.maxCapacity += gameObject.getResVal();
+                    //resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
                     console.log("pool val: " + resDropZone.data.values.pointSum );
                     console.log("max capacity: " + resDropZone.data.values.maxCapacity);
                     //Removing a card from handZone for draw card logic.
                     self.handZone.data.values.cards--;
                     if (self.handZone.data.values.cards == 0) {
                         console.log("You earned the 'All In!' achievement!");
+                        allinFlag = true;
                     }
                     
                 }
@@ -596,13 +676,14 @@ export default class Game extends Phaser.Scene {
                 self.textYourHit.setText(gameObject.getAttackPoints());
                 self.socket.emit('updateEnemy', self.isPlayerA, gameObject.getHealthPoints(), gameObject.getAttackPoints());
                 self.socket.emit('cardDropped', gameObject, self.isPlayerA);
-                self.socket.emit('mascotDropped', gameObject.getHealthPoints(), self.isPlayerA);
+                self.socket.emit('mascotDropped', gameObject.getHealthPoints(), gameObject.getRegion(), self.isPlayerA);
 
                 yourDroppedCard = gameObject;
                 console.log("your dropped card");
                 console.log(yourDroppedCard);
                 if (self.handZone.data.values.cards == 0) {
                     console.log("You earned the 'All In!' achievement!");
+                    allinFlag = true;
                 }
             }
            
@@ -610,12 +691,14 @@ export default class Game extends Phaser.Scene {
         })
         
 
-        this.socket.on('mascotDropped', function(hp, isPlayerA){
+        this.socket.on('mascotDropped', function(hp, region, isPlayerA){
             console.log("transmitted HP: " + hp);
+            console.log("transmitted region: " + region);
 
             //player b now knows their opponent's mascot health
             if(isPlayerA !== self.isPlayerA){
                 self.enemyMascot = hp;
+                self.enemyRegion = region;
             }
             
         })
@@ -644,8 +727,13 @@ export default class Game extends Phaser.Scene {
                 console.log("mascots destroyed: " + yourDestroyedMascots);
 
                 if(yourDestroyedMascots == 2){
+                    
                     self.yourhealthBar.setTexture('emptyHealthBar');
                     self.losePopUpText.setVisible(true).setDepth(100);
+                    
+                    //Update Achievements
+                    dbcalls(gatorAidFlag,scalebreakerFlag,allinFlag);
+                    
                 }
             }
             else{
@@ -659,8 +747,10 @@ export default class Game extends Phaser.Scene {
                 self.enemyhealthBar.setTexture('halfHealthBar');
 
                 if(enemyDestroyedMascots == 2){ // Player won the game
+                    //allinFlag = true;
                     if (yourDroppedCard.region == 'S') {
                         console.log("You earned the 'Gator-Aid' achievement!");
+                        gatorAidFlag = true;
                     }
                     self.enemyhealthBar.setTexture('emptyHealthBar');
                     self.winPopUpText.setVisible(true).setDepth(100);
@@ -677,7 +767,10 @@ export default class Game extends Phaser.Scene {
                     }
                     fetch("http://localhost:3001/users/updateWinCount",options).then(response =>{
                         console.log(JSON.stringify(response));
-                    })
+                    });
+                    
+                    //Update Achievements
+                    dbcalls(gatorAidFlag,scalebreakerFlag,allinFlag)
 
                 }
             }
@@ -723,8 +816,8 @@ export default class Game extends Phaser.Scene {
                     self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity - modifier;
                 }
                 self.resDropZone.data.values.maxCapacity -= modifier;
-                self.resDropZone.data.values.pointSum < 0 ? 0 : self.resDropZone.data.values.pointSum;
-                self.resDropZone.data.values.maxCapacity < 0 ? 0 : self.resDropZone.data.values.maxCapacity;
+                self.resDropZone.data.values.pointSum = self.resDropZone.data.values.pointSum < 0 ? 0 : self.resDropZone.data.values.pointSum;
+                self.resDropZone.data.values.maxCapacity = self.resDropZone.data.values.maxCapacity < 0 ? 0 : self.resDropZone.data.values.maxCapacity;
                 console.log("Max Capacity: " + self.resDropZone.data.values.maxCapacity);
                 console.log("resources available: " + self.resDropZone.data.values.pointSum);
             }
@@ -737,14 +830,24 @@ export default class Game extends Phaser.Scene {
             //this is emitted to all clients (player A and B), so this function goes thru both
             console.log("Mascot Attacked!!!!");
             console.log(yourDroppedCard);
-            console.log("Dropped Card HP: " + yourDroppedCard.getHealthPoints());
+            console.log("Your Dropped Card HP: " + yourDroppedCard.getHealthPoints());
+            console.log("Your Dropped Card Region: " + yourDroppedCard.getRegion());
+            console.log("Opponent Card Region: " + self.enemyRegion);
+            //console.log("attack: " + self.calculatePower(self.enemyRegion, yourDroppedCard.getRegion(),  attackPoints));
+            //let newAtttackPoints = self.calculatePower(yourDroppedCard.getRegion(), self.enemyRegion, attackPoints);
+            //console.log("attack: " + newAtttackPoints);
 
             if(isPlayerA !== self.isPlayerA){
-                console.log("attack " + self.calculatePower(yourDroppedCard.getRegion(), self.droppedCard.getRegion(), attackPoints));
-                yourDroppedCard.decreaseHP(attackPoints);
+                //console.log("attack " + self.calculatePower(yourDroppedCard.getRegion(), self.droppedCard.getRegion(), attackPoints));
+                //yourDroppedCard.decreaseHP(attackPoints);
+                let newAtttackPoints = self.calculatePower(self.enemyRegion,yourDroppedCard.getRegion(),  attackPoints);
+                console.log("Damage Dealt: " + newAtttackPoints);
+                yourDroppedCard.decreaseHP(newAtttackPoints);
                 self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                 if(yourDroppedCard.getHealthPoints() == 0) {
                     self.socket.emit('mascotDestroyed',isPlayerA);
+                    //yourDroppedCard = undefined;
+                    
                 }
                 self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
             }
@@ -808,6 +911,7 @@ export default class Game extends Phaser.Scene {
                             self.textYourHit.setText(yourDroppedCard.getAttackPoints());
                             if (yourDroppedCard.getAttackPoints() >= 20) {
                                 console.log("You earned the 'Scalebreaker' achievement!");
+                                scalebreakerFlag = true;
                             }
                             self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
                         }
@@ -858,6 +962,8 @@ export default class Game extends Phaser.Scene {
             console.log("max capacity: " + this.resDropZone.data.values.maxCapacity);
                 if (self.handZone.data.values.cards == 0) {
                     console.log("You earned the 'All In!' achievement!");
+                    allinFlag = true;
+                    //dfd
                 }
             }
         });
@@ -885,7 +991,12 @@ export default class Game extends Phaser.Scene {
         this.attackIcon.on('pointerdown', () => {
             console.log("I was clicked!");
             this.attackIcon.setTint(0x878787);
-            if(this.currentTurn && yourDroppedCard != undefined && attackCount > 0){
+            
+            if(this.currentTurn && yourDroppedCard != undefined && self.enemyRegion != undefined && attackCount > 0){
+                if (yourDroppedCard.getHealthPoints() == 0) {
+                    yourDroppedCard = undefined;
+                    return;
+                }
                 //this.updateClickCountText(++clickCount);
                 let attack = yourDroppedCard.getAttackPoints();
                 self.socket.emit('mascotAttacked', attack, self.isPlayerA);
@@ -920,7 +1031,7 @@ export default class Game extends Phaser.Scene {
             initTurn = true;
          }
 
-         this.update();
+         //this.update();
     
         });
         
@@ -933,7 +1044,7 @@ export default class Game extends Phaser.Scene {
         
         
         // Debugging pixel coords
-        this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+      
         if (this.currentTurn == true) {
             //console.log("Cond 1!");
             this.turnIndicator.setText('Your turn!');
@@ -1005,6 +1116,9 @@ export default class Game extends Phaser.Scene {
             else if(enemyRegion == northEast){
                 return (yourPower / 2)
             }
+            else{
+                return yourPower;
+            }
         }
         else if(yourRegion == northEast){
             //beats S
@@ -1012,8 +1126,11 @@ export default class Game extends Phaser.Scene {
                 return (yourPower * 2);
             }
             //loses to W
-            else if(enemyRegion == northEast){
+            else if(enemyRegion == west){
                 return (yourPower / 2)
+            }
+            else{
+                return yourPower;
             }
         }
         else if(yourRegion == midWest){
@@ -1025,6 +1142,9 @@ export default class Game extends Phaser.Scene {
             else if(enemyRegion == south){
                 return (yourPower / 2)
             }
+            else{
+                return yourPower;
+            }
         }
         else if(yourRegion == west){
             //beats NE
@@ -1034,6 +1154,9 @@ export default class Game extends Phaser.Scene {
             //loses to MW
             else if(enemyRegion == midWest){
                 return (yourPower / 2)
+            }
+            else{
+                return yourPower;
             }
         }
     }
