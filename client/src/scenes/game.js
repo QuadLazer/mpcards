@@ -679,7 +679,7 @@ export default class Game extends Phaser.Scene {
                         },
                         body: userData,
                     }
-                    fetch("http://localhost:3001/users/updateWinCount",options).then(response =>{
+                    fetch("https://mpcards-dbserver.onrender.com/users/updateWinCount",options).then(response =>{
                         console.log(JSON.stringify(response));
                     })
 
