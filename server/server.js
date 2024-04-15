@@ -77,6 +77,10 @@ io.on('connection', function (socket) {
         io.emit('mascotDestroyed', isPlayerA);
     });
 
+    socket.on('effectiveTextPopUp', function(isPlayerA, effective){
+        io.emit('effectiveTextPopUp', isPlayerA, effective);
+    });
+
     socket.on('switchTurn', function(turn, isPlayerA){
         io.emit('switchTurn',turn, isPlayerA);
     })
