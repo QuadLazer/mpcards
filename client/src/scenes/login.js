@@ -35,7 +35,7 @@ export default class Login extends Phaser.Scene
         });
 
         // Debugging pixel coords
-        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+
         this.pointer = this.input.activePointer;
 
         const text = this.add.text(10, 10, 'Please login to play', { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
@@ -109,7 +109,7 @@ export default class Login extends Phaser.Scene
     update ()
     {
         // Debugging pixel coords
-        this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+
     }
 
 }

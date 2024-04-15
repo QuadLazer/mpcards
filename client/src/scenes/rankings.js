@@ -25,8 +25,7 @@ export default class Rankings extends Phaser.Scene {
         this.title = this.add.image(900, 100, 'leaderb').setScale(0.75, 0.75);
         this.arrow = this.add.image(1100, 100, 'rightArrow').setScale(0.75, 0.75).setInteractive(); 
 
-        // Debugging the pixel coords
-        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+        // Debugging pixel coords
         this.pointer = this.input.activePointer;
 
         //Scroll panel
@@ -78,7 +77,7 @@ export default class Rankings extends Phaser.Scene {
     
     update() {
         // Debugging pixel coords
-        this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+
     }
 }
 

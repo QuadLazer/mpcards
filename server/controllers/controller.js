@@ -11,6 +11,7 @@ const updateUser = userModel.updateUser;
 const updateWinCount = userModel.updateWinCount;
 const getAchievements = achievementsModel.getAchievements;
 const getAchById = achievementsModel.getAchievementById;
+const getAchPercent = achievementsModel.getAchPercent;
 const getUserAchieved = userAchieveModel.getUserAchievements;
 const addAchievement = userAchieveModel.addUserAchievement;
 const deleteAchievement = userAchieveModel.deleteAchievement;
@@ -116,6 +117,15 @@ const fetchAllAchievements = async (req, res, next) => {
     }
 }
 
+const fetchPercentAchieve = async (req, res, next) => {
+    try {
+        const percentList = await getAchPercent();
+        return res.status(200).send(percentList)
+    } catch (error) {
+        next(error)
+    }
+}
+
 const findAchievement = async (req, res, next) => {
     try {
         let achievementId = req.params['achId'];
@@ -159,7 +169,8 @@ const removeAchievement = async (req, res, next) => {
 }
 
 module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, modifyWinCount, otherFunction, register,
-fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser, removeAchievement}
+fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser, removeAchievement,
+fetchPercentAchieve}
 
 //exports.fetchAllUsers = fetchAllUsers;
 //exports.otherFunction = otherFunction;
