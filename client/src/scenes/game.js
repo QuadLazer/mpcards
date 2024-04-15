@@ -336,7 +336,7 @@ export default class Game extends Phaser.Scene {
                     };
                     const get = ( url, param ) => request( url, param, 'GET' );
         
-                    get('mpcards-dbserver.onrender.com/users/findUser/', firebaseApp.getUser().email)
+                    get('https://mpcards-dbserver.onrender.com/users/findUser/', firebaseApp.getUser().email)
                     .then(response => {
                         console.log(response);
                         self.yourUsername.setText(response.uname.length > 8 ? response.uname.substring(0,8) + "..." : response.uname);
