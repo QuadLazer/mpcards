@@ -13,6 +13,7 @@ export default class MainMenu extends Phaser.Scene {
         this.load.image('rankingsButton','assets/menu_assets/rankingsButton.png');
         this.load.image('logOut', 'assets/menu_assets/logOut.png');
         this.load.image('bg', 'assets/bgtest.png');
+        this.load.image('infoButton', 'assets/instruct_assets/infoIcon.png');
     }
     
 
@@ -26,6 +27,7 @@ export default class MainMenu extends Phaser.Scene {
         this.rankingsButton = this.add.image(950, 393, 'rankingsButton').setScale(0.75, 0.75).setInteractive();
         this.title = this.add.image(650, 150, 'title').setScale(0.75, 0.75).setInteractive();
         this.logOut = this.add.image(60, 60, 'logOut').setScale(0.75, 0.75).setInteractive();
+        this.infoButton = this.add.image(1220, 60, 'infoButton').setScale(0.75, 0.75).setInteractive();
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         
         if (this.socket == null) {
@@ -78,6 +80,16 @@ export default class MainMenu extends Phaser.Scene {
         this.rankingsButton.on('pointerup', function (pointer) {
             this.rankingsButton.setTint(0x878787);
             this.scene.start('Rankings');
+            this.socket.disconnect();
+        }, this);
+
+        this.infoButton.on('pointerdown', function (pointer) {
+            this.infoButton.setTint(0x878787);
+        }, this);
+
+        this.infoButton.on('pointerup', function (pointer) {
+            this.infoButton.setTint();
+            this.scene.start('Instructions');
             this.socket.disconnect();
         }, this);
     }

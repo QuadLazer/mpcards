@@ -6,7 +6,6 @@ export default class Rankings extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('testEndButton', 'assets/TestEnd.png');
         this.load.image('bg', 'assets/bgtest.png');
         this.load.image('exit', 'assets/exitArrow.png');
         this.load.image('lbHeader', 'assets/leaderboard_assets/leaderboard.png');
@@ -71,6 +70,10 @@ export default class Rankings extends Phaser.Scene {
             console.log("I was clicked!");
             this.scene.start('MainMenu');
         }, this)
+
+        this.arrow.on('pointerup', function (pointer) {
+            this.scene.start('Achievements');
+        }, this)
     }
     
     update() {
@@ -100,7 +103,7 @@ var GetRankedUsers = async function () {
 var createPanel = async function (scene) {
     // Get all users sorted from CreateContent
     var entries = await GetRankedUsers();
-
+    console.log(entries);
     // Create a container for each entry
     var container = scene.add.container();
     for (var i = 0; i < entries.length; i++) {

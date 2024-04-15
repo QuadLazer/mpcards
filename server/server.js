@@ -9,7 +9,7 @@ const io = require("socket.io")(http, {
   });
 let players = [];
 
-app.use(express.static(__dirname + './public'));
+app.use(express.static(__dirname + '/public'));
 
 io.on('connection', function (socket) {
     console.log("Online: " + socket.id);
@@ -68,8 +68,8 @@ io.on('connection', function (socket) {
         io.emit('mascotAttacked', attackPoints, isPlayerA);
     });
 
-    socket.on('mascotDropped', function(hp, isPlayerA){
-        io.emit('mascotDropped', hp);
+    socket.on('mascotDropped', function(hp, region, isPlayerA){
+        io.emit('mascotDropped', hp, region, isPlayerA);
     });
 
     socket.on('mascotDestroyed', function(isPlayerA){
