@@ -108,7 +108,7 @@ var getPercentData = async function () {
     };
     const get = ( url) => request( url, 'GET' );
     return new Promise((resolve, reject) => {
-        get('http://localhost:3001/ach/fetchPercentAchieved')
+        get('https://mpcards-dbserver.onrender.com/ach/fetchPercentAchieved')
             .then(response => {
                 console.log(response)
                 resolve(response);
