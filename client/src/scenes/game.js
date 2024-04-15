@@ -79,6 +79,7 @@ export default class Game extends Phaser.Scene {
         this.opponentCards = [];
         this.mascotCardPlace = false;
         this.currentTurn = false;
+        this.hasDrawn = false;
         let initTurn = true;
         let attackCount = 1;
         let attackCap = attackCount;
@@ -153,7 +154,7 @@ export default class Game extends Phaser.Scene {
         this.resOutline = this.zone.renderResOutline(this.resDropZone);
 
         // Debugging pixel coords
-        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+   
         this.turnIndicator = this.add.text(90, 200, 'this is text!', { fontSize: '48px', fontFamily: 'Woodchuck'});
         this.turnIndicator.setStroke('#000000', 6);
         this.turnIndicator.setShadow(4, 4, '#000000', 0);
@@ -247,9 +248,10 @@ export default class Game extends Phaser.Scene {
         //For interacting with the deck
         this.input.on('gameobjectdown', (pointer, gameObject) => {
             console.log(this.handZone.data.values.xpos);
-            if(gameObject instanceof Deck && this.currentTurn && this.handZone.data.values.cards < 5) {
+            if(gameObject instanceof Deck && this.currentTurn && this.handZone.data.values.cards < 5 && this.hasDrawn === false) {
                 this.dealer.draw(self);
                 this.handZone.data.values.cards++;
+                this.hasDrawn = true;
                 this.socket.emit('draw',this.isPlayerA);
                 
             }
@@ -276,6 +278,7 @@ export default class Game extends Phaser.Scene {
                 this.socket.emit('switchTurn',this.currentTurn, this.isPlayerA);
                 self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity;
                 attackCount = attackCap;
+                this.hasDrawn = false;
             }
         });
 
@@ -813,8 +816,8 @@ export default class Game extends Phaser.Scene {
                     self.resDropZone.data.values.pointSum = self.resDropZone.data.values.maxCapacity - modifier;
                 }
                 self.resDropZone.data.values.maxCapacity -= modifier;
-                self.resDropZone.data.values.pointSum < 0 ? 0 : self.resDropZone.data.values.pointSum;
-                self.resDropZone.data.values.maxCapacity < 0 ? 0 : self.resDropZone.data.values.maxCapacity;
+                self.resDropZone.data.values.pointSum = self.resDropZone.data.values.pointSum < 0 ? 0 : self.resDropZone.data.values.pointSum;
+                self.resDropZone.data.values.maxCapacity = self.resDropZone.data.values.maxCapacity < 0 ? 0 : self.resDropZone.data.values.maxCapacity;
                 console.log("Max Capacity: " + self.resDropZone.data.values.maxCapacity);
                 console.log("resources available: " + self.resDropZone.data.values.pointSum);
             }
@@ -1041,7 +1044,7 @@ export default class Game extends Phaser.Scene {
         
         
         // Debugging pixel coords
-        this.label.setText('(' + this.pointer.x + ', ' + this.pointer.y + ')');
+      
         if (this.currentTurn == true) {
             //console.log("Cond 1!");
             this.turnIndicator.setText('Your turn!');
