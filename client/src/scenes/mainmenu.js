@@ -41,9 +41,7 @@ export default class MainMenu extends Phaser.Scene {
             console.log("I'm already set!");
             this.socket.close();
             this.socket = io("https://mpcards-socket.onrender.com", {
-                reconnection: true,
-                reconnectionDelay: 500,
-                reconnectionAttempts: 100,
+                reconnection: true
               });
         }
 
