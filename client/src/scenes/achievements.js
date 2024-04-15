@@ -35,7 +35,7 @@ export default class Achievements extends Phaser.Scene {
         this.arrow = this.add.image(750, 100, 'exit').setScale(0.75, 0.75).setInteractive(); 
 
         // Debugging pixel coords
-        this.label = this.add.text(0, 0, '(x, y)', { fontFamily: '"Monospace"'});
+
         this.pointer = this.input.activePointer;        
 
         //Scroll panel
