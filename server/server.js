@@ -3,7 +3,7 @@ const app = express();
 const http = require('http').createServer(express);
 const io = require("socket.io")(http, {
     cors: {
-      origin: "https://mpcards-socket.onrender.com",
+      origin: ["https://mpcards-socket.onrender.com", "https://mpcards-h6fr.onrender.com"],
       methods: ["GET", "POST"]
     }
   });
