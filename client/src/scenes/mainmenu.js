@@ -32,11 +32,19 @@ export default class MainMenu extends Phaser.Scene {
         
         if (this.socket == null) {
             console.log("I was null!");
-            this.socket = io('https://mpcards-socket.onrender.com:3000', { transports: ["websocket"] });
+            this.socket = io("https://mpcards-socket.onrender.com", {
+                reconnection: true,
+                reconnectionDelay: 500,
+                reconnectionAttempts: 100,
+              });
         } else {
             console.log("I'm already set!");
             this.socket.close();
-            this.socket = io('https://mpcards-socket.onrender.com:3000', { transports: ["websocket"] });
+            this.socket = io("https://mpcards-socket.onrender.com", {
+                reconnection: true,
+                reconnectionDelay: 500,
+                reconnectionAttempts: 100,
+              });
         }
 
         this.playButton.on('pointerdown', function (pointer) {
