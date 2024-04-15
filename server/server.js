@@ -9,7 +9,7 @@ const io = require("socket.io")(http, {
   });
 let players = [];
 
-app.use(express.static(__dirname + './public'));
+app.use(express.static(__dirname + '/public'));
 
 io.on('connection', function (socket) {
     console.log("Online: " + socket.id);

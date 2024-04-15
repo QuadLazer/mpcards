@@ -1018,13 +1018,14 @@ export default class Game extends Phaser.Scene {
          }
          this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
          //console.log("before set " + this.isPlayerA);
+         console.log(this.isPlayerA, initTurn)
          if(this.isPlayerA && initTurn) {
             this.currentTurn = true;
             initTurn = false;
          }
          else if(!this.isPlayerA && !initTurn) {
             this.currentTurn = false;
-            initTurn = false;
+            initTurn = true;
          }
 
          //this.update();
