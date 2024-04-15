@@ -181,7 +181,7 @@ export default class Game extends Phaser.Scene {
                         body: userAchData,
                     }
 
-                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    fetch("https://mpcards-dbserver.onrender.com/addUserAch",optionsAchieve).then(response =>{
                     console.log(JSON.stringify(response));
                 });
                 }
@@ -201,7 +201,7 @@ export default class Game extends Phaser.Scene {
                         body: userAchData,
                     }
 
-                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    fetch("https://mpcards-dbserver.onrender.com/addUserAch",optionsAchieve).then(response =>{
                     console.log(JSON.stringify(response));
                 });
                 }
@@ -221,7 +221,7 @@ export default class Game extends Phaser.Scene {
                         body: userAchData,
                     }
 
-                    fetch("http://localhost:3001/uha/addUserAch",optionsAchieve).then(response =>{
+                    fetch("https://mpcards-dbserver.onrender.com/addUserAch",optionsAchieve).then(response =>{
                     console.log(JSON.stringify(response));
                 });
                 }
