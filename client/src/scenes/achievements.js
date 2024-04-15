@@ -198,7 +198,9 @@ var createPanel = async function (scene) {
         }
         title.setStroke('#000000', 6);
         title.setShadow(6, 5, '#000000', 0);
-        var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, aDesc[i].length > 40 ? aDesc[i].substring(0,40) + "..." : aDesc[i], { color: 'white', fontFamily: 'Woodchuck', 
+        //var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, aDesc[i].length > 40 ? aDesc[i].substring(0,40) + "..." : aDesc[i], { color: 'white', fontFamily: 'Woodchuck', 
+        //fontSize: '28px', wordWrap: { width: 270, useAdvancedWrap: true }})
+        var flavorText = scene.add.text(180, 100 * (i * 2.5) + 45, flavorTexts[i], { color: 'white', fontFamily: 'Woodchuck', 
         fontSize: '28px', wordWrap: { width: 270, useAdvancedWrap: true }})
         flavorText.setStroke('#000000', 6);
         flavorText.setShadow(4, 4, '#000000', 0);
