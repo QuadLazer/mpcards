@@ -181,7 +181,7 @@ export default class Game extends Phaser.Scene {
                         body: userAchData,
                     }
 
-                    fetch("https://mpcards-dbserver.onrender.com/addUserAch",optionsAchieve).then(response =>{
+                    fetch("https://mpcards-dbserver.onrender.com/uha/addUserAch",optionsAchieve).then(response =>{
                     console.log(JSON.stringify(response));
                 });
                 }
@@ -201,7 +201,7 @@ export default class Game extends Phaser.Scene {
                         body: userAchData,
                     }
 
-                    fetch("https://mpcards-dbserver.onrender.com/addUserAch",optionsAchieve).then(response =>{
+                    fetch("https://mpcards-dbserver.onrender.com/uha/addUserAch",optionsAchieve).then(response =>{
                     console.log(JSON.stringify(response));
                 });
                 }
@@ -221,7 +221,7 @@ export default class Game extends Phaser.Scene {
                         body: userAchData,
                     }
 
-                    fetch("https://mpcards-dbserver.onrender.com/addUserAch",optionsAchieve).then(response =>{
+                    fetch("https://mpcards-dbserver.onrender.com/uha/addUserAch",optionsAchieve).then(response =>{
                     console.log(JSON.stringify(response));
                 });
                 }
@@ -846,7 +846,7 @@ export default class Game extends Phaser.Scene {
                 //yourDroppedCard.decreaseHP(attackPoints);
                 let newAtttackPoints = self.calculatePower(self.enemyRegion,yourDroppedCard.getRegion(),  attackPoints);
                 console.log("Damage Dealt: " + newAtttackPoints);
-                yourDroppedCard.decreaseHP(newAtttackPoints);
+                yourDroppedCard.decreaseHP(Math.floor(newAtttackPoints));
                 self.textYourHealth.setText(yourDroppedCard.getHealthPoints());
                 if(yourDroppedCard.getHealthPoints() == 0) {
                     self.socket.emit('mascotDestroyed',isPlayerA);
