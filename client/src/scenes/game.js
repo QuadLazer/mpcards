@@ -271,6 +271,8 @@ export default class Game extends Phaser.Scene {
             if (email != firebaseApp.getUser().email) {
                 const userEmail = email;
 
+                console.log(userEmail);
+
                 const request = ( url, param, method = 'GET' ) => {
 
                 url +=  ( param).toString();        
@@ -911,8 +913,6 @@ export default class Game extends Phaser.Scene {
             //this.updateMascotHealthText(yourDroppedCard.getHealthPoints());
          }
          this.updateResourceTotalText(this.resDropZone.data.values.pointSum);
-         //console.log("before set " + this.isPlayerA);
-         //console.log(this.isPlayerA, initTurn)
          if(this.isPlayerA && initTurn) {
             this.currentTurn = true;
             initTurn = false;
