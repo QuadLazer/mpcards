@@ -7,6 +7,7 @@ const io = require("socket.io")(http, {
       methods: ["GET", "POST"]
     }
   });
+const port = process.env.PORT || 4000;
 let players = [];
 
 app.use(express.static(__dirname + '/public'));
@@ -101,7 +102,7 @@ io.on('connection', function (socket) {
     })
 });
 
-http.listen(3000, function () {
+http.listen(port, function () {
     var host = http.address().address
     var port = http.address().port
     console.log('Now listening on http://%s:%s' , host, port);
