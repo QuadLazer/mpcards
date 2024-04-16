@@ -11,6 +11,7 @@ import FirebasePlugin from '../plugins/FirebasePlugin';
 import Controller from '../helpers/controller';
 import Mascot from '../helpers/mascot';
 import { GameObjects } from 'phaser';
+import { Time } from 'phaser';
 
 
 
@@ -138,6 +139,16 @@ export default class Game extends Phaser.Scene {
         this.textYourHit.setStroke('#000000', 6);
         this.textYourHit.setShadow(4, 4, '#000000', 0);
         
+        this.textSuperEffective = this.add.text(405, 450, 'Super Effective!',  {fill:'#00f35b', fontSize:'24px', fontFamily: 'Woodchuck'}).setVisible(0);
+        this.textSuperEffective.setStroke('#000000', 6);
+        this.textSuperEffective.setShadow(4, 4, '#000000', 0);
+        this.textNotEffective = this.add.text(405, 450, 'Not Effective...',  {fill:'#ff5733', fontSize:'24px', fontFamily: 'Woodchuck'}).setVisible(0);
+        this.textNotEffective.setStroke('#000000', 6);
+        this.textNotEffective.setShadow(4, 4, '#000000', 0);
+        this.textAttacked = this.add.text(405, 450, 'Attacked!',  {fill:'#fe8c20', fontSize:'24px', fontFamily: 'Woodchuck'}).setVisible(0);
+        this.textAttacked.setStroke('#000000', 6);
+        this.textAttacked.setShadow(4, 4, '#000000', 0);
+
 
         //win and lose text 
         this.losePopUpText = this.add.text(670, 370, 'YOU LOSE', {fill:'#ff5733', fontSize:'100px', fontFamily: 'Woodchuck'}).setOrigin(0.5).setVisible(false);
@@ -695,7 +706,7 @@ export default class Game extends Phaser.Scene {
             console.log("transmitted HP: " + hp);
             console.log("transmitted region: " + region);
 
-            //player b now knows their opponent's mascot health
+            //player b now knows their opponent's mascot health and region
             if(isPlayerA !== self.isPlayerA){
                 self.enemyMascot = hp;
                 self.enemyRegion = region;
@@ -826,6 +837,33 @@ export default class Game extends Phaser.Scene {
             }
         })
 
+        this.socket.on('effectiveTextPopUp', function(isPlayerA, effective){
+            if(effective == 0){
+                if(isPlayerA !== self.isPlayerA){
+                    self.textSuperEffective.setVisible(1);
+                    setTimeout(function(){
+                        self.textSuperEffective.setVisible(0);
+                    }, 5000);
+                }
+            }
+            else if(effective == 1){
+                if(isPlayerA !== self.isPlayerA){
+                    self.textNotEffective.setVisible(1);
+                    setTimeout(function(){
+                        self.textNotEffective.setVisible(0);
+                    }, 5000);
+                }
+            }
+            // else{
+            //     if(isPlayerA !== self.isPlayerA){
+            //         self.textAttacked.setVisible(1);
+            //         setTimeout(function(){
+            //             self.textAttacked.setVisible(0);
+            //         }, 5000);
+            //     }
+            // }
+        });
+
         this.socket.on('mascotAttacked', function (attackPoints, isPlayerA) {
             //this is emitted to all clients (player A and B), so this function goes thru both
             console.log("Mascot Attacked!!!!");
@@ -850,6 +888,18 @@ export default class Game extends Phaser.Scene {
                     
                 }
                 self.socket.emit('updateEnemy', self.isPlayerA, yourDroppedCard.getHealthPoints(), yourDroppedCard.getAttackPoints());
+
+                let result = self.calculateResult(self.enemyRegion, yourDroppedCard.getRegion());
+                self.socket.emit('effectiveTextPopUp', self.isPlayerA, result);
+                setTimeout(function(){
+                    self.textSuperEffective.setVisible(0);
+                }, 3000);
+                setTimeout(function(){
+                    self.textNotEffective.setVisible(0);
+                }, 3000);
+                setTimeout(function(){
+                    self.textAttacked.setVisible(0);
+                }, 3000);
             }
             
         })
@@ -1110,53 +1160,127 @@ export default class Game extends Phaser.Scene {
         if(yourRegion == south){
             //beats MW
             if(enemyRegion == midWest){
+                this.textSuperEffective.setVisible(1);
                 return (yourPower * 2);
             }
             //loses to NE
             else if(enemyRegion == northEast){
+                this.textNotEffective.setVisible(1);
                 return (yourPower / 2)
             }
             else{
+                this.textAttacked.setVisible(1);
                 return yourPower;
+                
             }
         }
         else if(yourRegion == northEast){
             //beats S
             if(enemyRegion == south){
+                this.textSuperEffective.setVisible(1);
                 return (yourPower * 2);
             }
             //loses to W
             else if(enemyRegion == west){
+                this.textNotEffective.setVisible(1);
                 return (yourPower / 2)
             }
             else{
+                this.textAttacked.setVisible(1);
                 return yourPower;
             }
         }
         else if(yourRegion == midWest){
             //beats W
             if(enemyRegion == west){
+                this.textSuperEffective.setVisible(1);
                 return (yourPower * 2);
             }
             //loses to S
             else if(enemyRegion == south){
+                this.textNotEffective.setVisible(1);
                 return (yourPower / 2)
             }
             else{
+                this.textAttacked.setVisible(1);
                 return yourPower;
             }
         }
         else if(yourRegion == west){
             //beats NE
             if(enemyRegion == northEast){
+                this.textSuperEffective.setVisible(1);
                 return (yourPower * 2);
             }
             //loses to MW
             else if(enemyRegion == midWest){
+                this.textNotEffective.setVisible(1);
                 return (yourPower / 2)
             }
             else{
+                this.textAttacked.setVisible(1);
                 return yourPower;
+            }
+        }
+    }
+
+    calculateResult(yourRegion, enemyRegion){
+        //NE beats S, S beats MW, MW beats W, W beats NE
+        let south = "S";
+        let northEast = "NE";
+        let midWest = "MW";
+        let west = "W";
+
+        if(yourRegion == south){
+            //beats MW
+            if(enemyRegion == midWest){
+                return 0;
+            }
+            //loses to NE
+            else if(enemyRegion == northEast){
+                return 1;
+            }
+            else{
+                return 2;
+            }
+        }
+        else if(yourRegion == northEast){
+            //beats S
+            if(enemyRegion == south){
+                return 0;
+            }
+            //loses to W
+            else if(enemyRegion == west){
+                return 1;
+            }
+            else{
+                return 2;
+            }
+        }
+        else if(yourRegion == midWest){
+            //beats W
+            if(enemyRegion == west){
+                return 0;
+            }
+            //loses to S
+            else if(enemyRegion == south){
+                return 1;
+            }
+            else{
+                return 2;
+            }
+        }
+        else if(yourRegion == west){
+            //beats NE
+            if(enemyRegion == northEast){
+                return 0;
+            }
+            //loses to MW
+            else if(enemyRegion == midWest){
+                return 1;
+            }
+            else{
+                return 2;
             }
         }
     }
