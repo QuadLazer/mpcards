@@ -367,7 +367,7 @@ export default class Game extends Phaser.Scene {
                 let cardBack;
                 cardBack = 'opponentBack';
                 let opponentCard = new Card(self, 875 - (self.opponentCards.length * 100), 50, cardBack);
-                self.opponentCards.push((opponentCard).disableInteractive());
+                self.opponentCards.unshift((opponentCard).disableInteractive());
       
             }
         });
@@ -534,7 +534,6 @@ export default class Game extends Phaser.Scene {
 
         this.socket.on('resDropped', function (isPlayerA) {
             if (isPlayerA !== self.isPlayerA) {
-                
                 self.opponentCards.shift().destroy();
 
             }
