@@ -16,22 +16,46 @@ const getUserAchieved = userAchieveModel.getUserAchievements;
 const addAchievement = userAchieveModel.addUserAchievement;
 const deleteAchievement = userAchieveModel.deleteAchievement;
 
+function escapeHTML(str) {
+    return str.replace(/[&<>"'\/]/g, function (char) {
+    switch (char) {
+      case '&':
+        return '&amp;';
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '"':
+        return '&quot;';
+      case '\\':
+        return '&#39;';
+      case '/':
+        return '&#x2F;';
+      default:
+        return char;
+      }
+    });
+}
+  
 
 
 
-const fetchAllUsers = async (req, res, next) => {
+
+async function fetchAllUsers(req, res, next) {
     try {
         const userList = await getUsers();
-        return res.status(200).send(userList)
+        return res.status(200).send(userList);
     } catch (error) {
-        next(error)
+        next(error);
     }
 
 }
 
 const findUser = async (req, res, next) => {
     try {
-        let identifier = req.params['userEmail']
+        
+        let identifier = req.params['userEmail'];
+        identifier = escapeHTML(identifier);
         const user = await getUser(identifier);
         return res.status(200).send(user)
     } catch (error) {
@@ -43,6 +67,8 @@ const findUser = async (req, res, next) => {
 const eraseUser = async (req, res, next) => {
     try {
         let {username, email} = req.body
+        username = escapeHTML(username);
+        email = escapeHTML(email);
         const deleted = await deleteUser(username, email);
         return res.status(200).send(deleted)
     } catch (error) {
@@ -53,6 +79,11 @@ const eraseUser = async (req, res, next) => {
 const modifyUser = async (req, res, next) => {
     try {
         let {username, email, newUsername, newEmail, newPassword} = req.body
+        username = escapeHTML(username);
+        email = escapeHTML(email);
+        newUsername = escapeHTML(newUsername);
+        newEmail = escapeHTML(newEmail);
+        newPassword = escapeHTML(newPassword);
         if(newEmail && !validator.validate(newEmail)) {
             console.log("not a valid email");
             throw { name: "DatabaseQueryError", message: "malformed email", status: false }
@@ -75,6 +106,7 @@ const modifyUser = async (req, res, next) => {
 const modifyWinCount = async (req, res, next) => {
     try {
         let {username} = req.body
+        username = escapeHTML(username);
         const updated = await updateWinCount(username);
         return res.status(200).send(updated)
     } catch (error) {
@@ -86,6 +118,8 @@ const modifyWinCount = async (req, res, next) => {
 const register = async (req, res, next) => {
     try {
         let { email, password } = req.body
+        email = escapeHTML(email);
+        password = escapeHTML(password);
         if (!validator.validate(email) || password.length < 6) {
             throw res.status(400);
         }
@@ -120,6 +154,7 @@ const fetchPercentAchieve = async (req, res, next) => {
 const findAchievement = async (req, res, next) => {
     try {
         let achievementId = req.params['achId'];
+        achievementId = escapeHTML(achievementId);
         const achievement = await getAchById(achievementId);
         return res.status(200).send(achievement)
     } catch (error) {
@@ -131,6 +166,7 @@ const findAchievement = async (req, res, next) => {
 const findUserAchieved = async (req, res, next) => {
     try {
         let email = req.params['email'];
+        email = escapeHTML(email);
         const achievement = await getUserAchieved(email);
         return res.status(200).send(achievement)
     } catch (error) {
@@ -142,6 +178,8 @@ const findUserAchieved = async (req, res, next) => {
 const addAchievementToUser = async (req, res, next) => {
     try {
         let {email,achievementName} = req.body
+        email = escapeHTML(email);
+        achievementName = escapeHTML(achievementName);
         const addedToUser = await addAchievement(email,achievementName);
         return res.status(200).send(addedToUser)
     } catch (error) {
@@ -152,6 +190,8 @@ const addAchievementToUser = async (req, res, next) => {
 const removeAchievement = async (req, res, next) => {
     try {
         let {email,achievementName} = req.body
+        email = escapeHTML(email);
+        achievementName = escapeHTML(achievementName);
         const deleted = await deleteAchievement(email,achievementName);
         return res.status(200).send(deleted)
     } catch (error) {
