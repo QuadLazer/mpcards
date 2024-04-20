@@ -553,9 +553,6 @@ export default class Game extends Phaser.Scene {
                 console.log(arr);
                 self.handZone.setData({xpos:arr})
                 self.socket.emit('resDropped',self.isPlayerA);
-                // self.handZone.data.xpos = self.handZone.data.xpos.filter(function(item) {
-                //     return item !== 5;
-                // })
 
                 console.log('Game Obj Vars:')
                 console.log(gameObject);
@@ -564,7 +561,6 @@ export default class Game extends Phaser.Scene {
                     console.log('Resource Card Value Dropped: ' + gameObject.getResVal());
                     resDropZone.data.values.pointSum += gameObject.getResVal();
                     resDropZone.data.values.maxCapacity += gameObject.getResVal();
-                    //resDropZone.data.values.maxCapacity = resDropZone.data.values.pointSum;
                     console.log("pool val: " + resDropZone.data.values.pointSum );
                     console.log("max capacity: " + resDropZone.data.values.maxCapacity);
                     //Removing a card from handZone for draw card logic.
@@ -590,16 +586,6 @@ export default class Game extends Phaser.Scene {
             }
         } )
 
-
-        this.socket.on('cardReturned', function (gameObject, isPlayerA) {
-            if (isPlayerA !== self.isPlayerA) {
-                let sprite = gameObject.textureKey;
-                console.log(sprite);
-                //self.handZone.data.values.cards++;
-                let card = new Card(self,((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
-                //card.render(((self.handZone.x - 350) + (self.handZone.data.values.cards * 200)), (self.handZone.y - 200), sprite).disableInteractive();
-            }
-        })
         
         this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
             gameObject.x = dragX;
