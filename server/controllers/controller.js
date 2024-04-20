@@ -82,15 +82,6 @@ const modifyWinCount = async (req, res, next) => {
     }
 }
 
-const otherFunction = async (req, res, next) => {
-    try {
-        const userList = await getUsers();
-        return res.status(200).send(userList)
-    } catch (error) {
-        next(error)
-    }
-
-}
 
 const register = async (req, res, next) => {
     try {
@@ -100,8 +91,8 @@ const register = async (req, res, next) => {
         }
         const hash = await argon2.hash(password)
         console.log(email);
-        let username = email;
-        const user = await addUser(username, email, hash)
+        let username = email.toLowerCase();
+        const user = await addUser(username, email.toLowerCase(), hash)
         return res.status(201).send(user)
     } catch (error) {
         next(error)
@@ -168,7 +159,7 @@ const removeAchievement = async (req, res, next) => {
     }
 }
 
-module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, modifyWinCount, otherFunction, register,
+module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, modifyWinCount, register,
 fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser, removeAchievement,
 fetchPercentAchieve}
 
