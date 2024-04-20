@@ -7,7 +7,6 @@ const findUser = controllers.findUser;
 const eraseUser = controllers.eraseUser;
 const modifyUser = controllers.modifyUser;
 const modifyWinCount = controllers.modifyWinCount;
-const otherFunction = controllers.otherFunction;
 const register = controllers.register;
 const fetchAllAchievements = controllers.fetchAllAchievements;
 const findAchievement = controllers.findAchievement;
@@ -18,7 +17,6 @@ const fetchPercentAchieve = controllers.fetchPercentAchieve;
 
 router.get("/users/fetchUsers", fetchAllUsers);
 router.get("/users/findUser/:userEmail", findUser);
-router.get("/users/sameFetch", otherFunction);
 router.post("/users/register", register);
 router.delete("/users/delete", eraseUser);
 router.put("/users/updateAccount", modifyUser);
