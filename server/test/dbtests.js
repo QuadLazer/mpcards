@@ -136,6 +136,25 @@ describe('Database Tests', () => {
         expect(response).to.have.status(200);
     });
 
+    it('increments win count for a user', async() => {
+        let data = {
+            username: "burner@gmail.com"
+        }
+        const response = await chai.request('http://localhost:3001').put('/users/updateWinCount').send(data);
+        expect(response).to.have.status(200);
+
+    });
+
+    it('reflects the new win count', async() => {
+
+        let userEmail = 'burnert@gmail.com';
+        const response = await chai.request('http://localhost:3001').get('/users/findUser/' + userEmail);
+        expect(response).to.have.status(200);
+        expect(response.body).to.have.property('win_count',1);
+        expect(response.body).to.not.have.property('password');
+
+    });
+
     it('should delete a user', async() => {
 
         let data = {
@@ -252,6 +271,17 @@ describe('Database Tests', () => {
         
         
     });
+
+    it('should calculate achievement percentages', async() => {
+        const response = await chai.request('http://localhost:3001').get('/ach/fetchPercentAchieved')
+        expect(response).to.have.status(200);
+        console.log(response.body);
+        expect(response.body[0]).to.have.property('pct','66.7');
+        expect(response.body[0]).to.have.property('id',3);
+        expect(response.body[1]).to.have.property('pct','33.3');
+        expect(response.body[1]).to.have.property('id',4);
+        expect(response.body.length).to.be.equal(2);
+    })
 
     it('cleans up', async() => {
         let data = {

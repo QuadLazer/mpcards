@@ -82,15 +82,6 @@ const modifyWinCount = async (req, res, next) => {
     }
 }
 
-const otherFunction = async (req, res, next) => {
-    try {
-        const userList = await getUsers();
-        return res.status(200).send(userList)
-    } catch (error) {
-        next(error)
-    }
-
-}
 
 const register = async (req, res, next) => {
     try {
@@ -168,7 +159,7 @@ const removeAchievement = async (req, res, next) => {
     }
 }
 
-module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, modifyWinCount, otherFunction, register,
+module.exports = {fetchAllUsers, findUser, eraseUser, modifyUser, modifyWinCount, register,
 fetchAllAchievements, findAchievement, findUserAchieved, addAchievementToUser, removeAchievement,
 fetchPercentAchieve}
 
