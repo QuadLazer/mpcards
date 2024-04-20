@@ -100,8 +100,8 @@ const register = async (req, res, next) => {
         }
         const hash = await argon2.hash(password)
         console.log(email);
-        let username = email;
-        const user = await addUser(username, email, hash)
+        let username = email.toLowerCase();
+        const user = await addUser(username, email.toLowerCase(), hash)
         return res.status(201).send(user)
     } catch (error) {
         next(error)
