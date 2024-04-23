@@ -3,9 +3,6 @@ export default class Loading extends Phaser.Scene {
     constructor() {
         super('Loading');
         this.users = [];
-        //this.broadcastChannel = new BroadcastChannel('users');
-        //this.broadcastChannel.addEventListener('message', this.handleBroadcastMessage.bind(this));
-        //this.socket = io('http://localhost:3000');
         this.newUser = {id: Phaser.Math.RND.uuid()};
     }
 
@@ -48,7 +45,6 @@ export default class Loading extends Phaser.Scene {
             if (this.users.length == 2) {
                 console.log(this.users[0], this.users[1]);
                 this.socket.emit('successMatch');
-                //this.broadcastChannel.close();
             }
         });
 
@@ -78,15 +74,6 @@ export default class Loading extends Phaser.Scene {
         this.socket.emit('queueAdd', this.newUser.id);
         console.log(`User ${this.newUser.id} is waiting for a game`);
 
-        //this.broadcastChannel.postMessage({type: 'joined', user: newUser});
-        /*
-        if(this.users.length == 2) {
-            
-            this.loadGame(this.users);
-            this.users.length = 0;
-            //this.broadcastChannel.close();
-        }
-        */
     }
 
     checkUser() {
@@ -100,19 +87,5 @@ export default class Loading extends Phaser.Scene {
     loadGame(users) {
         this.scene.start('Game');
     }
-    /*
-    handleBroadcastMessage(event) {
-        const message = event.data;
-        if (message.type === 'joined') {
-          this.users.push(message.user);
-          if (this.users.length === 2) {
-            this.loadGame(this.users);
-            this.users.length = 0;
-            //this.broadcastChannel.close();
-          }
-        } else if (message.type === 'left') {
-            this.users = this.users.filter(e => e.id != this.newUser.id);
-        }
-      }
-      */
+    
 }
