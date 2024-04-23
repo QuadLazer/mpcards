@@ -46,8 +46,6 @@ export default class Login extends Phaser.Scene
 
         element.addListener('click');
 
-        //this.socket = io('http://localhost:3000');
-
         element.on('click', function (event)
         {
 
@@ -72,16 +70,6 @@ export default class Login extends Phaser.Scene
                         console.log(error);
                     });
 
-                    /*firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
-                    .then(cred => {
-                        console.log(cred);
-                    })
-                    .catch(function(error) {
-                        // Handle Errors here.
-                        console.log(error);
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
-                    });*/
                 }
                 else
                 {

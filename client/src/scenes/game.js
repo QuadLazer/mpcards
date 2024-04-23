@@ -8,7 +8,6 @@ import Deck from '../helpers/deck';
 
 import FirebasePlugin from '../plugins/FirebasePlugin';
 
-import Controller from '../helpers/controller';
 import Mascot from '../helpers/mascot';
 import { GameObjects } from 'phaser';
 import { Time } from 'phaser';
@@ -299,7 +298,7 @@ export default class Game extends Phaser.Scene {
         this.resourceTotalText.setShadow(4, 4, '#000000', 0);
 
         this.dealer = new Dealer(this);
-        this.controller = new Controller(this); /*TODO - Remove this*/ 
+
 
         let self = this;
 

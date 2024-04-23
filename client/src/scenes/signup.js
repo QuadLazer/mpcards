@@ -22,13 +22,6 @@ export default class Signup extends Phaser.Scene
 
         let scene = this.scene;
 
-        // check if user already logged in
-        /*firebaseApp.auth.onAuthStateChanged(user => {
-            if (user) {
-                console.log('Logged in as: ' + user.email);
-                this.scene.start('Game');
-            }
-        });*/
 
         // Debugging pixel coords
   
@@ -42,7 +35,6 @@ export default class Signup extends Phaser.Scene
 
         element.addListener('click');
 
-        //this.socket = io('http://localhost:3000');
 
         element.on('click', function (event)
         {
@@ -76,9 +68,6 @@ export default class Signup extends Phaser.Scene
                         console.log(JSON.stringify(response));
                     })
 
-                    // response.then(data => {
-                    // console.log(JSON.stringify(data));
-                    // });
                     // Create new user account
                     firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
                     .then(cred => {
