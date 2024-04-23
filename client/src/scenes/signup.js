@@ -13,10 +13,13 @@ export default class Signup extends Phaser.Scene
     {
         this.load.html('signupform', 'assets/html/signupform.html');
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
+        this.load.image('bg', 'assets/bgtest.png');
     }
 
     create ()
     {
+        this.bg = this.add.image(0, 0, 'bg');
+        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         var firebaseApp = this.plugins.get('FirebasePlugin');
         console.log(firebaseApp);
 

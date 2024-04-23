@@ -13,10 +13,13 @@ export default class Login extends Phaser.Scene
     {
         this.load.html('nameform', 'assets/html/loginform.html');
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
+        this.load.image('bg', 'assets/bgtest.png');
     }
 
     create (loginFlag)
     {
+        this.bg = this.add.image(0, 0, 'bg');
+        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         let flag = true;
         flag = loginFlag;
         var firebaseApp = this.plugins.get('FirebasePlugin');
