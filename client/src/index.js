@@ -9,6 +9,7 @@ import Profile from "./scenes/profile";
 import Rankings from "./scenes/rankings";
 import Achievements from "./scenes/achievements";
 import Instructions from "./scenes/instructions";
+import EditProfile from "./scenes/EditProfile";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 const config = {
@@ -28,7 +29,8 @@ const config = {
         MainMenu,
         Rankings,
         Achievements,
-        Instructions
+        Instructions,
+        EditProfile
     ],
     scale: {
         mode: Phaser.Scale.FIT,

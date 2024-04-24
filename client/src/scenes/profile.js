@@ -40,6 +40,10 @@ export default class Game extends Phaser.Scene {
         {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0);
         this.userWinCount.setStroke('#000000', 6);
         this.userWinCount.setShadow(4, 4, '#000000', 0);
+        this.editText = this.add.text(200, 700, 'Edit Profile',
+        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0).setInteractive();
+        this.editText.setStroke('#000000', 6);
+        this.editText.setShadow(4, 4, '#000000', 0);
 
         // Will eventually clean up with a nice loop, but this works for now.
         this.achDisplay = []
@@ -53,6 +57,11 @@ export default class Game extends Phaser.Scene {
         this.exit.on('pointerup', function (pointer) {
             console.log("I was clicked!");
             this.scene.start('MainMenu');
+        }, this)
+
+        this.editText.on('pointerup', function (pointer) {
+            console.log("Edit Profile clicked!");
+            this.scene.start('EditProfile');
         }, this)
 
         let firebaseApp = this.plugins.get('FirebasePlugin');
