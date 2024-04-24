@@ -53,7 +53,6 @@ export default class FirebasePlugin extends Phaser.Plugins.BasePlugin {
 
     async signInWithEmailAndPassword(email, password) {
         const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-        console.log(this.auth);
         return userCredential.user;
     }
 

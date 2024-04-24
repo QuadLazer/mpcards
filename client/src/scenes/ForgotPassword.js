@@ -34,7 +34,6 @@ export default class ForgotPassword extends Phaser.Scene
         this.pointer = this.input.activePointer;
 
         this.exit.on('pointerup', function (pointer) {
-            console.log("I was clicked!");
             this.scene.start('Login');
         }, this)
 
@@ -57,10 +56,8 @@ export default class ForgotPassword extends Phaser.Scene
                 if (inputEmail.value !== '')
                 {
                     firebaseApp.sendPasswordResetEmail(inputEmail.value).then(() => {
-                        console.log("Email sent");
                         this.scene.scene.start('Login');
                     }).catch((error) => {
-                        console.log(error);
                         errorText.setVisible(true);
                     });
                 }

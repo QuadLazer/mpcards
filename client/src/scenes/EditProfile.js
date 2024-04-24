@@ -35,12 +35,10 @@ export default class Game extends Phaser.Scene {
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
         this.exit.on('pointerup', function (pointer) {
-            console.log("I was clicked!");
             this.scene.start('Profile');
         }, this)
 
         let firebaseApp = this.plugins.get('FirebasePlugin');
-        console.log(firebaseApp.getUser())
         const userEmail = firebaseApp.getUser().email;
         var currUsername = '';
 
@@ -54,7 +52,6 @@ export default class Game extends Phaser.Scene {
 
         get('http://localhost:3001/users/findUser/', userEmail)
         .then(response => {
-            console.log(response);
             currUsername = response.uname;
         })
 
@@ -76,11 +73,9 @@ export default class Game extends Phaser.Scene {
                 if (newPassword.value !== '') { 
                     firebaseApp.updatePassword(newPassword.value)
                     .then(cred => {
-                        console.log(cred);
                     })
                     .catch(function(error) {
                         // Handle Errors here.
-                        console.log(error);
                         if (error.code === 'auth/requires-recent-login') {
                             // Display error text to logout
                             errorText.setVisible(true);
@@ -103,7 +98,6 @@ export default class Game extends Phaser.Scene {
                     newEmail: null,
                     newPassword: newPassword.value
                 });
-                console.log(userData);
 
 
                 const options = {
@@ -117,7 +111,7 @@ export default class Game extends Phaser.Scene {
 
                 // modify account in DB
                 fetch("http://localhost:3001/users/updateAccount",options).then(response =>{
-                    console.log(JSON.stringify(response));
+                    
                 })
 
                 if (isSuccess) {

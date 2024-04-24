@@ -1,9 +1,8 @@
 import Card from './card';
-import Controller from './controller';
 import Mascot from './mascot'
 import Resource from './resource'
 import Effect from './effect'
-// import Deck from './deck'
+
 export default class Dealer {
     constructor(scene) {
         
@@ -30,7 +29,6 @@ export default class Dealer {
                 console.log(card);
                 switch (card) {
                     case 'Mascot':
-                        //new Mascot(scene, 475 + (i * 100), 670, mascotSprite);
                         this.randomizeMascot(475 + (i * 100), 700, scene);
                         break;
                     case 'Resource':
@@ -90,10 +88,8 @@ export default class Dealer {
                     }
                     console.log(insert);
             }
-                //let i = this.handzone.data.values.cards;
                 switch (card) {
                     case 'Mascot':
-                        //addHand = new Mascot(scene, insert, 670, mascotSprite);
                         addHand = this.randomizeMascot(insert, 700, scene);
                         break;
                     case 'Resource':
