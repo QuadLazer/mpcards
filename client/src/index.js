@@ -10,6 +10,7 @@ import Rankings from "./scenes/rankings";
 import Achievements from "./scenes/achievements";
 import Instructions from "./scenes/instructions";
 import EditProfile from "./scenes/EditProfile";
+import ForgotPassword from "./scenes/ForgotPassword";
 import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
 const config = {
@@ -30,7 +31,8 @@ const config = {
         Rankings,
         Achievements,
         Instructions,
-        EditProfile
+        EditProfile,
+        ForgotPassword
     ],
     scale: {
         mode: Phaser.Scale.FIT,
