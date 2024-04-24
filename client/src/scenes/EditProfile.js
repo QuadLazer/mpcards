@@ -50,7 +50,7 @@ export default class Game extends Phaser.Scene {
         };
         const get = ( url, param ) => request( url, param, 'GET' );
 
-        get('http://localhost:3001/users/findUser/', userEmail)
+        get('https://mpcards-dbserver.onrender.com/users/findUser/', userEmail)
         .then(response => {
             currUsername = response.uname;
         })
@@ -110,7 +110,7 @@ export default class Game extends Phaser.Scene {
                 }
 
                 // modify account in DB
-                fetch("http://localhost:3001/users/updateAccount",options).then(response =>{
+                fetch("https://mpcards-dbserver.onrender.com/users/updateAccount",options).then(response =>{
                     
                 })
 
