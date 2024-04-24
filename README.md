@@ -12,8 +12,8 @@ Access the game here: https://mpcards-h6fr.onrender.com/
 ```console
 git clone https://github.com/QuadLazer/mpcards.git
 ```
-2. copy FirebaseConfig.js to ./mpcards/client/src/helpers/plugins/FirebaseConfig.js
-3. copy noshare.js to ./mpcards/server/noshare.js
+2. Copy FirebaseConfig.js to ./mpcards/client/src/helpers/plugins/FirebaseConfig.js
+3. Copy noshare.js to ./mpcards/server/noshare.js
 4. Install necessary packages in the frontend
 ```console
 cd mpcards/client
