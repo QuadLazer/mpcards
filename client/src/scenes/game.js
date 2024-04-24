@@ -78,6 +78,7 @@ export default class Game extends Phaser.Scene {
         this.mascotCardPlace = false;
         this.currentTurn = false;
         this.hasDrawn = false;
+        this.yourFullUsername = '';
         let initTurn = true;
         let attackCount = 1;
         let attackCap = attackCount;
@@ -384,6 +385,7 @@ export default class Game extends Phaser.Scene {
                     get('http://localhost:3001/users/findUser/', firebaseApp.getUser().email)
                     .then(response => {
                         self.yourUsername.setText(response.uname.length > 8 ? response.uname.substring(0,8) + "..." : response.uname);
+                        self.yourFullUsername = response.uname;
                     })
                 self.socket.emit('usersPlaying', firebaseApp.getUser().email);
             }, 1000);
@@ -656,8 +658,9 @@ export default class Game extends Phaser.Scene {
 
                     //Update win count for victor
                     const userData = JSON.stringify({
-                        username: firebaseApp.getUser().email
+                        username: self.yourFullUsername
                     });
+                    console.log(self.yourFullUsername)
                     const options = {
                         method: 'PUT',
                         headers: {

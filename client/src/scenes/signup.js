@@ -103,7 +103,6 @@ export default class Signup extends Phaser.Scene
 
     update ()
     {
-        // Debugging pixel coords
 
     }
 
