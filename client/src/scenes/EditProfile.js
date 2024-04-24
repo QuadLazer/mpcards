@@ -25,13 +25,12 @@ export default class Game extends Phaser.Scene {
     create() {
         this.bg = this.add.image(0, 0, 'bg');
         this.exit = this.add.image(60, 100, 'exit').setScale(0.75, 0.75).setInteractive();
-        this.infoText = this.add.text(200, 700, 'Edit Profile',
-        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0).setInteractive();
-        this.infoText.setStroke('#000000', 6);
-        this.infoText.setShadow(4, 4, '#000000', 0);
-        const errorText = this.add.text(200, 700, 'Please logout and log back in to change email',
+        const errorText = this.add.text(1000, 700, 'Auth error: Please logout and log back in to change password',
         {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0).setInteractive().setVisible(false);
         errorText.setStroke('#000000', 6);
+        const confirmText = this.add.text(500, 600, 'Account updated!',
+        {fontSize: '36px', fontFamily: 'Woodchuck'}).setOrigin(1, 0).setInteractive().setVisible(false);
+        confirmText.setStroke('#000000', 6);
 
         Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
 
@@ -44,7 +43,6 @@ export default class Game extends Phaser.Scene {
         console.log(firebaseApp.getUser())
         const userEmail = firebaseApp.getUser().email;
         var currUsername = '';
-        var isSuccess = true;
 
         // get curr username
         const request = ( url, param, method = 'GET' ) => {
@@ -71,16 +69,14 @@ export default class Game extends Phaser.Scene {
             if (event.target.name === 'saveButton')
             {
                 var newUsername = this.getChildByName('username');
-                var newEmail = this.getChildByName('email');
                 var newPassword = this.getChildByName('password');
+                var isSuccess = true;
 
                 //modify account in Firebase
-                if (newEmail.value !== '') {
-                    console.log(newEmail.value);
-                    firebaseApp.updateEmail(newEmail.value)
+                if (newPassword.value !== '') { 
+                    firebaseApp.updatePassword(newPassword.value)
                     .then(cred => {
                         console.log(cred);
-                        this.scene.scene.start('Profile');
                     })
                     .catch(function(error) {
                         // Handle Errors here.
@@ -90,24 +86,6 @@ export default class Game extends Phaser.Scene {
                             errorText.setVisible(true);
                             isSuccess = false;
                         }
-                    });
-                }
-                else {
-                    newEmail.value = null;
-                }
-
-                if (newPassword.value !== '') { 
-                    firebaseApp.updatePassword(newPassword.value)
-                    .then(cred => {
-                        console.log(cred);
-                        this.scene.scene.start('Profile');
-                    })
-                    .catch(function(error) {
-                        // Handle Errors here.
-                        console.log(error);
-                        isSuccess = false;
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
                     });
                 }
                 else {
@@ -122,7 +100,7 @@ export default class Game extends Phaser.Scene {
                     username: currUsername,
                     email: userEmail,
                     newUsername: newUsername.value,
-                    newEmail: newEmail.value,
+                    newEmail: null,
                     newPassword: newPassword.value
                 });
                 console.log(userData);
@@ -142,10 +120,11 @@ export default class Game extends Phaser.Scene {
                     console.log(JSON.stringify(response));
                 })
 
-                /*if (isSuccess) {
-                    this.scene.scene.start('Profile');
-                }*/
+                if (isSuccess) {
+                    confirmText.setVisible(true);
+                }
             }
+
         });
     }
     
