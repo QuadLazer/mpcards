@@ -13,24 +13,17 @@ export default class Signup extends Phaser.Scene
     {
         this.load.html('signupform', 'assets/html/signupform.html');
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
+        this.load.image('bg', 'assets/bgtest.png');
     }
 
     create ()
     {
+        this.bg = this.add.image(0, 0, 'bg');
+        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         var firebaseApp = this.plugins.get('FirebasePlugin');
         console.log(firebaseApp);
 
         let scene = this.scene;
-
-        // check if user already logged in
-        /*firebaseApp.auth.onAuthStateChanged(user => {
-            if (user) {
-                console.log('Logged in as: ' + user.email);
-                this.scene.start('Game');
-            }
-        });*/
-
-        // Debugging pixel coords
   
         this.pointer = this.input.activePointer;
 
@@ -41,8 +34,6 @@ export default class Signup extends Phaser.Scene
         element.setPerspective(800);
 
         element.addListener('click');
-
-        //this.socket = io('http://localhost:3000');
 
         element.on('click', function (event)
         {
@@ -76,9 +67,6 @@ export default class Signup extends Phaser.Scene
                         console.log(JSON.stringify(response));
                     })
 
-                    // response.then(data => {
-                    // console.log(JSON.stringify(data));
-                    // });
                     // Create new user account
                     firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
                     .then(cred => {
@@ -88,8 +76,7 @@ export default class Signup extends Phaser.Scene
                     .catch(function(error) {
                         // Handle Errors here.
                         console.log(error);
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
+                        text.setText(`Error: Account already exists or invalid email/password`);
                     });
                 }
                 else
@@ -116,7 +103,6 @@ export default class Signup extends Phaser.Scene
 
     update ()
     {
-        // Debugging pixel coords
 
     }
 

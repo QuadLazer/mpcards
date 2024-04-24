@@ -54,7 +54,8 @@ describe('Database Tests', () => {
         let data = {
             username: "burner@gmail.com",
             email: "burner@gmail.com",
-            newUsername: "coolGuy99"
+            newUsername: "coolGuy99",
+            newPassword: '',
         }
         const response = await chai.request('http://localhost:3001').put('/users/updateAccount').send(data);
         expect(response).to.have.status(200);
@@ -65,7 +66,6 @@ describe('Database Tests', () => {
         const response = await chai.request('http://localhost:3001').get('/users/findUser/' + userEmail);
         expect(response).to.have.status(200);
         expect(response.body).to.have.property('uname','coolGuy99');
-        expect(response.body).to.have.property('email','burner@gmail.com');
         expect(response.body).to.have.property('win_count',0);
         expect(response.body).to.not.have.property('password');
 
@@ -91,54 +91,34 @@ describe('Database Tests', () => {
         expect(response).to.have.status(400);
     });
 
-    it('should update an email and password at the same time', async() => {
+    it('should update a password', async() => {
         let data = {
             username: "coolGuy99",
             email: "burner@gmail.com",
-            newEmail: "burnert@gmail.com",
+            newEmail: '',
+            newUsername: '',
             newPassword: "rigmarole"
         }
         const response = await chai.request('http://localhost:3001').put('/users/updateAccount').send(data);
         expect(response).to.have.status(200);
     });
 
-    it('should update a username and email at the same time', async() => {
-        let data = {
-            username: "coolGuy99",
-            email: "burnert@gmail.com",
-            newUsername: "burner@gmail.com",
-            newEmail: "burner@gmail.com"
-        }
-        const response = await chai.request('http://localhost:3001').put('/users/updateAccount').send(data);
-        expect(response).to.have.status(200);
-    });
-
+    
     it('should update a username and password at the same time', async() => {
         let data = {
-            username: "burner@gmail.com",
+            username: "coolGuy99",
             email: "burner@gmail.com",
-            newUsername: "coolGuy99",
+            newUsername: "coolGuy98",
             newPassword: "abulafia"
         }
         const response = await chai.request('http://localhost:3001').put('/users/updateAccount').send(data);
         expect(response).to.have.status(200);
     });
 
-    it('should update a username, password, email at the same time', async() => {
-        let data = {
-            username: "coolGuy99",
-            email: "burner@gmail.com",
-            newUsername: "burner@gmail.com",
-            newPassword: "throwaway",
-            newEmail: "burnert@gmail.com"
-        }
-        const response = await chai.request('http://localhost:3001').put('/users/updateAccount').send(data);
-        expect(response).to.have.status(200);
-    });
 
     it('increments win count for a user', async() => {
         let data = {
-            username: "burner@gmail.com"
+            username: "coolGuy98"
         }
         const response = await chai.request('http://localhost:3001').put('/users/updateWinCount').send(data);
         expect(response).to.have.status(200);
@@ -147,7 +127,7 @@ describe('Database Tests', () => {
 
     it('reflects the new win count', async() => {
 
-        let userEmail = 'burnert@gmail.com';
+        let userEmail = 'burner@gmail.com';
         const response = await chai.request('http://localhost:3001').get('/users/findUser/' + userEmail);
         expect(response).to.have.status(200);
         expect(response.body).to.have.property('win_count',1);
@@ -158,8 +138,8 @@ describe('Database Tests', () => {
     it('should delete a user', async() => {
 
         let data = {
-                    username: "burner@gmail.com",
-                    email: "burnert@gmail.com",
+                    username: "coolGuy98",
+                    email: "burner@gmail.com",
                 };
 
         const response = await chai.request('http://localhost:3001').delete('/users/delete').send(data);

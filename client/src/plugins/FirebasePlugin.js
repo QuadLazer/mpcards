@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, Firestore, setDoc, doc, getDoc, DocumentSnapshot } from 'firebase/firestore';
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth';
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, verifyBeforeUpdateEmail, updatePassword, reauthenticateWithCredential, sendPasswordResetEmail, onAuthStateChanged} from 'firebase/auth';
 import { getConfig } from '/etc/secrets/FirebaseConfig.js';
 
 const firebaseConfig = getConfig();
@@ -53,8 +53,24 @@ export default class FirebasePlugin extends Phaser.Plugins.BasePlugin {
 
     async signInWithEmailAndPassword(email, password) {
         const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-        console.log(this.auth);
         return userCredential.user;
+    }
+
+    async updateEmail(email) {
+        await verifyBeforeUpdateEmail(this.auth.currentUser, email);
+    }
+
+    async updatePassword(password) {
+        await updatePassword(this.auth.currentUser, password);
+    }
+
+    async sendPasswordResetEmail(email) {
+        await sendPasswordResetEmail(this.auth, email);
+    }
+
+    async reauthenticateWithCredential(email, password) {
+        const credential = this.auth.EmailAuthProvider.credential(email, password);
+        await reauthenticateWithCredential(this.auth.currentUser, credential);
     }
 
     getUser() {

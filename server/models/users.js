@@ -86,11 +86,11 @@ const updateUser = async (username, email, newUsername, newEmail, newPassword) =
         SELECT * FROM g_user WHERE uname = $1 AND email = $2
         `, [username, email])
         if (!checkUser) return { message: "User not found", status: false }
-        let rawString = String.raw`UPDATE g_user SET uname = $1, email = $2, password = $3 
+        let rawString = String.raw`UPDATE g_user SET uname = $1, password = $3 
         WHERE uname = $4
         RETURNING uname, email`;
-        if (newUsername == null ) {
-            if (newEmail == null) {
+        if (newUsername == '') {
+            if (newEmail == '') {
                 //set new password only
                 rawString = String.raw`UPDATE g_user SET  password = $1 
                 WHERE uname = $2
@@ -98,7 +98,7 @@ const updateUser = async (username, email, newUsername, newEmail, newPassword) =
                 const updated = await db.any(rawString, [newPassword, username])
                 return {message: "User updated successfully", status: true, user: updated}
                 } 
-            else if (newPassword == null) {
+            else if (newPassword == '') {
                 // set new email only
                 rawString = String.raw`UPDATE g_user SET email = $1
                 WHERE uname = $2
@@ -109,16 +109,16 @@ const updateUser = async (username, email, newUsername, newEmail, newPassword) =
             }
             else {
                 //set new email and password
-                rawString = String.raw`UPDATE g_user SET email = $1,  password = $2 
+                rawString = String.raw`UPDATE g_user SET password = $2 
                 WHERE uname = $3
                 RETURNING uname, email`;
                 const updated = await db.any(rawString, [newEmail,newPassword, username])
                 return {message: "User updated successfully", status: true, user: updated}
             }
         }
-        else if (newEmail == null) {
+        else if (newEmail == '') {
             //set new user name only
-            if (newPassword == null) {
+            if (newPassword == '') {
                 rawString = String.raw`UPDATE g_user SET  uname = $1 
                 WHERE uname = $2
                 RETURNING uname, email`;
@@ -136,9 +136,9 @@ const updateUser = async (username, email, newUsername, newEmail, newPassword) =
                 
             }
         }
-        else if (newPassword == null) {
+        else if (newPassword == '') {
             //set email and username
-            rawString = String.raw`UPDATE g_user SET uname = $1,  email = $2 
+            rawString = String.raw`UPDATE g_user SET uname = $1 
             WHERE uname = $3
             RETURNING uname, email`;
             const updated = await db.any(rawString, [newUsername,newEmail, username])

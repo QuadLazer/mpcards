@@ -4,7 +4,6 @@ export default class Resource extends Card {
     constructor(scene, x, y, textureKey) {
         //this super() constructor is for the Sprite class
         super(scene, x, y, textureKey);
-        //this.scene = scene;
 
         this.setScale(0.55, 0.50);
         this.setInteractive();
@@ -14,7 +13,6 @@ export default class Resource extends Card {
         scene.add.existing(this);
 
         let inDropZone = false;
-        //this.value = Math.floor(Math.random()*3)+1;
 
         this.getResVal = () => {
             return this.value;

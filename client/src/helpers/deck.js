@@ -14,16 +14,6 @@ export default class Deck extends Card {
         this.setScale(0.50, 0.50);
         this.setInteractive();
         scene.input.setDraggable(this);
-        //this.deckSprite = this.scene.add.sprite(x,y,texture).setScale(.25,.25).setInteractive();
-        //this.deckSprite.on('pointerdown', this.drawCard,this);
-        // this.deckSprite.on('pointerdown', (pointer,gameObject,scene) =>{
-        //     if(scene.handZone.data.values.cards < 5) {
-        //         this.drawCard;
-        //         //scene.dealer.draw();
-        //         //this.dealer.draw();
-
-        //     }
-        // }, this)
     }
 
 

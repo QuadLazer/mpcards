@@ -102,8 +102,7 @@ export default class Achievements extends Phaser.Scene {
 
 var getPercentData = async function () {
     const request = ( url,method = 'GET' ) => {
-
-        //url +=  (param).toString();        
+     
         return fetch(url).then( response => response.json() );
     };
     const get = ( url) => request( url, 'GET' );

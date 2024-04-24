@@ -13,10 +13,13 @@ export default class Login extends Phaser.Scene
     {
         this.load.html('nameform', 'assets/html/loginform.html');
         this.load.plugin('FirebasePlugin', FirebasePlugin, true);
+        this.load.image('bg', 'assets/bgtest.png');
     }
 
     create (loginFlag)
     {
+        this.bg = this.add.image(0, 0, 'bg');
+        Phaser.Display.Align.In.Center(this.bg, this.add.zone(640, 390, 1280, 780));
         let flag = true;
         flag = loginFlag;
         var firebaseApp = this.plugins.get('FirebasePlugin');
@@ -34,8 +37,6 @@ export default class Login extends Phaser.Scene
             }
         });
 
-        // Debugging pixel coords
-
         this.pointer = this.input.activePointer;
 
         const text = this.add.text(10, 10, 'Please login to play', { color: 'white', fontFamily: 'Arial', fontSize: '32px '});
@@ -45,8 +46,6 @@ export default class Login extends Phaser.Scene
         element.setPerspective(800);
 
         element.addListener('click');
-
-        //this.socket = io('http://localhost:3000');
 
         element.on('click', function (event)
         {
@@ -62,7 +61,7 @@ export default class Login extends Phaser.Scene
                     // Sign in
                     firebaseApp.signInWithEmailAndPassword(inputUsername.value, inputPassword.value)
                     .then(cred => {
-                        console.log(cred);
+                        console.log(cred);   
                         this.scene.scene.start('MainMenu', loginFlag);
                     })
                     .catch(function(error) {
@@ -71,17 +70,6 @@ export default class Login extends Phaser.Scene
                         text.setText(`Error: Invalid username/password`);
                         console.log(error);
                     });
-
-                    /*firebaseApp.createUserWithEmailAndPassword(inputUsername.value, inputPassword.value)
-                    .then(cred => {
-                        console.log(cred);
-                    })
-                    .catch(function(error) {
-                        // Handle Errors here.
-                        console.log(error);
-                        var errorCode = error.code;
-                        var errorMessage = error.message;
-                    });*/
                 }
                 else
                 {
@@ -90,6 +78,11 @@ export default class Login extends Phaser.Scene
                 }
             }
 
+            if (event.target.name === 'forgotButton')
+            {
+                element.setVisible(false);
+                scene.start('ForgotPassword');
+            }
         });
 
         this.signupButton = this.add.text(740, 220, 'Sign up', { color: 'white', fontFamily: 'Arial', fontSize: '16px '});
@@ -108,7 +101,6 @@ export default class Login extends Phaser.Scene
 
     update ()
     {
-        // Debugging pixel coords
 
     }
 

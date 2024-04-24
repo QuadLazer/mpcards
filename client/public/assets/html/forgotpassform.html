@@ -1,13 +1,11 @@
 <style>
-    .signup {
-      background: #eceeee;
-      border: 1px solid #42464b;
+    .editProfile {
       border-radius: 6px;
       height: 257px;
       margin: 20px auto 0;
       width: 298px;
     }
-    .signup h1 {
+    .editProfile h1 {
       background-image: linear-gradient(top, #f1f3f3, #d4dae0);
       border-bottom: 1px solid #a6abaf;
       border-radius: 6px 6px 0 0;
@@ -21,7 +19,7 @@
       text-align: center;
       text-shadow: 0 -1px 0 rgba(0,0,0,0.2), 0 1px 0 #fff;
     }
-    input[type="password"], input[type="text"] {
+    input[type="email"] {
       background: linear-gradient(top, #d6d7d7, #dee0e0);
       border: 1px solid #a1a3a3;
       border-radius: 4px;
@@ -75,7 +73,7 @@
       transition: color .4s;
     }
     .forgot:hover { color: #3b3b3b }
-    input[type="sub"] {
+    input[type="submit"] {
       width:240px;
       height:35px;
       display:block;
@@ -101,25 +99,14 @@
       box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #497a78, 0px 10px 5px #999;
     }
     
-    .shadow {
-      background: #000;
-      border-radius: 12px 12px 4px 4px;
-      box-shadow: 0 0 20px 10px #000;
-      height: 12px;
-      margin: 30px auto;
-      opacity: 0.2;
-      width: 270px;
-    }
-    
     input[type="submit"]:active {
       top:3px;
       box-shadow: inset 0px 1px 0px #2ab7ec, 0px 2px 0px 0px #31524d, 0px 5px 3px #999;
     }    
     </style>
     
-    <div class="signup">
-        <input type="text" placeholder="Email" id="username" name="username">
-        <input type="password" placeholder="password" id="password" name="password">
-        <input type="sub" value="Sign Up" name="signupButton">
+    <div class="editProfile">
+        <input type="email" placeholder="Email" id="email" name="email">
+        <input type="submit" value="Send" name="sendButton">
     </div>
     <div class="shadow"></div>
