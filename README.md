@@ -53,6 +53,9 @@ npm test
 
 ## Team Members
 Wes Ahearn (wejama)
+
 Seth Paul (sethyboy20)
+
 John Scharff
+
 Syed Mahdi (5yM01)
