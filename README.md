@@ -6,7 +6,7 @@ Mascot Mayhem is a browser-based multiplayer card game based around the differen
 
 ## Play Game
 Access the game here: https://mpcards-h6fr.onrender.com/
-
+(To test gameplay functionality, two accounts can be used in separate browsers)
 ## Build Game
 1. Clone the repo
 ```console
